@@ -1,46 +1,62 @@
-# Getting Started with Create React App
+# QRookie-Node
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+QRookie-Node is an application for downloading and installing games for Quest devices, inspired by the [QRookie](https://github.com/glaumar/QRookie) project by **@glaumar**. This project adapts the original implementation to a modern development environment, leveraging **Node.js** and **React** for greater flexibility and ease of use across multiple platforms.
 
-## Available Scripts
+## ⚡ Key Features
 
-In the project directory, you can run:
+- **Game Downloads**: Facilitates downloading games for Quest devices from public mirrors.
+- **Modern Interface**: Built with React and a tab-based navigation system.
+- **Device Management**: Handles connected devices via ADB.
+- **Node.js Backend**: Complete restructuring for cross-platform execution using Node.js.
+- **FontAwesome Icons**: Enhanced visual interface with FontAwesome Icons.
 
-### `yarn start`
+## 📚 Dependencies
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Frontend
+- **React** and **React Router Dom** for navigation.
+- **FontAwesome** for custom icons.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Backend
+- **Node.js** for logic and process management.
+- Integration with external tools like `adb`, `zip`, `unzip`, etc.
 
-### `yarn test`
+## 📦 Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/suarepo/qrookie-node.git
+   cd qrookie-node
+    ```
+2.	Install dependencies:
+    ```bash
+    yarn install
+    ```
+3.	Start the development server:
+    ```bash
+    yarn start
+    ```
+4.	Access in your browser:
+    ```bash
+    http://localhost:3000
+    ```
 
-### `yarn build`
+## 🚀 Deployment Eletron
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+`TODO`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🛠️ Project Structure
+- src/pages: Contains the main pages such as Games, Downloads, Devices, Users, and Settings.
+- src/components: Reusable components like TabBar and configured icons.
+- src/models: TypeScript models representing system entities like GameInfo and DeviceManager.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🎨 User Interface
 
-### `yarn eject`
+The user interface is designed to be simple and intuitive, with a tab-based navigation system for easy access to different features. The interface is responsive and adapts to different screen sizes, making it suitable for various devices.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Using react also allows for easy customization and extension of the interface, making it easy to add new features or modify existing ones.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🔗 References
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+This project was heavily inspired and based on the work of glaumar in [QRookie](https://github.com/glaumar/QRookie). The structure, ideas, and features were adapted to better suit the requirements of JavaScript-based platforms. 
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+The interface is inspired by the tab-based navigation system of the original [QRookie](https://github.com/glaumar/QRookie) QML project but restructured in React. Each tab is styled flexibly to adapt to different screen sizes.

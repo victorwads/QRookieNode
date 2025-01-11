@@ -12,6 +12,11 @@
 /build
 /dist
 
+# Generated files
+/assets/*x*
+/assets/*.icns
+/assets/*.ico
+
 # misc
 .DS_Store
 .env.local

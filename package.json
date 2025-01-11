@@ -2,17 +2,15 @@
   "name": "qrookie-node",
   "version": "0.1.0",
   "private": true,
+  "description": "QRookieNode is a cross-platform tool to manage Quest devices and games.",
+  "author": {
+    "name": "Victor Wads",
+    "email": "victor.laureano+qrookienode@gmail.com"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^13.0.0",
-    "@testing-library/user-event": "^13.2.1",
-    "@types/jest": "^27.0.1",
-    "@types/node": "^16.7.13",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.1",
@@ -24,7 +22,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron:dev": "bash ./electron-dev.sh",
+    "electron:build": "yarn build && tsc --project tsconfig.json && electron-builder"
   },
   "eslintConfig": {
     "extends": [
@@ -45,7 +45,52 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^13.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "@types/electron": "^1.6.12",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^22.10.5",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "electron": "^33.3.1",
     "eslint": "^9.18.0",
     "eslint-config-react-app": "^7.0.1"
+  },
+  "build": {
+    "appId": "br.com.victor.qrookie.node",
+    "productName": "QRookieNode",
+    "files": [
+      "build/**/*",
+      "electron/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "extraMetadata": {
+      "main": "electron/main.js"
+    },
+    "mac": {
+      "identity": null,
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["arm64","x64"]
+        }
+      ]
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["arm64", "x64"]
+        }
+      ],
+      "icon": "assets/icon.png"
+    }
   }
 }

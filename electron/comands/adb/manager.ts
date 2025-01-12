@@ -32,12 +32,17 @@ class AdbManager {
   public async listDevices(): Promise<Device[]> {
     const output = await this.runAdbCommand(["devices"]);
     const lines = output.split("\n").slice(1);
-    this.devices = lines
+    const all = lines
       .filter((line) => line.includes("\tdevice"))
-      .map((line) => {
+      .map(async (line) => {
         const [serial] = line.split("\t");
-        return { serial, model: "" };
+        return { 
+          serial,
+          model: await this.runAdbCommand(["-s", serial, "shell", "getprop", "ro.product.model"])
+        };
       });
+    this.devices = await Promise.all(all);
+    
     if((!this.serial && this.devices.length > 0) || this.devices.length === 1) {
       this.serial = this.devices[0].serial;
     }
@@ -57,8 +62,8 @@ class AdbManager {
 
     // Processar os resultados
     const batteryLevel = parseInt(batteryOutput.match(/level:\s*(\d+)/)?.[1] || "0", 10);
-    const [total, free] = spaceUsageOutput.match(/(\d+)\s+(\d+)\s+(\d+)/) || [];
-
+    const [, total, used] = spaceUsageOutput.split('\n')[1].match(/(\d+)\s+(\d+)\s+(\d+)/) || [];
+    
     const device: Device = {
       serial,
       model,
@@ -66,7 +71,7 @@ class AdbManager {
       androidVersion,
       sdkVersion: parseInt(sdkVersion, 10),
       batteryLevel,
-      spaceUsage: { total: parseInt(total || "0", 10), free: parseInt(free || "0", 10) },
+      spaceUsage: { total: parseInt(total || "0"), used: parseInt(used || "0") },
     };
 
     return device;

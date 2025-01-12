@@ -7,7 +7,7 @@ export interface Device {
     sdkVersion?: number;
     spaceUsage?: {
         total: number;
-        free: number;
+        used: number;
     };
 }
 

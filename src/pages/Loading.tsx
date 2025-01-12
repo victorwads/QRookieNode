@@ -9,7 +9,11 @@ interface LoadingProps {
 export const BasicLoading: React.FC<LoadingProps> = ({ visible }: LoadingProps) => {
   return <div className={
     `lds-ellipsis` + (visible === true ? '' : ' hide')
-  }><div></div><div></div><div></div><div></div></div>;
+  }>
+    <div>
+      <div></div><div></div><div></div><div></div>
+    </div>
+  </div>;
 }
 
 export const CenteredLoading: React.FC<LoadingProps> = ({ visible }: LoadingProps) => {

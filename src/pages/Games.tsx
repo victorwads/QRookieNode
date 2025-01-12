@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import "./GameCard.css";
+import "./Games.css";
 import sendCommand, { GamesCommandName, GamesCommandPayload, Game } from '../bridge';
 import GameCard from '../components/GameCard';
 import { CenteredLoading } from './Loading';
@@ -47,10 +47,10 @@ const Games: React.FC = () => {
 
   return <>
     <div className="game-list-header">
-      <Icon icon={Icons.solid.faSearch} />
-      <input type="text" value={search} onChange={e => setSearch(e.target.value)} style={{ flex: 1 }} />
+      <Icon icon={Icons.solid.faSearch} size='xl' />
+      <input type="text" value={search} onChange={e => setSearch(e.target.value)} style={{ flex: 1 }} placeholder='Search' />
       <CenteredLoading visible={result.length === 0 || loading} />
-      Items na tela: <select onChange={e => setLimit(Number.parseInt(e.target.value))} value={`${limit}`}>
+      <strong>Limit:</strong><select onChange={e => setLimit(Number.parseInt(e.target.value))} value={`${limit}`}>
         <option value="10">10</option>
         <option value="50">50</option>
         <option value="100">100</option>
@@ -60,7 +60,6 @@ const Games: React.FC = () => {
         <option value="10000">All (Not Recomended)</option>
       </select>
     </div>
-
     <div className="game-list">
       {result
         .map((game) => searchItemIsIncluded(search, game))

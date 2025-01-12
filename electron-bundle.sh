@@ -1,10 +1,9 @@
 #!/bin/bash
 
-if [ -x "$(command -v snapcraft)" ]; then
-    brew install snapcraft
+if [ "$1" != "--no-clean" ]; then
+    rm -rf dist
 fi
 
-# rm -rf dist
 yarn install
 yarn react:build
 yarn electron:build
@@ -12,8 +11,10 @@ electron-builder --macos &
 MACOS=$!
 electron-builder --linux &
 LINUX=$!
-electron-builder --win
+electron-builder --win &
 WIN=$!
+
+trap "kill $WIN $MACOS $LINUX" SIGINT
 
 wait $WIN $MACOS $LINUX
 

@@ -45,6 +45,7 @@
     "@types/react-dom": "^18.0.0",
     "customize-cra": "^1.0.0",
     "electron": "^33.3.1",
+    "electron-builder": "^25.1.8",
     "eslint": "^9.17.0",
     "eslint-config-react-app": "^7.0.1",
     "globals": "^15.14.0",
@@ -84,15 +85,33 @@
       "icon": "assets/icon.ico",
       "artifactName": "QRookie-windows-${arch}-${version}.${ext}",
       "target": [
-        {"target": "zip", "arch": ["arm64","x64"]},
-        {"target": "nsis", "arch": ["arm64","x64"]}
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
       ]
     },
     "linux": {
       "icon": "assets/icon.png",
       "artifactName": "QRookie-linux-${arch}-${version}.${ext}",
       "target": [
-        {"target": "AppImage", "arch": ["arm64","x64"]}
+        {
+          "target": "AppImage",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
       ]
     }
   },

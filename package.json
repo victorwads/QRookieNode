@@ -69,6 +69,7 @@
     "mac": {
       "icon": "assets/icon.icns",
       "category": "public.app-category.utilities",
+      "artifactName": "QRookie-macOS-${arch}-${version}.${ext}",
       "target": [
         {
           "target": "dmg",
@@ -81,18 +82,17 @@
     },
     "win": {
       "icon": "assets/icon.ico",
-      "target": "nsis"
+      "artifactName": "QRookie-windows-${arch}-${version}.${ext}",
+      "target": [
+        {"target": "zip", "arch": ["arm64","x64"]},
+        {"target": "nsis", "arch": ["arm64","x64"]}
+      ]
     },
     "linux": {
       "icon": "assets/icon.png",
+      "artifactName": "QRookie-linux-${arch}-${version}.${ext}",
       "target": [
-        {
-          "target": "AppImage",
-          "arch": [
-            "arm64",
-            "x64"
-          ]
-        }
+        {"target": "AppImage", "arch": ["arm64","x64"]}
       ]
     }
   },

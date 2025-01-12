@@ -10,14 +10,15 @@
   "homepage": "./",
   "scripts": {
     "build": "bash ./ts-build.sh",
+    "dev": "bash ./electron-dev.sh",
     "bundle": "yarn build && electron-builder",
+    "bundle:mac-dev": "yarn bundle --mac --dir -c.mac.identity=null",
 
     "react:dev": "BROWSER=none react-app-rewired start",
     "react:build": "BUILD_PATH=dist/react react-app-rewired build",
 
-    "electron:dev": "bash ./electron-dev.sh",
     "electron:build": "tsc --project tsconfig.electron.json",
-    "electron:dev-ts": "nodemon --watch electron --ext ts --exec \"rm -rf ./dist/electron && tsc --project tsconfig.electron.json\"",
+    "electron:dev-ts": "nodemon --watch electron --ext ts --exec \"tsc --project tsconfig.electron.json\"",
     "electron:dev-app": "nodemon --watch electron --ext ts --exec \"NODE_ENV=development electron ./dist/electron/main.js\"",
 
     "lint": "clear && eslint --config ./eslint.config.mjs electron src",
@@ -74,7 +75,7 @@
     "mac": {
       "icon": "assets/icon.icns",
       "category": "public.app-category.utilities",
-      "artifactName": "QRookie-macOS-${arch}-${version}.${ext}",
+      "artifactName": "QRookie${version}_MacOS_${ext}.${arch}.${ext}",
       "target": [
         {
           "target": "dmg",
@@ -87,7 +88,7 @@
     },
     "win": {
       "icon": "assets/icon.ico",
-      "artifactName": "QRookie-windows-${arch}-${version}.${ext}",
+      "artifactName": "QRookie${version}_Windows_${ext}.${arch}.${ext}",
       "target": [
         {
           "target": "zip",
@@ -107,7 +108,7 @@
     },
     "linux": {
       "icon": "assets/icon.png",
-      "artifactName": "QRookie-linux-${arch}-${version}.${ext}",
+      "artifactName": "QRookie${version}_Linux_${ext}.${arch}.${ext}",
       "target": [
         {
           "target": "AppImage",

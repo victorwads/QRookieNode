@@ -2,12 +2,18 @@ import React from "react";
 
 import "./Loading.css";
 
-export const BasicLoading: React.FC = () => {
-  return <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>;
+interface LoadingProps {
+  visible?: boolean;
 }
 
-export const CenteredLoading: React.FC = () => {
+export const BasicLoading: React.FC<LoadingProps> = ({ visible }: LoadingProps) => {
+  return <div className={
+    `lds-ellipsis` + (visible === true ? '' : ' hide')
+  }><div></div><div></div><div></div><div></div></div>;
+}
+
+export const CenteredLoading: React.FC<LoadingProps> = ({ visible }: LoadingProps) => {
   return <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-    <BasicLoading />
+    <BasicLoading visible={visible} />
   </div>;
 }

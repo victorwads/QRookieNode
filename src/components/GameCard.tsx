@@ -24,8 +24,8 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect }: GameCardProps) =>
         <img src={'local-file://' + game.image} alt={game.name} loading='lazy' />
       </div>
       <div className="game-card-content">
-        <h3 className="game-card-title">{game.normalName || game.name}</h3>
-        <p className="game-card-subtitle">{game.name}</p>
+        <h3 className="game-card-title">{game.normalName}</h3>
+        {game.name !== game.normalName && <p className="game-card-subtitle">{game.name}</p>}
         <p className="game-card-category">{game.category}</p>
         <p className="game-card-size">{formatSize(game.size)}</p>
       </div>

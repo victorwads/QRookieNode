@@ -35,7 +35,7 @@ const Devices: React.FC = () => {
     <div>
       <div className='horizontal-display'>
         <h1><Icon icon={Icons.solid.faTabletAlt} size="lg" />Devices Page</h1>
-        {loading && <CenteredLoading />}
+        <CenteredLoading visible={loading} />
         <button onClick={getAdbDevices}><Icon icon={Icons.solid.faRefresh} /> Reload Devices</button>
       </div>
       <DevicesList devices={result.devices} />

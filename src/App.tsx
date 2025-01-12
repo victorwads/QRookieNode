@@ -11,8 +11,8 @@ function App() {
   return (
     <Router>
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <TabBar />
-      <div style={{ flex: 1 }}>
+        <TabBar />
+        <div style={{ flex: 1 }}>
           <Routes>
             <Route path="/" element={<Games />} />
             <Route path="/downloads" element={<Downloads />} />

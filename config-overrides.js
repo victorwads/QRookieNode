@@ -6,4 +6,4 @@ module.exports = override(
   babelInclude([
     path.resolve("src"),
     path.resolve("electron"),
-]));
+  ]));

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu } from "electron";
+import { app, BrowserWindow } from "electron";
 import path from "path";
 
 import setupBridge from "./comands";

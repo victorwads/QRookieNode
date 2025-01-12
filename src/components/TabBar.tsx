@@ -11,10 +11,10 @@ interface Tab {
 }
 
 const tabs: Tab[] = [
-  { name: 'Games', path: '/', icon: Icons.solid.faGamepad, isFlexible: true },
+  { name: 'Games', path: '/games', icon: Icons.solid.faGamepad, isFlexible: true },
   { name: 'Downloads', path: '/downloads', icon: Icons.solid.faDownload, isFlexible: true },
   { name: 'Devices', path: '/devices', icon: Icons.solid.faTabletAlt, isFlexible: true },
-  { name: 'Users', path: '/users', icon: Icons.solid.faUsers, isFlexible: true },
+  // { name: 'Users', path: '/users', icon: Icons.solid.faUsers, isFlexible: true },
   { name: 'Settings', path: '/settings', icon: Icons.solid.faCog, isFlexible: false },
 ];
 
@@ -30,7 +30,7 @@ const TabBar: React.FC = () => {
           style={{
             ...styles.tab,
             ...(tab.isFlexible ? styles.flexibleTab : styles.nonFlexibleTab),
-            ...(location.pathname === tab.path ? styles.activeTab : {}),
+            ...(location.pathname === tab.path && tab.isFlexible ? styles.activeTab : {}),
           }}
         >
           <Icon icon={tab.icon} size="lg" />
@@ -45,7 +45,8 @@ const styles: { [key: string]: CSSProperties } = {
   container: {
     display: 'flex',
     flexDirection: 'row',
-    height: '60px',
+    height: '70px',
+    minHeight: '70px',
     backgroundColor: '#2c3e50',
     borderTop: '1px solid #34495e',
   },
@@ -62,7 +63,8 @@ const styles: { [key: string]: CSSProperties } = {
   },
   nonFlexibleTab: {
     flex: 'none',
-    width: '80px',
+    width: '90px',
+    backgroundColor: '#777', 
   },
   activeTab: {
     backgroundColor: '#34495e',

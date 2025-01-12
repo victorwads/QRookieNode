@@ -1,21 +1,46 @@
-import React from 'react';
-import sendCommand, { AdbCommandName, AdbPayload } from '../bridge';
+import React, { useEffect } from 'react';
+import sendCommand, { AdbCommandName, AdbCommandOutput } from '../bridge';
+import { CenteredLoading } from './Loading';
+import Icon, { Icons } from '../components/Icons';
+import DevicesList from '../components/DeviceList';
+import DeviceInfoCard from '../components/DeviceInfoCard';
+import UsersList from '../components/UsersList';
+
+
+let cache: AdbCommandOutput = {
+  devices: [],
+  users: [],
+  apps: [],
+};
 
 const Devices: React.FC = () => {
-  const [result, setResult] = React.useState<string>("");
+  const [result, setResult] = React.useState<AdbCommandOutput>(cache);
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   const getAdbDevices = async () => {
-    const result = sendCommand<AdbCommandName, AdbPayload, string>({
+    setLoading(true);
+    const result = sendCommand<AdbCommandName, any, AdbCommandOutput>({
       type: 'adb',
     });
-    setResult(await result);
+    cache = await result;
+    setResult(cache);
+    setLoading(false)
   };
+
+  useEffect(() => {
+    getAdbDevices()
+  }, []);
 
   return (
     <div>
-      <h1>Devices Page</h1>
-      <button onClick={getAdbDevices}>Get ADB Devices</button>
-      <pre>{result}</pre>
+      <div className='horizontal-display'>
+        <h1><Icon icon={Icons.solid.faTabletAlt} size="lg" />Devices Page</h1>
+        {loading && <CenteredLoading />}
+        <button onClick={getAdbDevices}><Icon icon={Icons.solid.faRefresh} /> Reload Devices</button>
+      </div>
+      <DevicesList devices={result.devices} />
+      {result.deviceInfo && <DeviceInfoCard deviceInfo={result.deviceInfo} />}
+      <UsersList users={result.users} />
     </div>
   );
 };

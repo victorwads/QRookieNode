@@ -12,9 +12,9 @@ function App() {
     <Router>
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <TabBar />
-        <div style={{ flex: 1, overflow: 'auto' }}>
+        <div style={{ display: 'flex', flex: 1, overflow: 'auto', flexDirection: 'column' }}>
           <Routes>
-            <Route path="/" element={<Games />} />
+            <Route path="/games/:id?" element={<Games />} />
             <Route path="/downloads" element={<Downloads />} />
             <Route path="/devices" element={<Devices />} />
             <Route path="/users" element={<Users />} />

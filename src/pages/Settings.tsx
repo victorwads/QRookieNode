@@ -1,5 +1,6 @@
 import React from 'react';
 import sendCommand, { DevToolsCommandName } from '../bridge';
+import Icon, { Icons } from '../components/Icons';
 
 const Settings: React.FC = () => {
   const openDevTools = () => {
@@ -9,8 +10,8 @@ const Settings: React.FC = () => {
   };
   
   return (
-    <div>
-      <h1>Settings Page</h1>
+    <div className='horizontal-display'>
+      <h1><Icon icon={Icons.solid.faGear} size="lg" />Settings Page</h1>
       <button onClick={openDevTools}>Open DevTools</button>
     </div>
   );

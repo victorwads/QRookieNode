@@ -108,8 +108,10 @@ export class VprManager {
       }
 
       await (new Promise((resolve, reject) => {
+        const binPath = sevenBin.path7za.replace("Contents/Resources/app.asar", "Contents/Resources/app.asar.unpacked")
+        console.log("Extracting metadata...", binPath);
         const seven = extractFull(metaFilePath, downloadDir, {
-          $bin: sevenBin.path7za,
+          $bin: binPath,
           password: vrpInfo.password
         })
         seven.on('end', function () {

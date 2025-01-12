@@ -1,9 +1,10 @@
 import React from 'react';
+import Icon, { Icons } from '../components/Icons';
 
 const Downloads: React.FC = () => {
   return (
-    <div>
-      <h1>Downloads Page</h1>
+    <div className='horizontal-display'>
+      <h1><Icon icon={Icons.solid.faDownload} size="lg" />Downloads Page</h1>
     </div>
   );
 };

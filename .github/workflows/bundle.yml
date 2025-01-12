@@ -26,6 +26,17 @@ jobs:
       - name: Yarn install
         run: yarn install --frozen-lockfile --non-interactive
 
+      - name: Import Signing Certificate
+        env:
+          CERTIFICATE_PASSWORD: ${{ secrets.DECP }}
+        run: |
+          security create-keychain -p "$CERTIFICATE_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$CERTIFICATE_PASSWORD" build.keychain
+          echo "${{ secrets.DEVC }}" | base64 --decode > certificate.p12
+          security import certificate.p12 -k ~/Library/Keychains/build.keychain -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -k "$CERTIFICATE_PASSWORD" build.keychain
+
       - name: Build and Sign Electron App
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}

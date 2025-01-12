@@ -1,5 +1,6 @@
 import { HttpDownloader } from "./httpDownloader";
 import Game from "./game";
+import vrpManager from './vrpManager';
 
 interface WebGame {
   name?: string;
@@ -27,6 +28,7 @@ class GameManager {
       }
 
       this.games = json.map((game: WebGame) => {
+        const existingGame = vrpManager.getGame(game.name || "");
         return {
           id: game.hash_val,
           name: game.name || "Unknown",
@@ -34,6 +36,11 @@ class GameManager {
           size: parseInt(game.size || "0"),
           completionOn: parseInt(game.completion_on || "0"),
           category: game.category || "Unknown",
+          image: vrpManager.getGameThumbnailPath(existingGame),
+          packageName: existingGame?.packageName,
+          normalName: existingGame?.name,
+          lastUpdated: existingGame?.lastUpdated,
+          version: existingGame?.version,
         } as Game
       });
 

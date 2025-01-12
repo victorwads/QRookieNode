@@ -1,7 +1,8 @@
 #!/bin/bash
 
-yarn build:react
-yarn build:electron
+rm -rf dist
+yarn react:build
+yarn electron:build
 electron-builder
 
 # if not ci, open macos app

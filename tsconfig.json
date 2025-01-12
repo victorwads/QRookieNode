@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "outDir": "./dist/react",
     "target": "es5",
     "lib": [

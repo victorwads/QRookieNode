@@ -1,8 +1,9 @@
 import { BrowserWindow } from "electron";
 import { Command, CommandEvent } from "../shared";
 
-export type DevToolsCommand = Command<void, void, 'devTools'>
-export type DevToolsCommandEvent = CommandEvent<void, 'devTools'>
+export type DevToolsCommandName = 'devTools'
+export type DevToolsCommand = Command<void, void, DevToolsCommandName>
+export type DevToolsCommandEvent = CommandEvent<void, void, DevToolsCommandName>
 
 export default {
     type: 'devTools',

@@ -1,11 +1,11 @@
 import React from 'react';
-import sendCommand, { DevToolsCommandEvent } from '../bridge';
+import sendCommand, { DevToolsCommandName } from '../bridge';
 
 const Settings: React.FC = () => {
   const openDevTools = () => {
-    sendCommand({
+    sendCommand<DevToolsCommandName>({
       type: 'devTools',
-    } as DevToolsCommandEvent);
+    });
   };
   
   return (

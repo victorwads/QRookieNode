@@ -41,8 +41,6 @@ generate_icons_macos() {
   done
 
   iconutil -c icns -o "icon.icns" "$iconset_dir"
-
-  rm -r "$iconset_dir"
 }
 
 generateicon 512 "."

@@ -1,32 +1,49 @@
-name: Create Bundle for All Platforms
+name: Build and Deploy
 
-on: 
+on:
   push:
     tags:
-    - '*'
+      - '*'
 
 jobs:
-  build_and_deploy:
+  macos:
+    name: Build for macOS
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js 22.x
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 22.x
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-      - name: Config Yarn Cache
-        id: yarn-cache-restore
+        run: |
+          echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+          echo "version=$(node -p -e "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Cache Yarn
         uses: actions/cache@v4
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - name: Yarn install
-        run: yarn install --frozen-lockfile --non-interactive
 
-      - name: Import Signing Certificate
+      - name: Cache Homebrew
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Homebrew
+          key: ${{ runner.os }}-homebrew-${{ hashFiles('**/*.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-homebrew
+
+      - name: Install dependencies
+        run: |
+          brew install inkscape
+          yarn install --frozen-lockfile --non-interactive
+
+      - name: Configure Keychain for Signing
         env:
           CERTIFICATE_PASSWORD: ${{ secrets.DECP }}
         run: |
@@ -42,16 +59,107 @@ jobs:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: yarn electron:bundle
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn bundle --mac
 
-      - name: Publish Release
+      - name: Upload macOS Artifacts to Release
         uses: ncipollo/release-action@v1
         with:
+          artifacts: "dist/*.dmg"
           allowUpdates: true
-          artifacts: "dist/*.dmg,dist/*.zip,dist/*.exe,dist/*.AppImage"
-          name: Release ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-          body: |
-            Changes of ${{ github.ref_name }}:
-            - TODO Changelog
+          tag: ${{ steps.yarn-cache-dir-path.outputs.version }}
+          name: Release ${{ steps.yarn-cache-dir-path.outputs.version }}
+
+  windows:
+    name: Build for Windows
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+
+      - name: Get yarn cache directory path and package version
+        id: yarn-cache-dir-path
+        run: |
+          echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+          echo "version=$(node -p -e "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Cache Yarn
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Cache Homebrew
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Homebrew
+          key: ${{ runner.os }}-homebrew-${{ hashFiles('**/*.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-homebrew
+
+      - name: Install dependencies
+        run: |
+          brew install inkscape
+          yarn install --frozen-lockfile --non-interactive
+  
+      - name: Build Windows App
+        env:
+          CERTIFICATE_PASSWORD: ${{ secrets.DECP }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn bundle --win
+
+      - name: Upload Windows Artifacts to Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/*.exe,dist/*.zip"
+          allowUpdates: true
+          tag: ${{ steps.yarn-cache-dir-path.outputs.version }}
+          name: Release ${{ steps.yarn-cache-dir-path.outputs.version }}
+
+  linux:
+    name: Build for Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: |
+          echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+          echo "version=$(node -p -e "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Cache Yarn
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install inkscape
+          yarn install --frozen-lockfile --non-interactive
+
+      - name: Build Linux App
+        env:
+          CERTIFICATE_PASSWORD: ${{ secrets.DECP }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn bundle --linux
+
+      - name: Upload Linux Artifacts to Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/*.AppImage,dist/*.deb,dist/*.rpm"
+          allowUpdates: true
+          tag: ${{ steps.yarn-cache-dir-path.outputs.version }}
+          name: Release ${{ steps.yarn-cache-dir-path.outputs.version }}

@@ -9,6 +9,7 @@ export type BridgeSendCommandEventType = 'sendCommand';
 export type { AdbCommandName, AdbPayload } from '../comands/adb';
 export type { DevToolsCommandName  } from '../comands/devTools';
 export type { GamesCommandName, GamesCommandPayload } from '../comands/games';
+export type { default as Game } from '../comands/games/game';
 
 declare global {
     interface Window {

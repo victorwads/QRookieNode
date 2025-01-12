@@ -31,9 +31,7 @@ class AdbManager {
 
   public async listDevices(): Promise<Device[]> {
     const output = await this.runAdbCommand(["devices"]);
-    console.log(output);
     const lines = output.split("\n").slice(1);
-    console.log(lines);
     this.devices = lines
       .filter((line) => line.includes("\tdevice"))
       .map((line) => {

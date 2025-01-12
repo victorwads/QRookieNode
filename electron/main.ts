@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, protocol } from "electron";
 import path from "path";
 
 import setupBridge from "./comands";
@@ -29,6 +29,13 @@ const createMainWindow = () => {
   mainWindow.on('closed', () => { mainWindow = null;});
 };
 
+app.whenReady().then(() => {
+  protocol.registerFileProtocol("local-file", (request, callback) => {
+    const url = request.url.replace("local-file:///", "");
+    const decodedPath = decodeURIComponent(url);
+    callback(path.normalize(decodedPath));
+  });
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

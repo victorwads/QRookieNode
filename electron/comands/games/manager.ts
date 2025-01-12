@@ -44,7 +44,6 @@ class GameManager {
         } as Game
       });
 
-      console.log("Games updated:", this.games);
       return true;
     } catch (err) {
       console.error("Error updating games:", err);

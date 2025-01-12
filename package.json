@@ -8,6 +8,20 @@
     "email": "victor.laureano+qrookienode@gmail.com"
   },
   "homepage": "./",
+  "scripts": {
+    "react:dev": "BROWSER=none react-app-rewired start",
+    "react:build": "BUILD_PATH=dist/react react-app-rewired build",
+
+    "electron:dev": "bash ./electron-dev.sh",
+    "electron:build": "tsc --project tsconfig.electron.json",
+    "electron:bundle": "bash ./electron-bundle.sh",
+
+
+    "electron:dev-ts": "nodemon --watch electron --ext ts --exec \"tsc --project tsconfig.electron.json\"",
+    "electron:dev-app": "NODE_ENV=development electron ./dist/electron/main.js",
+
+    "test": "react-scripts test"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
@@ -19,13 +33,66 @@
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "electron:dev": "bash ./electron-dev.sh",
-    "electron:build": "yarn build && tsc --project tsconfig.json && electron-builder"
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^13.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "@types/electron": "^1.6.12",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^22.10.5",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "customize-cra": "^1.0.0",
+    "electron": "^33.3.1",
+    "eslint": "^9.18.0",
+    "eslint-config-react-app": "^7.0.1",
+    "nodemon": "^3.1.9",
+    "react-app-rewired": "^2.2.1",
+    "tsconfig-paths": "^4.2.0"
+  },
+  "build": {
+    "appId": "br.com.victor.qrookie.node",
+    "productName": "QRookie",
+    "files": [
+      "dist/react/**/*",
+      "dist/electron/**/*"
+    ],
+    "extraMetadata": {
+      "main": "dist/electron/main.js"
+    },
+    "directories": {
+      "buildResources": "assets"
+    },
+    "mac": {
+      "identity": null,
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.utilities",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ]
+    },
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": "nsis"
+    },
+    "linux": {
+      "icon": "assets/icon.png",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ]
+    }
   },
   "eslintConfig": {
     "extends": [
@@ -44,56 +111,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^13.0.0",
-    "@testing-library/user-event": "^13.2.1",
-    "@types/electron": "^1.6.12",
-    "@types/jest": "^27.0.1",
-    "@types/node": "^22.10.5",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "electron": "^33.3.1",
-    "eslint": "^9.18.0",
-    "eslint-config-react-app": "^7.0.1"
-  },
-  "build": {
-    "appId": "br.com.victor.qrookie.node",
-    "productName": "QRookie",
-    "files": [
-      "build/**/*",
-      "electron/**/*"
-    ],
-    "directories": {
-      "buildResources": "assets"
-    },
-    "extraMetadata": {
-      "main": "electron/main.js"
-    },
-    "mac": {
-      "identity": null,
-      "icon": "assets/icon.icns",
-      "category": "public.app-category.utilities",
-      "target": [
-        {
-          "target": "dmg",
-          "arch": ["arm64","x64"]
-        }
-      ]
-    },
-    "win": {
-      "icon": "assets/icon.ico",
-      "target": "nsis"
-    },
-    "linux": {
-      "icon": "assets/icon.png",
-      "target": [
-        {
-          "target": "AppImage",
-          "arch": ["arm64", "x64"]
-        }
-      ]
-    }
   }
 }

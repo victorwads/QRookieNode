@@ -1,16 +1,11 @@
 import React from 'react';
-
-declare global {
-  interface Window {
-    electronAPI: {
-      openDevTools: () => void;
-    };
-  }
-}
+import sendCommand, { DevToolsCommandEvent } from '../bridge';
 
 const Settings: React.FC = () => {
   const openDevTools = () => {
-    window.electronAPI.openDevTools();
+    sendCommand({
+      type: 'devTools',
+    } as DevToolsCommandEvent);
   };
   
   return (

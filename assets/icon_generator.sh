@@ -6,9 +6,15 @@ if ! command -v inkscape &> /dev/null; then
   exit 1
 fi
 
+generateicon() {
+  folder="${2}"
+  mkdir -p "${folder}"
+  inkscape scalable/icon.svg -w "$1" -h "$1" -o "${folder}/icon.png"
+}
+
 generate_one_icon() {
-  mkdir -p "${1}x${1}"
-  inkscape scalable/icon.svg -w "$1" -h "$1" -o "${1}x${1}/icon.png"
+  size="$1"
+  generateicon "$1" "${size}x${size}"
 }
 
 generate_icons_linux() {
@@ -39,10 +45,10 @@ generate_icons_macos() {
   rm -r "$iconset_dir"
 }
 
-# if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-#   generate_icons_linux
-# elif
-if [[ "$OSTYPE" == "darwin"* ]]; then
+generateicon 512 "."
+
+if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "darwin"* ]]; then
+  generate_icons_linux
   generate_icons_macos
 else
   echo "Sistema operacional não suportado."

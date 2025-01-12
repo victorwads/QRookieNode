@@ -4,6 +4,13 @@ if [ "$1" != "--no-clean" ]; then
     rm -rf dist
 fi
 
+cd ./assets
+bash icon_generator.sh
+cd ..
+
+ELECTRON_CACHE=".cache/electron"
+ELETCRON_BUILDER_CACHE=".cache/electron-builder"
+
 yarn install
 yarn react:build
 yarn electron:build

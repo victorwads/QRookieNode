@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
 import TabBar from './components/TabBar';
 import Games from './pages/Games';
 import Downloads from './pages/Downloads';
@@ -14,7 +14,8 @@ function App() {
         <TabBar />
         <div style={{ display: 'flex', flex: 1, overflow: 'auto', flexDirection: 'column' }}>
           <Routes>
-            <Route path="/games/:id?" element={<Games />} />
+            <Route path="/" element={<Navigate to="/games" />} />
+            <Route path="/games/:id?" index={true} element={<Games />} />
             <Route path="/downloads" element={<Downloads />} />
             <Route path="/devices" element={<Devices />} />
             <Route path="/users" element={<Users />} />

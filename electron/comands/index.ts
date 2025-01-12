@@ -24,4 +24,5 @@ const setupBridge = () => {
     return null;
   });
 }
-export default setupBridge;
+
+setupBridge();

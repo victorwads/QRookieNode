@@ -1,7 +1,7 @@
 import { app, BrowserWindow, protocol } from "electron";
 import path from "path";
 
-import setupBridge from "./comands";
+import "./comands";
 import { setupMenu } from "./features/menu";
 
 let mainWindow;
@@ -23,7 +23,6 @@ const createMainWindow = () => {
     mainWindow.loadFile(path.join(__dirname, '../../dist/react/index.html'));
     setupMenu();
   }
-  setupBridge();
 
   mainWindow.on('closed', () => { mainWindow = null;});
 };

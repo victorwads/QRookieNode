@@ -73,7 +73,7 @@
     "mac": {
       "icon": "assets/icon.icns",
       "category": "public.app-category.utilities",
-      "artifactName": "QRookie${version}_MacOS_${ext}.${arch}.${ext}",
+      "artifactName": "${version}.${arch}-QRookie_MacOS.${ext}",
       "target": [
         {
           "target": "dmg",
@@ -86,7 +86,7 @@
     },
     "win": {
       "icon": "assets/icon.png",
-      "artifactName": "QRookie${version}_Windows_${ext}.${arch}.${ext}",
+      "artifactName": "${version}.${arch}-QRookie$_Windows.${ext}",
       "target": [
         {
           "target": "zip",
@@ -106,7 +106,7 @@
     },
     "linux": {
       "icon": "assets/icon.png",
-      "artifactName": "QRookie${version}_Linux_${ext}.${arch}.${ext}",
+      "artifactName": "${version}.${arch}-QRookie_Linux.${ext}",
       "target": [
         {
           "target": "AppImage",

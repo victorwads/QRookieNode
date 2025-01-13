@@ -6,7 +6,6 @@ import { extractFull } from 'node-7z'
 
 import { HttpDownloader } from "./httpDownloader";
 import vrpPublic from "./vrpPublic";
-import Game from "./game";
 
 export interface GameInfo {
   name: string;
@@ -74,13 +73,6 @@ export class VprManager {
     }
   }
 
-  public getGames(): Game[] {
-    return Array.from(this.games.values()).map((game) => ({
-      id: game.name,
-      image: this.getGameThumbnailPath(game),
-    } as Game));
-  }
-
   public getGame(name: string): GameInfo | undefined {
     return this.games.get(name);
   }
@@ -89,7 +81,6 @@ export class VprManager {
     this.games.set(game.releaseName, game);
     this.saveGamesInfo();
   }
-
 
   public async updateMetadata(): Promise<boolean> {
     const downloader = new HttpDownloader();
@@ -108,7 +99,7 @@ export class VprManager {
       }
 
       await (new Promise((resolve, reject) => {
-        const binPath = sevenBin.path7za.replace("Contents/Resources/app.asar", "Contents/Resources/app.asar.unpacked")
+        const binPath = sevenBin.path7za.replace("app.asar", "app.asar.unpacked");
         console.log("Extracting metadata...", binPath);
         const seven = extractFull(metaFilePath, downloadDir, {
           $bin: binPath,
@@ -179,14 +170,6 @@ export class VprManager {
       return true;
     }
   }
-
-  public getGameThumbnailPath(game?: GameInfo): string {
-    if (!game) {
-      return "";
-    }
-    return path.join(downloadDir, ".meta", "thumbnails", game.packageName + ".jpg");
-  }
-
 }
 
 export default (new VprManager());

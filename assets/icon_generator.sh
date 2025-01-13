@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
 
-# install inkscape if not installed on linux or macos
-if ! command -v inkscape &> /dev/null; then
-  echo "Inkscape is not installed. Please install it."
-  exit 1
-fi
-
 generateicon() {
   folder="${2}"
   mkdir -p "${folder}"
-  inkscape scalable/icon.svg -w "$1" -h "$1" -o "${folder}/icon.png"
+  if [[ "$OSTYPE" == "msys" ]]; then
+    /c/Program\ Files/Inkscape/bin/inkscape.com scalable/icon.svg -w "$1" -h "$1" -o "${folder}/icon.png"
+  else
+    inkscape scalable/icon.svg -w "$1" -h "$1" -o "${folder}/icon.png"
+  fi
 }
 
 generate_one_icon() {
@@ -43,12 +41,18 @@ generate_icons_macos() {
   iconutil -c icns -o "icon.icns" "$iconset_dir"
 }
 
-generateicon 512 "."
-
 if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "darwin"* ]]; then
+  if ! command -v inkscape &> /dev/null; then
+    echo "Inkscape is not installed. Please install it."
+    exit 1
+  fi
   generate_icons_linux
   generate_icons_macos
-else
-  echo "Sistema operacional não suportado."
-  exit 1
+elif [[ "$OSTYPE" == "msys" ]]; then
+  if ! command -v /c/Program\ Files/Inkscape/bin/inkscape.com &> /dev/null; then
+    echo "Inkscape is not installed. Please install it."
+    exit 1
+  fi
 fi
+
+generateicon 512 "."

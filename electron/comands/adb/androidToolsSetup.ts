@@ -12,7 +12,7 @@ const TOOL_URLS = {
 const arch = process.arch;
 const platform = getPlatform();
 const userDataDir = path.join(app.getPath("userData"));
-const downloadDir = path.join(userDataDir, "downloads");
+export const downloadDir = path.join(userDataDir, "downloads");
 const extractedDir = path.join(userDataDir, arch, platform);
 export const platformToolsDir = path.join(extractedDir, "platform-tools");
 export const binExt = platform === "win32" ? ".exe" : ""

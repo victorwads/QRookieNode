@@ -15,13 +15,8 @@ export interface GameCardProps {
 const GameCard: React.FC<GameCardProps> = ({ game, onSelect }: GameCardProps) => {
   return (
     <div className="game-card" onClick={() => onSelect && onSelect(game)}>
-      <div
-        className="game-card-image"
-        style={{
-          // backgroundImage: `url("local-file://${game.image || ""}")`,
-        }}
-      >
-        <img src={'local-file://' + game.image} alt={game.name} loading='lazy' />
+      <div className="game-card-image">
+        <img src={'game-image://' + game.packageName} alt={game.name} loading='lazy' />
       </div>
       <div className="game-card-content">
         <h3 className="game-card-title">{game.normalName}</h3>

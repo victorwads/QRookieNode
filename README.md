@@ -10,38 +10,24 @@ QRookie-Node is an application for downloading and installing games for Quest de
 - **Node.js Backend**: Complete restructuring for cross-platform execution using Node.js.
 - **FontAwesome Icons**: Enhanced visual interface with FontAwesome Icons.
 
+## 📦 Installation
+
+Download on [releases page](./releases) for your platform.
+
 ## 📚 Dependencies
 
 ### Frontend
 - **React** and **React Router Dom** for navigation.
 - **FontAwesome** for custom icons.
 
-### Backend
+### Development
 - **Node.js** for logic and process management.
-- Integration with external tools like `adb`, `zip`, `unzip`, etc.
+- **Yarn** for package management.
+- **Inkscape** for icon generation.
 
-## 📦 Installation
+## 🚀 Development With Eletron
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/suarepo/qrookie-node.git
-   cd qrookie-node
-    ```
-2.	Install dependencies:
-    ```bash
-    yarn install
-    ```
-3.	Start the development server:
-    ```bash
-    yarn start
-    ```
-4.	Access in your browser:
-    ```bash
-    http://localhost:3000
-    ```
-
-## 🚀 Deployment Eletron
-
+- [Windows instructions](./docs/windowsDevelopment.md)
 `TODO`
 
 ## 🛠️ Project Structure

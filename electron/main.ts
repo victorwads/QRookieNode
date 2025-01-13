@@ -1,8 +1,10 @@
-import { app, BrowserWindow, protocol } from "electron";
+import { app, BrowserWindow, net, protocol } from "electron";
 import path from "path";
+import fs from "fs";
 
 import "./comands";
 import { setupMenu } from "./features/menu";
+import { downloadDir } from "./comands/adb/androidToolsSetup";
 
 let mainWindow;
 
@@ -28,11 +30,14 @@ const createMainWindow = () => {
 };
 
 app.whenReady().then(() => {
-  protocol.registerFileProtocol("local-file", (request, callback) => {
-    const url = request.url.replace("local-file:///", "");
-    const decodedPath = decodeURIComponent(url);
-    callback(path.normalize(decodedPath));
-  });
+  protocol.handle('game-image', (request) => {
+    const packageName = decodeURIComponent(request.url.replace("game-image://", ""));
+    let filePath = path.join(downloadDir, ".meta", "thumbnails", packageName + ".jpg");
+    if (!fs.existsSync(filePath)) {
+      filePath = path.join(__dirname, '../../assets/images/matrix.png');
+    }
+    return net.fetch('file://' + path.normalize(filePath));
+  })
 });
 
 app.on('window-all-closed', () => {

@@ -1,6 +1,6 @@
 {
   "name": "qrookie-node",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "QRookieNode is a cross-platform tool to manage Quest devices and games.",
   "author": {
@@ -9,18 +9,14 @@
   },
   "homepage": "./",
   "scripts": {
-    "build": "bash ./ts-build.sh",
-    "dev": "bash ./electron-dev.sh",
+    "build": "bash ./script-bundle.sh",
+    "dev": "bash ./script-dev.sh",
     "bundle": "yarn build && electron-builder",
     "bundle:mac-dev": "yarn bundle --mac --dir -c.mac.identity=null",
-
-    "react:dev": "BROWSER=none react-app-rewired start",
-    "react:build": "BUILD_PATH=dist/react react-app-rewired build",
-
+    "react:dev": "cross-env BROWSER=none react-app-rewired start",
+    "react:build": "cross-env BUILD_PATH=dist/react react-app-rewired build",
     "electron:build": "tsc --project tsconfig.electron.json",
-    "electron:dev-ts": "nodemon --watch electron --ext ts --exec \"tsc --project tsconfig.electron.json\"",
-    "electron:dev-app": "nodemon --watch electron --ext ts --exec \"NODE_ENV=development electron ./dist/electron/main.js\"",
-
+    "electron:dev": "nodemon --watch electron --ext ts --exec \"tsc --project tsconfig.electron.json && cross-env NODE_ENV=development electron ./dist/electron/main.js\"",
     "lint": "clear && eslint --config ./eslint.config.mjs electron src",
     "test": "react-scripts test"
   },
@@ -48,6 +44,7 @@
     "@types/node-7z": "^2.1.10",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",
     "electron": "^33.3.1",
     "electron-builder": "^25.1.8",
@@ -64,7 +61,8 @@
     "productName": "QRookie",
     "files": [
       "dist/react/**/*",
-      "dist/electron/**/*"
+      "dist/electron/**/*",
+      "assets/images/**/*"
     ],
     "extraMetadata": {
       "main": "dist/electron/main.js"
@@ -87,7 +85,7 @@
       ]
     },
     "win": {
-      "icon": "assets/icon.ico",
+      "icon": "assets/icon.png",
       "artifactName": "QRookie${version}_Windows_${ext}.${arch}.${ext}",
       "target": [
         {

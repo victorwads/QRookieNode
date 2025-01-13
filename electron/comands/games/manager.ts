@@ -36,7 +36,6 @@ class GameManager {
           size: parseInt(game.size || "0"),
           completionOn: parseInt(game.completion_on || "0"),
           category: game.category || "Unknown",
-          image: vrpManager.getGameThumbnailPath(existingGame),
           packageName: existingGame?.packageName,
           normalName: existingGame?.name,
           lastUpdated: existingGame?.lastUpdated,

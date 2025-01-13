@@ -31,17 +31,12 @@ echo "Iniciando React..."
 PORT=3000 yarn react:dev &
 REACT_PID=$!
 
-# Iniciar o compilador TypeScript com nodemon
-echo "Iniciando compilação do TypeScript com nodemon..."
-yarn electron:dev-ts &
-TSC_PID=$!
-
 # Verificar se o servidor React está pronto
 wait_for_port 3000
 
 # Iniciar o Electron no modo de desenvolvimento
 echo "Iniciando Electron..."
-yarn electron:dev-app &
+yarn electron:dev &
 ELECTRON_PID=$!
 
 # Aguardar os processos (impede que o script termine imediatamente)

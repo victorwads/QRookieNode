@@ -5,7 +5,6 @@ export default interface Game {
     normalName?: string
     magnetUri: string;
     size: number;
-    image?: string;
     packageName?: string;
     version?: string;
     lastUpdated?: string;

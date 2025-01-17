@@ -4,20 +4,44 @@ import * as path from "path";
 import * as https from "https";
 import * as child_process from "child_process";
 
-const TOOL_URLS = {
+export type GitHubRelease = {
+  assets: { download_count: number, name: string, browser_download_url: string }[]
+};
+
+type Platform = typeof process.platform;
+type ToolURL = string | (() => Promise<string>);
+type ToolURLs = { [platform in Platform]?: ToolURL };
+
+const TOOL_URLS: ToolURLs = {
   darwin: "https://dl.google.com/android/repository/platform-tools-latest-darwin.zip",
   win32: "https://dl.google.com/android/repository/platform-tools-latest-windows.zip",
-  linux: "https://dl.google.com/android/repository/platform-tools-latest-linux.zip",
+  linux: async () => {
+    if (process.arch.indexOf("arm") === -1) {
+      return "https://dl.google.com/android/repository/platform-tools-latest-linux.zip";
+    }
+
+    const getLastReleaseUrl = "https://api.github.com/repos/lzhiyong/android-sdk-tools/releases";
+    const response = await fetch(getLastReleaseUrl);
+    const releases = await response.json();
+    const release: GitHubRelease = releases[0];
+    const asset = release.assets.find(asset => asset.name.includes("aarch64"));
+    if (!asset) {
+      throw new Error("Failed to find ARM asset");
+    }
+    return asset.browser_download_url;
+  },
 };
+TOOL_URLS.android = TOOL_URLS.linux;
+
 const arch = process.arch;
 const platform = getPlatform();
 const userDataDir = path.join(app.getPath("userData"));
-export const downloadDir = path.join(userDataDir, "downloads");
 const extractedDir = path.join(userDataDir, arch, platform);
+export const downloadDir = path.join(userDataDir, "downloads");
 export const platformToolsDir = path.join(extractedDir, "platform-tools");
 export const binExt = platform === "win32" ? ".exe" : ""
 
-function getPlatform(): "darwin" | "win32" | "linux" {
+function getPlatform(): "darwin" | "win32" | "linux" | "android" {
   const platform = process.platform;
   if (platform === "darwin" || platform === "win32" || platform === "linux") {
     return platform;
@@ -63,8 +87,6 @@ function unzipFile(zipPath: string, dest: string): Promise<void> {
 }
 
 export async function setupTools(force: boolean = false): Promise<void> {
-  const url = TOOL_URLS[platform];
-
   if (force && fs.existsSync(platformToolsDir)) {
     fs.rmdirSync(platformToolsDir, { recursive: true });
   }
@@ -73,13 +95,21 @@ export async function setupTools(force: boolean = false): Promise<void> {
     return;
   }
 
+  let url = TOOL_URLS[platform];
+  if (!url) {
+    throw new Error(`No tool URL for platform: ${platform}-${arch}`);
+  }
+  if (typeof url === "function")
+    url = await url();
+
   // Garantir que os diretórios existem
   fs.mkdirSync(downloadDir, { recursive: true });
   fs.mkdirSync(extractedDir, { recursive: true });
 
-  const zipPath = path.join(downloadDir, `platform-tools-${platform}.zip`);
+  const fileName = url.split('/').pop() + "";
+  const zipPath = path.join(downloadDir, fileName);
 
-  console.log(`Downloading tools for ${platform}...`);
+  console.log(`Downloading tools for ${platform}-${arch} from ${url}...`);
   await downloadFile(url, zipPath);
 
   console.log(`Extracting tools to ${extractedDir}...`);

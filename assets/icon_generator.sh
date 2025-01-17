@@ -41,7 +41,16 @@ generate_icons_macos() {
 }
 
 # if running on CI and Icons alvery exists, skip generating icons
-if [[ "$CI" == "true" && -d "16x16" && -d "32x32" && -d "48x48" && -d "64x64" && -d "128x128" && -d "256x256" && -d "512x512" ]]; then
+if [[ 
+  "$1" != "--force"
+  && -d "16x16" 
+  && -d "32x32" 
+  && -d "48x48" 
+  && -d "64x64" 
+  && -d "128x128" 
+  && -d "256x256" 
+  && -d "512x512"
+]]; then
   echo "Icons already exists. Skipping generating icons."
   exit 0
 fi

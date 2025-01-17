@@ -28,12 +28,10 @@ jobs:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
-      - name: Cache Icons and Node Modules
+      - name: Cache Icons
         uses: actions/cache@v4
         with:
-          path: |
-            icon-assets
-            node_modules
+          path: assets
           key: icon-assets-${{ hashFiles('assets/scalable/icon.svg') }}
           restore-keys: icon-assets
 
@@ -91,12 +89,10 @@ jobs:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
-      - name: Cache Icons and Node Modules
+      - name: Cache Icons
         uses: actions/cache@v4
         with:
-          path: |
-            icon-assets
-            node_modules
+          path: assets
           key: icon-assets-${{ hashFiles('assets/scalable/icon.svg') }}
           restore-keys: icon-assets
   
@@ -141,12 +137,10 @@ jobs:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
-      - name: Cache Icons and Node Modules
+      - name: Cache Icons
         uses: actions/cache@v4
         with:
-          path: |
-            icon-assets
-            node_modules
+          path: assets
           key: icon-assets-${{ hashFiles('assets/scalable/icon.svg') }}
           restore-keys: icon-assets
 

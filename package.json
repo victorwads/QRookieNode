@@ -129,7 +129,15 @@
             "x64"
           ]
         }
-      ],
+      ]
+    },
+    "deb": {
+      "depends": [
+        "adb",
+        "unzip"
+      ]
+    },
+    "rpm": {
       "depends": [
         "adb",
         "unzip"

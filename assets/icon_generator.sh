@@ -23,7 +23,6 @@ generate_icons_linux() {
 }
 
 generate_icons_macos() {
-  generate_one_icon "512"
   iconset_dir="icon.iconset"
   png_filename="512x512/icon.png"
   mkdir -p "$iconset_dir"
@@ -56,18 +55,17 @@ if ! command -v inkscape &> /dev/null; then
   fi
 fi
 
-if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "darwin"* ]]; then
-  if ! command -v inkscape &> /dev/null; then
-    echo "Inkscape is not installed. Please install it."
-    exit 1
-  fi
-  generate_icons_linux
+generateicon 512 "."
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
   generate_icons_macos
+fi
+
+if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "darwin"* ]]; then
+  generate_icons_linux
 elif [[ "$OSTYPE" == "msys" ]]; then
   if ! command -v /c/Program\ Files/Inkscape/bin/inkscape.com &> /dev/null; then
     echo "Inkscape is not installed. Please install it."
     exit 1
   fi
 fi
-
-generateicon 512 "."

@@ -41,6 +41,21 @@ generate_icons_macos() {
   iconutil -c icns -o "icon.icns" "$iconset_dir"
 }
 
+# if running on CI and Icons alvery exists, skip generating icons
+if [[ "$CI" == "true" && -d "16x16" && -d "32x32" && -d "48x48" && -d "64x64" && -d "128x128" && -d "256x256" && -d "512x512" ]]; then
+  echo "Icons already exists. Skipping generating icons."
+  exit 0
+fi
+
+# if inkscape is not installed, install it by platform
+if ! command -v inkscape &> /dev/null; then
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    sudo apt-get install inkscape
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    brew install inkscape
+  fi
+fi
+
 if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "darwin"* ]]; then
   if ! command -v inkscape &> /dev/null; then
     echo "Inkscape is not installed. Please install it."

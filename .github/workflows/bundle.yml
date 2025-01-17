@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 22.x
 
-      - name: Get yarn cache directory path
+      - name: Get yarn cache directory and package version
         id: yarn-cache-dir-path
         run: |
           echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
@@ -28,18 +28,15 @@ jobs:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
-      - name: Cache Homebrew
+      - name: Cache Icons
         uses: actions/cache@v4
         with:
-          path: ~/.cache/Homebrew
-          key: ${{ runner.os }}-homebrew-${{ hashFiles('**/*.sh') }}
-          restore-keys: |
-            ${{ runner.os }}-homebrew
+          path: icon-assets
+          key: icon-assets-${{ hashFiles('assets/scalable/icon.svg') }}
+          restore-keys: icon-assets
 
       - name: Install dependencies
-        run: |
-          brew install inkscape
-          yarn install --frozen-lockfile --non-interactive
+        run: yarn install --frozen-lockfile --non-interactive
 
       - name: Configure Keychain for Signing
         env:
@@ -80,7 +77,7 @@ jobs:
         with:
           node-version: 22.x
 
-      - name: Get yarn cache directory path and package version
+      - name: Get yarn cache directory and package version
         id: yarn-cache-dir-path
         run: |
           echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
@@ -92,18 +89,15 @@ jobs:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
-      - name: Cache Homebrew
+      - name: Cache Icons
         uses: actions/cache@v4
         with:
-          path: ~/.cache/Homebrew
-          key: ${{ runner.os }}-homebrew-${{ hashFiles('**/*.sh') }}
-          restore-keys: |
-            ${{ runner.os }}-homebrew
-
+          path: icon-assets
+          key: icon-assets-${{ hashFiles('assets/scalable/icon.svg') }}
+          restore-keys: icon-assets
+  
       - name: Install dependencies
-        run: |
-          brew install inkscape
-          yarn install --frozen-lockfile --non-interactive
+        run: yarn install --frozen-lockfile --non-interactive
   
       - name: Build Windows App
         env:
@@ -131,7 +125,7 @@ jobs:
         with:
           node-version: 22.x
 
-      - name: Get yarn cache directory path
+      - name: Get yarn cache directory and package version
         id: yarn-cache-dir-path
         run: |
           echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
@@ -143,10 +137,15 @@ jobs:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
+      - name: Cache Icons
+        uses: actions/cache@v4
+        with:
+          path: icon-assets
+          key: icon-assets-${{ hashFiles('assets/scalable/icon.svg') }}
+          restore-keys: icon-assets
+
       - name: Install dependencies
-        run: |
-          sudo apt-get install inkscape
-          yarn install --frozen-lockfile --non-interactive
+        run: yarn install --frozen-lockfile --non-interactive
 
       - name: Build Linux App
         env:

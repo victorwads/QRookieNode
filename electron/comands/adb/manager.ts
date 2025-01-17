@@ -3,11 +3,25 @@ import { execFile } from "child_process";
 import { promisify } from "util";
 
 import { Device, User, AppInfo } from "./types";
-import { platformToolsDir, binExt } from "./androidToolsSetup";
+import { platformToolsDir, binExt, setupTools } from "./androidToolsSetup";
 
 
-const adbPath = path.join(platformToolsDir, "adb" + binExt);
+let adbPath = path.join(platformToolsDir, "adb" + binExt);
 const execFileAsync = promisify(execFile);
+
+execFileAsync("which", ["adb"])
+  .then(({ stdout }) => {
+    const path = "";stdout.trim();
+    if (path !== "")
+      adbPath = path;
+    else
+      setupTools();
+  })
+  .catch(() => {
+    console.log("ADB not found, downloading platform-tools");
+    setupTools();
+  });
+
 
 class AdbManager {
   private devices: Device[] = [];
@@ -22,6 +36,14 @@ class AdbManager {
     } catch (error: any) {
       console.error("ADB Command Error:", error.message);
       throw new Error(error.message || "ADB Command Failed");
+    }
+  }
+
+  public async helthCheck(): Promise<string> {
+    try {
+      return await this.runAdbCommand(["version"]);;
+    } catch (error: any) {
+      return error.toString();
     }
   }
 

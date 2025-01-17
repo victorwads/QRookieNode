@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import sendCommand, { DevToolsCommandName } from '../bridge';
+import sendCommand, { DevToolsCommandName, AdbCommandName, AdbCommandOutput } from '../bridge';
 import Icon, { Icons } from '../components/Icons';
 import { GitHubRelease } from '../../electron/comands/adb/androidToolsSetup';
 
 const Settings: React.FC = () => {
   const [infos, set] = useState<RepoDownloadsInfo>(repoDownloadsInfo);
+  const [adbHelth, setAdbHelth] = useState<string>("loading...");
+
   const openDevTools = () => {
     sendCommand<DevToolsCommandName>({
       type: 'devTools',
@@ -13,6 +15,11 @@ const Settings: React.FC = () => {
 
   useEffect(() => {
     promisse.then(() => set({...repoDownloadsInfo}));
+    sendCommand<AdbCommandName, any, AdbCommandOutput>({
+      type: 'adb',
+    }).then(result => {
+      setAdbHelth(result.helthCheck);
+    });
   }, []);
 
   const reposInfos = Object.values(infos);
@@ -37,6 +44,14 @@ const Settings: React.FC = () => {
       </>;
     })}
     <span>Last Update: {lastUpdate.toLocaleString()}</span>
+    <h2>System Helth Check</h2>
+    <ul>
+      <li>App Version: TODO</li>
+      <li>ADB: <pre>{adbHelth}</pre></li>
+      <li>Unzip: TODO</li>
+      <li>7Zip: TODO</li>
+      <li>Java: TODO</li>
+    </ul>
   </>;
 };
 

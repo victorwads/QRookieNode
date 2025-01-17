@@ -1,12 +1,6 @@
-import { setupTools } from "./androidToolsSetup";
 import { Command, CommandEvent } from "../../shared";
 import AdbManager from "./manager";
 import { AppInfo, Device, User } from "./types";
-
-export const setupToolsPromisse = setupTools()
-  .then(() => console.log("Tools setup successfully!"))
-  .catch((err) => console.error("Error setting up tools:", err));
-
 
 export type AdbCommandName = 'adb';
 export type AdbCommand = Command<AdbCommandInput, AdbCommandOutput, AdbCommandName>;
@@ -16,6 +10,7 @@ export interface AdbCommandOutput {
   deviceInfo?: Device;
   users: User[];
   apps: AppInfo[];
+  helthCheck: string;
 }
 export type AdbCommandInput = { 
   command: 'selectDevice';
@@ -30,7 +25,8 @@ export default {
       devices,
       deviceInfo: await AdbManager.getDeviceInfo(),
       users: await AdbManager.listUsers(),
-      apps: await AdbManager.listPackagesForUser()
+      apps: await AdbManager.listPackagesForUser(),
+      helthCheck: await AdbManager.helthCheck(),
     } as AdbCommandOutput;
   }
 } as AdbCommand;

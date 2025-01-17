@@ -53,8 +53,18 @@ function downloadFile(url: string, dest: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(dest);
     https.get(url, (response) => {
-      if (response.statusCode !== 200) {
+      if (response.statusCode === 302 && response.headers.location) {
+        downloadFile(response.headers.location, dest)
+          .then(resolve, reject);
+        return 
+      } else if (response.statusCode !== 200) {
         reject(new Error(`Failed to download file: ${response.statusCode}`));
+        // console.error(response);
+        // log body and headers
+        let data = '';
+        response.on('data', chunk => data += chunk);
+        response.on('end', () => console.log('bodyData', data));
+        response.on('finish', () => console.log('bodyData', data));
         return;
       }
       response.pipe(file);

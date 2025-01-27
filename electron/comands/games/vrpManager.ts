@@ -25,9 +25,7 @@ const metaFilePath = path.join(downloadDir, metaFileName);
 fs.mkdirSync(downloadDir, { recursive: true });
 fs.mkdirSync(extractedDir, { recursive: true });
 
-
 export class VprManager {
-
   private games: Map<string, GameInfo> = new Map();
 
   constructor() {
@@ -169,6 +167,17 @@ export class VprManager {
       console.log("Metadata parsed successfully");
       return true;
     }
+  }
+
+  async downloadGame(id: string): Promise<void> {
+    const vrpInfo = await vrpPublic;
+    if (!vrpInfo) {
+      console.error("Failed to get VRP info");
+      return;
+    }
+
+    const downloader = new HttpDownloader();
+    downloader.downloadDir(vrpInfo.baseUri, id)
   }
 }
 

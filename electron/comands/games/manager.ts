@@ -1,6 +1,7 @@
 import { HttpDownloader } from "./httpDownloader";
 import Game from "./game";
 import vrpManager from './vrpManager';
+import * as crypto from 'crypto';
 
 interface WebGame {
   name?: string;
@@ -13,13 +14,13 @@ interface WebGame {
 
 class GameManager {
   private games: Game[] = [];
+  private downloader = new HttpDownloader();
 
   private static readonly GAMES_URL = "https://torrents.vrpirates.wiki/torrents.json";
 
   public async update(): Promise<boolean> {
     try {
-      const downloader = new HttpDownloader();
-      const data = await downloader.download(GameManager.GAMES_URL);
+      const data = await this.downloader.download(GameManager.GAMES_URL);
 
       const json = JSON.parse(data);
       if (!Array.isArray(json)) {
@@ -30,7 +31,7 @@ class GameManager {
       this.games = json.map((game: WebGame) => {
         const existingGame = vrpManager.getGame(game.name || "");
         return {
-          id: game.hash_val,
+          id: this.getGameId(game.name || ""),
           name: game.name || "Unknown",
           magnetUri: game.magnet_uri || "",
           size: parseInt(game.size || "0"),
@@ -52,6 +53,16 @@ class GameManager {
 
   public listGames(): Game[] {
     return this.games;
+  }
+
+  private getGameId(releaseName: string): string {
+    const hash = crypto.createHash('md5');
+    hash.update(releaseName + "\n");
+    return hash.digest('hex');
+  }
+
+  public download(game: Game) {
+    vrpManager.downloadGame(this.getGameId(game.name));
   }
 }
 

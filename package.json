@@ -1,6 +1,6 @@
 {
   "name": "qrookie-node",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "description": "QRookieNode is a cross-platform tool to manage Quest devices and games.",
   "author": {
@@ -109,21 +109,7 @@
       "artifactName": "QRookieLinux-${version}.${arch}.${ext}",
       "target": [
         {
-          "target": "AppImage",
-          "arch": [
-            "arm64",
-            "x64"
-          ]
-        },
-        {
-          "target": "rpm",
-          "arch": [
-            "arm64",
-            "x64"
-          ]
-        },
-        {
-          "target": "deb",
+          "target": "flatpak",
           "arch": [
             "arm64",
             "x64"
@@ -141,6 +127,19 @@
       "depends": [
         "adb",
         "unzip"
+      ]
+    },
+    "flatpak": {
+      "runtime": "org.freedesktop.Platform",
+      "runtimeVersion": "21.08",
+      "sdk": "org.freedesktop.Sdk",
+      "base": "io.atom.electron.BaseApp",
+      "baseVersion": "21.08",
+      "modules": [
+        {
+          "name": "QRookie",
+          "buildsystem": "simple"
+        }
       ]
     }
   },

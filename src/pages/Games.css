@@ -96,3 +96,44 @@
     color: #555;
     margin-top: 8px;
 }
+
+.game-card-download-progress {
+    display: flex;
+    flex-direction: row;
+    height: 15px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background-color: #ddd;
+}
+
+.game-card-download-progress > div {
+    display: flex;
+    /* height: 100%; */
+    font-size: 0.6em;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    overflow: hidden;
+    text-align: center;
+}
+
+.game-card-download-progress > div:nth-child(5n + 1) {
+    background-color: aqua;
+}
+
+.game-card-download-progress > div:nth-child(5n + 2) {
+    background-color: blueviolet;
+    color: white;
+}
+
+.game-card-download-progress > div:nth-child(5n + 3) {
+    background-color: darkseagreen;
+}
+
+.game-card-download-progress > div:nth-child(5n + 4) {
+    background-color: cornflowerblue;
+}
+
+.game-card-download-progress > div:nth-child(5n + 5) {
+    background-color: coral;
+}

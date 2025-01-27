@@ -12,10 +12,13 @@ const execFileAsync = promisify(execFile);
 execFileAsync("which", ["adb"])
   .then(({ stdout }) => {
     const path = "";stdout.trim();
-    if (path !== "")
+    if (path !== ""){
       adbPath = path;
-    else
+      console.log("ADB found at:", path);
+    } else {
+      console.log("ADB not found, downloading platform-tools. which returned:", path);
       setupTools();
+    }
   })
   .catch(() => {
     console.log("ADB not found, downloading platform-tools");

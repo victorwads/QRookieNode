@@ -6,7 +6,11 @@ import "./comands";
 import { setupMenu } from "./features/menu";
 import { downloadDir } from "./comands/adb/androidToolsSetup";
 
-let mainWindow;
+let mainWindow: BrowserWindow|null = null;
+
+export function getMainWindow(): BrowserWindow|null {
+  return mainWindow;
+}
 
 const createMainWindow = () => {
   mainWindow = new BrowserWindow({

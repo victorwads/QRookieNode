@@ -15,9 +15,10 @@ type ToolURLs = { [platform in Platform]?: ToolURL };
 const TOOL_URLS: ToolURLs = {
   darwin: "https://dl.google.com/android/repository/platform-tools-latest-darwin.zip",
   win32: "https://dl.google.com/android/repository/platform-tools-latest-windows.zip",
-  linux: async () => {
+  linux: "https://dl.google.com/android/repository/platform-tools-latest-linux.zip",
+  android: async () => {
     if (process.arch.indexOf("arm") === -1) {
-      return "https://dl.google.com/android/repository/platform-tools-latest-linux.zip";
+      return TOOL_URLS.linux as string;
     }
 
     const getLastReleaseUrl = "https://api.github.com/repos/lzhiyong/android-sdk-tools/releases";
@@ -31,7 +32,6 @@ const TOOL_URLS: ToolURLs = {
     return asset.browser_download_url;
   },
 };
-TOOL_URLS.android = TOOL_URLS.linux;
 
 const arch = process.arch;
 const platform = getPlatform();
@@ -59,12 +59,8 @@ function downloadFile(url: string, dest: string): Promise<void> {
         return 
       } else if (response.statusCode !== 200) {
         reject(new Error(`Failed to download file: ${response.statusCode}`));
-        // console.error(response);
-        // log body and headers
         let data = '';
         response.on('data', chunk => data += chunk);
-        response.on('end', () => console.log('bodyData', data));
-        response.on('finish', () => console.log('bodyData', data));
         return;
       }
       response.pipe(file);

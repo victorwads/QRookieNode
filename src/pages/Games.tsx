@@ -21,8 +21,12 @@ const Games: React.FC = () => {
     setLoading(true);
     const result = sendCommand<GamesCommandName, GamesCommandPayload, Game[]>({
       type: 'games',
+      payload: {
+        action: 'list',
+      },
     });
     cache = await result;
+    console.log('cache', cache);
     setResult(cache);
     setLoading(false);
   };
@@ -30,6 +34,16 @@ const Games: React.FC = () => {
   useEffect(() => {
     getAdbDevices();
   }, []);
+
+  const startDownloading = async (game: Game) => {
+    sendCommand<GamesCommandName, GamesCommandPayload, Game[]>({
+      type: 'games',
+      payload: {
+        action: 'download',
+        game,
+      },
+    });
+  }
 
   if (result.length > 0 && id) {
     const game = result.find(game => game.packageName === id)!;
@@ -40,7 +54,7 @@ const Games: React.FC = () => {
       <span><strong>Last Updated:</strong> {game.lastUpdated}</span>
       <span><strong>Package Name:</strong> {game.packageName}</span>
       <div className='horizontal-display' style={{ justifyContent: 'center', flex: 1 }}>
-        <GameCard game={game} />
+        <GameCard game={game} onDownload={startDownloading} verbose />
       </div>
     </div>
   }

@@ -1,5 +1,11 @@
 # QRookie-Node
 
+**Under development**
+```
+This project is in alpha releases just to test on several operational systems.
+Is not ready for final users. Just developers
+```
+
 QRookie-Node is an application for downloading and installing games for Quest devices, inspired by the [QRookie](https://github.com/glaumar/QRookie) project by **@glaumar**. This project adapts the original implementation to a modern development environment, leveraging **Node.js** and **React** for greater flexibility and ease of use across multiple platforms.
 
 ## ⚡ Key Features

@@ -11,15 +11,29 @@ import type { AdbCommandOutput } from '../bridge/devices';
 
 
 const Devices: React.FC = () => {
-  const [result, setResult] = React.useState<AdbCommandOutput>(deviceManager.getDevicesCache());
+  const [result, setResult] = React.useState<AdbCommandOutput['list']>(deviceManager.getDevicesCache());
   const [loading, setLoading] = React.useState<boolean>(true);
 
-  const getAdbDevices = async () => {
+  const getAdbDevices = async (serial?: string) => {
+    if (serial) {
+      await deviceManager.setDevice(serial);
+    }
     setLoading(true);
     const devices = await deviceManager.getDevices();
     setResult(devices);
     setLoading(false)
   };
+
+  const connectWifi = async (serial: string) => {
+    setLoading(true);
+    const newSerial = await deviceManager.connectWifi(serial);
+    if(newSerial) {
+      await getAdbDevices();
+    } else {
+      alert('Failed to connect to wifi');
+    }
+    setLoading(false);
+  }
 
   useEffect(() => {
     getAdbDevices()
@@ -30,9 +44,9 @@ const Devices: React.FC = () => {
       <div className='horizontal-display'>
         <h1><Icon icon={Icons.solid.faTabletAlt} size="lg" />Devices Page</h1>
         <CenteredLoading visible={loading} />
-        <button onClick={getAdbDevices}><Icon icon={Icons.solid.faRefresh} /> Reload Devices</button>
+        <button onClick={() => getAdbDevices()}><Icon icon={Icons.solid.faRefresh} /> Reload Devices</button>
       </div>
-      <DevicesList devices={result.devices} />
+      <DevicesList devices={result.devices} onConnect={getAdbDevices} onConnectWifi={connectWifi} />
       {result.deviceInfo && <DeviceInfoCard deviceInfo={result.deviceInfo} />}
       <UsersList users={result.users} />
     </div>

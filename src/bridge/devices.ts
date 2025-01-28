@@ -1,24 +1,23 @@
 import sendCommand from '.';
 
-import type { AdbCommandName, AdbCommandOutput, Device } from '../../electron/shared';
+import type { AdbCommandInput, AdbCommandName, AdbCommandOutput, Device } from '../../electron/shared';
 export type { Device, AdbCommandOutput } from '../../electron/shared';
 
 class DeviceManager {
-
-  private current: Device | null = null;
-  private cache: AdbCommandOutput = {
+  private current: string | null = null;
+  private cache: AdbCommandOutput['list'] = {
     devices: [],
     users: [],
     apps: [],
     helthCheck: 'loading...',
   };
 
-  public getDevicesCache(): AdbCommandOutput {
+  public getDevicesCache(): AdbCommandOutput['list'] {
     return this.cache;
   }
 
-  public async getDevices(): Promise<AdbCommandOutput> {
-    const result = sendCommand<AdbCommandName, any, AdbCommandOutput>({
+  public async getDevices(): Promise<AdbCommandOutput['list']> {
+    const result = sendCommand<AdbCommandName, AdbCommandInput, AdbCommandOutput['list']>({
       type: 'adb',
     });
     this.cache = await result;
@@ -26,12 +25,30 @@ class DeviceManager {
   }
 
   public getDevice(): Device | null {
-    return this.current
+    return this.cache?.devices.find((d) => d.serial === this.current) ||
+           this.cache?.deviceInfo || this.cache?.devices[0] || null;
   }
 
-  public setDevice(serial: string) {
-    this.cache.devices.find((d) => d.serial === serial);
+  public async setDevice(serial: string) {
+    await sendCommand<AdbCommandName, AdbCommandInput, void>({
+      type: 'adb',
+      payload: { command: 'selectDevice', serial: serial },
+    });
+    this.current = serial;
   }
+
+  async connectWifi(serial: string): Promise<boolean> {
+    const newSerial = await sendCommand<AdbCommandName, AdbCommandInput, string | null>({
+      type: 'adb',
+      payload: { command: 'connectWifi', serial: serial },
+    });
+    if (newSerial) {
+      this.current = newSerial;
+      return true;
+    }
+    return false;
+  }
+
 }
 
 export default new DeviceManager();

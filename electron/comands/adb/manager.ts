@@ -37,7 +37,7 @@ class AdbManager {
       return stdout.trim();
     } catch (error: any) {
       console.error("ADB Command Error:", error.message);
-      throw new Error(error.message || "ADB Command Failed");
+      return "error"
     }
   }
 
@@ -53,18 +53,28 @@ class AdbManager {
     return this.serial || this.devices[0]?.serial || "";
   }
 
-  public async listDevices(): Promise<Device[]> {
+  public selectDevice(serial: string): void {
+    this.serial = serial;
+  }
+
+  private async getSerials(): Promise<string[]> {
     const output = await this.runAdbCommand(["devices"]);
     const lines = output.split("\n").slice(1);
-    const all = lines
+    return lines
       .filter((line) => line.includes("\tdevice"))
-      .map(async (line) => {
+      .map((line) => {
         const [serial] = line.split("\t");
-        return { 
-          serial,
-          model: await this.runAdbCommand(["-s", serial, "shell", "getprop", "ro.product.model"])
-        };
+        return serial.trim();
       });
+  }
+
+  public async listDevices(): Promise<Device[]> {
+    const serials = await this.getSerials();
+    const all = serials.map(async (serial) => ({ 
+      serial,
+      ip: await this.getIp(serial),
+      model: await this.runAdbCommand(["-s", serial, "shell", "getprop", "ro.product.model"])
+    }));
     this.devices = await Promise.all(all);
     
     if((!this.serial && this.devices.length > 0) || this.devices.length === 1) {
@@ -77,28 +87,32 @@ class AdbManager {
     serial = this.getDeviceSerial();
     if (!serial) return null
 
-    const model = await this.runAdbCommand(["-s", serial, "shell", "getprop", "ro.product.model"]);
-    const ip = await this.runAdbCommand(["-s", serial, "shell", "ip", "route"]);
-    const androidVersion = await this.runAdbCommand(["-s", serial, "shell", "getprop", "ro.build.version.release"]);
-    const sdkVersion = await this.runAdbCommand(["-s", serial, "shell", "getprop", "ro.build.version.sdk"]);
-    const batteryOutput = await this.runAdbCommand(["-s", serial, "shell", "dumpsys", "battery"]);
-    const spaceUsageOutput = await this.runAdbCommand(["-s", serial, "shell", "df", "/sdcard"]);
+    const ip = this.getIp(serial);
+    const model = this.runAdbCommand(["-s", serial, "shell", "getprop", "ro.product.model"]);
+    const androidVersion = this.runAdbCommand(["-s", serial, "shell", "getprop", "ro.build.version.release"]);
+    const sdkVersion = this.runAdbCommand(["-s", serial, "shell", "getprop", "ro.build.version.sdk"]);
+    const batteryOutput = this.runAdbCommand(["-s", serial, "shell", "dumpsys", "battery"]);
+    const spaceUsageOutput = this.runAdbCommand(["-s", serial, "shell", "df", "/sdcard"]);
 
     // Processar os resultados
-    const batteryLevel = parseInt(batteryOutput.match(/level:\s*(\d+)/)?.[1] || "0", 10);
-    const [, total, used] = spaceUsageOutput.split('\n')[1].match(/(\d+)\s+(\d+)\s+(\d+)/) || [];
+    const batteryLevel = parseInt((await batteryOutput)?.match(/level:\s*(\d+)/)?.[1] || "0", 10);
+    const [, total, used] = (await spaceUsageOutput).split('\n')[1]?.match(/(\d+)\s+(\d+)\s+(\d+)/) || [];
     
-    const device: Device = {
+    return {
       serial,
-      model,
-      ip: ip.match(/src\s+(\d+\.\d+\.\d+\.\d+)/)?.[1],
-      androidVersion,
-      sdkVersion: parseInt(sdkVersion, 10),
+      model: await model,
+      ip: await ip,
+      androidVersion: await androidVersion,
+      sdkVersion: parseInt(await sdkVersion, 10),
       batteryLevel,
       spaceUsage: { total: parseInt(total || "0"), used: parseInt(used || "0") },
-    };
+    } as Device;
+  }
 
-    return device;
+  private async getIp(serial: string): Promise<string|null> {
+    const ip = await this.runAdbCommand(["-s", serial, "shell", "ip", "route"]);
+    const filteredIp = ip.match(/src\s+(\d+\.\d+\.\d+\.\d+)/)?.[1] || "";
+    return filteredIp.trim().length > 0 ? filteredIp : null;
   }
 
   public async listUsers(serial?: string): Promise<User[]> {
@@ -118,19 +132,17 @@ class AdbManager {
     return this.users;
   }
 
-  public async listPackagesForUser(serial?: string, userId?: number): Promise<AppInfo[]> {
+  public async listPackagesForUser(serial?: string, userId: number = 0): Promise<AppInfo[]> {
     serial = this.getDeviceSerial();
     if (!serial) return []
 
     const args = [
       "-s", serial,
       "shell","pm","list","packages",
+      "--user", userId.toString(),
       "--show-versioncode",
       "-3",
     ]
-    if(userId) {
-      args.push("--user", userId.toString());
-    }
 
     const output = await this.runAdbCommand(args);
     const lines = output.split("\n").filter(Boolean);
@@ -142,6 +154,24 @@ class AdbManager {
       };
     });
     return this.apps;
+  }
+
+  public async connectWifi(serial: string): Promise<string|null> {
+    const ip = await this.getIp(serial);
+    if (!ip) {
+      console.log(new Error("Failed to get IP address"));
+      return null;
+    }
+    await this.runAdbCommand(["-s", serial, "tcpip", "5555"]);
+    await this.runAdbCommand(["connect", ip]);
+    const serials = await this.getSerials();
+    const newSerial = serials.find((s) => s.includes(ip));
+    if (!newSerial) {
+      console.error(new Error("Failed to connect to the device"));
+      return null;
+    }
+    this.serial = newSerial;
+    return newSerial;
   }
 }
 

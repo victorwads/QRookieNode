@@ -2,17 +2,20 @@ import { Command, CommandEvent } from "../../shared";
 import AdbManager from "./manager";
 
 export type AdbCommandName = 'adb';
-export type AdbCommand = Command<AdbCommandInput, AdbCommandOutput, AdbCommandName>;
+export type AdbCommand = Command<AdbCommandInput, AdbCommandOutputs, AdbCommandName>;
 export type AdbCommandEvent = CommandEvent<AdbCommandInput, AdbCommandName>
 export type AdbCommandInput = { 
   command: 'selectDevice';
-  deviceId: string;
+  serial: string;
+} | {
+  command: 'connectWifi';
+  serial: string;
 } | void
 
 export type Device = {
   serial: string;
   model: string;
-  ip?: string;
+  ip?: string | null;
   batteryLevel?: number;
   androidVersion?: string;
   sdkVersion?: number;
@@ -34,24 +37,49 @@ export type AppInfo = {
   versionCode: number;
 }
 
-export interface AdbCommandOutput {
-  devices: Device[];
-  deviceInfo?: Device;
-  users: User[];
-  apps: AppInfo[];
-  helthCheck: string;
+export type AdbCommandOutput = {
+  list: {
+    devices: Device[];
+    deviceInfo?: Device;
+    users: User[];
+    apps: AppInfo[];
+    helthCheck: string;
+  }
 }
+
+type AdbCommandOutputs = 
+  AdbCommandOutput['list'] | void | string | null
+;
 
 export default {
   type: 'adb',
-  receiver: async function () {
+  receiver: async function (payload: AdbCommandInput): Promise<AdbCommandOutputs> {
+    if (payload?.command === 'selectDevice') { 
+      AdbManager.selectDevice(payload.serial);
+      return;
+    } else if(payload?.command === 'connectWifi') {
+      return await AdbManager.connectWifi(payload.serial);;
+    }
+    
     const devices = await AdbManager.listDevices();
+    const promises = {
+      deviceInfo: AdbManager.getDeviceInfo(),
+      users: AdbManager.listUsers(),
+      apps: AdbManager.listPackagesForUser(),
+      helthCheck: AdbManager.helthCheck(),
+    };
+    const info = await promises.deviceInfo;
     return {
-      devices,
-      deviceInfo: await AdbManager.getDeviceInfo(),
-      users: await AdbManager.listUsers(),
-      apps: await AdbManager.listPackagesForUser(),
-      helthCheck: await AdbManager.helthCheck(),
-    } as AdbCommandOutput;
+      devices: devices.map(device => {
+        if (device.serial === info?.serial) {
+          return info;
+        }
+        return device;
+      }),
+      deviceInfo: await promises.deviceInfo || undefined,
+      users: await promises.users,
+      apps: await promises.apps,
+      helthCheck: await promises.helthCheck,
+    }
   }
 } as AdbCommand;

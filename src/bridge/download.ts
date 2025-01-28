@@ -42,14 +42,3 @@ class GameDownloadManager {
 }
 
 export default new GameDownloadManager();
-
-// Example usage
-// const unsubscribe = GameDownloadManager.addListener('game1', (info) => {
-//   console.log('Download info:', info);
-// });
-
-// To emit an event
-// GameDownloadManager.emit('game1', { /* DownloadInfo object */ });
-
-// To unsubscribe
-// unsubscribe();

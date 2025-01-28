@@ -38,9 +38,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
         <p className="game-card-category">{game.category}</p>
         <p className="game-card-size">{formatSize(game.size)}</p>
       </div>
-      <div className="game-card-actions">
-        <button onClick={() => onDownload?.(game)}>Download</button>
-      </div>
+      {onDownload && <button onClick={() => onDownload(game)}>Download</button>}
       {downloadInfo && <>
         <div className="game-card-download-progress">{downloadInfo.files.map((file, index) => {
           const totalPercentage = file.bytesReceived / downloadInfo.bytesTotal * 100;

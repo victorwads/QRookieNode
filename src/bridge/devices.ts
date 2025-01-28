@@ -1,10 +1,9 @@
 import sendCommand from '.';
 
-import type { AdbCommandInput, AdbCommandName, AdbCommandOutput, Device } from '../../electron/shared';
+import type { AdbCommandInput, AdbCommandName, AdbCommandOutput } from '../../electron/shared';
 export type { Device, AdbCommandOutput } from '../../electron/shared';
 
 class DeviceManager {
-  private current: string | null = null;
   private cache: AdbCommandOutput['list'] = {
     devices: [],
     users: [],
@@ -24,17 +23,11 @@ class DeviceManager {
     return this.cache;
   }
 
-  public getDevice(): Device | null {
-    return this.cache?.devices.find((d) => d.serial === this.current) ||
-           this.cache?.deviceInfo || this.cache?.devices[0] || null;
-  }
-
   public async setDevice(serial: string) {
     await sendCommand<AdbCommandName, AdbCommandInput, void>({
       type: 'adb',
       payload: { command: 'selectDevice', serial: serial },
     });
-    this.current = serial;
   }
 
   async connectWifi(serial: string): Promise<boolean> {
@@ -43,7 +36,6 @@ class DeviceManager {
       payload: { command: 'connectWifi', serial: serial },
     });
     if (newSerial) {
-      this.current = newSerial;
       return true;
     }
     return false;

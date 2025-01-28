@@ -9,13 +9,18 @@ class GamesManager {
     return this.cache;
   }
 
+  public getGameFromCache(packageName: string): Game | null {
+    return this.cache.find((game) => game.packageName === packageName) || null;
+  }
+
   public async getGames() {
-    return sendCommand<GamesCommandName, GamesCommandPayload, Game[]>({
+    this.cache = await sendCommand<GamesCommandName, GamesCommandPayload, Game[]>({
       type: 'games',
       payload: {
         action: 'list',
       },
     });
+    return this.cache;
   }
 
   public downloadGame(game: Game) {

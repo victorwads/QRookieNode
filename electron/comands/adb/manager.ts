@@ -49,8 +49,11 @@ class AdbManager {
     }
   }
 
-  private getDeviceSerial(): string {
-    return this.serial || this.devices[0]?.serial || "";
+  private getDeviceSerial(): string|undefined {
+    if(!(this.serial && this.devices.find((device) => device.serial === this.serial))) {
+      this.serial = this.devices[0]?.serial || null;
+    }
+    return this.serial || undefined;
   }
 
   public selectDevice(serial: string): void {
@@ -76,10 +79,6 @@ class AdbManager {
       model: await this.runAdbCommand(["-s", serial, "shell", "getprop", "ro.product.model"])
     }));
     this.devices = await Promise.all(all);
-    
-    if((!this.serial && this.devices.length > 0) || this.devices.length === 1) {
-      this.serial = this.devices[0].serial;
-    }
     return this.devices;
   }
 

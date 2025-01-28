@@ -4,9 +4,9 @@ import * as path from "path";
 import * as fs from "fs";
 import { WriteStream } from "fs";
 
-import { downloadDir } from "../adb/androidToolsSetup";
 import { DownloadInfo, DownloadProgress } from "../../shared";
 import { getMainWindow } from "../../main";
+import { gamesDir } from "../dirs";
 
 const downloadingInfo: Record<string, DownloadInfo> = {};
 
@@ -17,7 +17,7 @@ const progress = (info: DownloadInfo, id: string) => {
   downloadingInfo[id] = info;
   if(shouldSend) {
     shouldSend = false;
-    getMainWindow()?.webContents.send("downloadProgress", downloadingInfo);
+    getMainWindow()?.webContents.send("downloadProgress", info);
   }
 }
 
@@ -206,7 +206,7 @@ export class HttpDownloader {
     progressInfo.files = files;
     progress(progressInfo, id);
 
-    const downloadDirectory = path.join(downloadDir, "games", id);
+    const downloadDirectory = path.join(gamesDir, id);
     if (!fs.existsSync(downloadDirectory)) {
       fs.mkdirSync(downloadDirectory, { recursive: true });
     }

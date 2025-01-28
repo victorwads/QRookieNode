@@ -56,6 +56,14 @@ class GameManager {
     return this.games;
   }
 
+  public async getDownloadedGames(): Promise<Game[]> {
+    return vrpManager
+      .getDownloadedGames()
+      .map(id => this.games.find(g => g.id === id))
+      .filter(g => g) as Game[];
+    ;
+  }
+
   private getGameId(releaseName: string): string {
     const hash = crypto.createHash('md5');
     hash.update(releaseName + "\n");
@@ -63,7 +71,7 @@ class GameManager {
   }
 
   public download(game: Game) {
-    vrpManager.downloadGame(this.getGameId(game.name));
+    vrpManager.downloadGame(game.id);
   }
 }
 

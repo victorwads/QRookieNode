@@ -1,8 +1,8 @@
-import { app } from "electron";
 import * as fs from "fs";
 import * as path from "path";
 import * as https from "https";
 import * as child_process from "child_process";
+import { downloadDir, extractedDir } from "../dirs";
 
 export type GitHubRelease = {
   assets: { download_count: number, name: string, browser_download_url: string }[]
@@ -35,9 +35,6 @@ const TOOL_URLS: ToolURLs = {
 
 const arch = process.arch;
 const platform = getPlatform();
-const userDataDir = path.join(app.getPath("userData"));
-const extractedDir = path.join(userDataDir, arch, platform);
-export const downloadDir = path.join(userDataDir, "downloads");
 export const platformToolsDir = path.join(extractedDir, "platform-tools");
 export const binExt = platform === "win32" ? ".exe" : ""
 
@@ -107,10 +104,6 @@ export async function setupTools(force: boolean = false): Promise<void> {
   }
   if (typeof url === "function")
     url = await url();
-
-  // Garantir que os diretórios existem
-  fs.mkdirSync(downloadDir, { recursive: true });
-  fs.mkdirSync(extractedDir, { recursive: true });
 
   const fileName = url.split('/').pop() + "";
   const zipPath = path.join(downloadDir, fileName);

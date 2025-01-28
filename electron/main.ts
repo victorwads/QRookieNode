@@ -4,7 +4,7 @@ import fs from "fs";
 
 import "./comands";
 import { setupMenu } from "./features/menu";
-import { downloadDir } from "./comands/adb/androidToolsSetup";
+import { downloadDir } from "./comands/dirs";
 
 let mainWindow: BrowserWindow|null = null;
 

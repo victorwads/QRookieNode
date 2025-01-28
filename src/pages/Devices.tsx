@@ -7,6 +7,7 @@ import DevicesList from '../components/DeviceList';
 import DeviceInfoCard from '../components/DeviceInfoCard';
 
 import gamesManager from '../bridge/games';
+import type { Game } from '../bridge/games';
 import deviceManager from '../bridge/devices';
 import type { AdbCommandOutput } from '../bridge/devices';
 import GameCard from '../components/GameCard';
@@ -53,10 +54,10 @@ const Devices: React.FC = () => {
       <UsersList users={result.users} />
       <h2>Installed Games</h2>
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        {result.apps
+        {(result.apps
           .map(game => gamesManager.getGameFromCache(game.packageName))
-          .filter(game => game)
-          .map(game => <GameCard game={game!} key={game!.id}/>)}
+          .filter(game => game) as Game[])
+          .map(game => <GameCard game={game} key={game.id}/>)}
       </div>
       <h2>Other Installed Apps</h2>
       <ul>

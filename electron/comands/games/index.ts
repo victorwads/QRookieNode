@@ -19,7 +19,7 @@ export type Game = {
 }
 
 export type GamesActionList = {
-  action: 'list';
+  action: 'list' | 'listDownloaded';
 }
 
 export type GamesActionDownload = {
@@ -45,6 +45,8 @@ export default {
     if (payload.action === 'list') {
       await GamesManager.update();
       return GamesManager.listGames();
+    } else if (payload.action === 'listDownloaded') {
+      return GamesManager.getDownloadedGames();
     } else if (payload.action === 'download') {
       GamesManager.download(payload.game);
     }

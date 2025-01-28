@@ -1,4 +1,3 @@
-import { app } from "electron";
 import * as fs from "fs";
 import * as path from "path";
 import sevenBin from '7zip-bin'
@@ -6,6 +5,7 @@ import { extractFull } from 'node-7z'
 
 import { HttpDownloader } from "./httpDownloader";
 import vrpPublic from "./vrpPublic";
+import { downloadDir, gamesDir } from "../dirs";
 
 export interface GameInfo {
   name: string;
@@ -18,12 +18,7 @@ export interface GameInfo {
 }
 
 const metaFileName = "meta.7z";
-const userDataDir = path.join(app.getPath("userData"));
-const downloadDir = path.join(userDataDir, "downloads");
-const extractedDir = path.join(userDataDir, "uncrompressed");
 const metaFilePath = path.join(downloadDir, metaFileName);
-fs.mkdirSync(downloadDir, { recursive: true });
-fs.mkdirSync(extractedDir, { recursive: true });
 
 export class VprManager {
   private games: Map<string, GameInfo> = new Map();
@@ -178,6 +173,10 @@ export class VprManager {
 
     const downloader = new HttpDownloader();
     downloader.downloadDir(vrpInfo.baseUri, id)
+  }
+
+  public getDownloadedGames(): string[] {
+    return fs.readdirSync(gamesDir);
   }
 }
 

@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { DownloadInfo, Game } from "../bridge";
+
+import downloadManager from "../bridge/download";
+import type { DownloadInfo } from "../bridge/download";
+import type { Game } from "../bridge/games";
 
 export function formatSize(size: number = 0): string {
   if (size >= 1e9) return `${(size / 1e9).toFixed(2)} GB`;
@@ -15,24 +18,13 @@ export interface GameCardProps {
   onSelect?: (game: Game) => void;
 }
 
-const { downloads } = (window as any);
-let limit = 20;
-
 const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose }: GameCardProps) => {
   const [downloadInfo, setDownloadInfo] = useState<DownloadInfo|null>(null);
 
   useEffect(() => {
-    const onDownloadProgress = (info: Record<string, DownloadInfo>) => {
-      setDownloadInfo(info[game.id] ? {...info[game.id]} : null);
-    };
-
-    if (limit <= 0) return;
-    limit--;
-    downloads.receive(onDownloadProgress);
-    return () => {
-      limit++;
-      downloads.remove(onDownloadProgress);
-    };
+    return downloadManager.addListener(game.id, (info) => {
+      setDownloadInfo(info ? {...info} : null);
+    });
   }, [game]);
 
   return <>

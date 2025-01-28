@@ -1,19 +1,43 @@
 import { Command, CommandEvent } from "../../shared";
-import Game from "./game";
 import GamesManager from "./manager";
 
-interface ListAction {
+export type GamesCommandPayload = GamesActionList | GamesActionDownload;
+export type GamesCommandName = 'games';
+export type GamesCommand = Command<GamesCommandPayload, Game[], GamesCommandName>;
+export type GamesCommandEvent = CommandEvent<GamesCommandPayload, GamesCommandName>
+export type Game = {
+  id: string;
+  category: string;
+  name: string;
+  normalName?: string
+  magnetUri: string;
+  size: number;
+  packageName?: string;
+  version?: string;
+  lastUpdated?: string;
+  completionOn: number;
+}
+
+export type GamesActionList = {
   action: 'list';
 }
-interface DownloadAction {
+
+export type GamesActionDownload = {
   action: 'download';
   game: Game;
 }
 
-export type GamesCommandPayload = ListAction | DownloadAction;
-export type GamesCommandName = 'games';
-export type GamesCommand = Command<GamesCommandPayload, Game[], GamesCommandName>;
-export type GamesCommandEvent = CommandEvent<GamesCommandPayload, GamesCommandName>
+export type DownloadProgress = {
+  url: string;
+  bytesReceived: number;
+  bytesTotal: number;
+  percent: number;
+}
+
+export type DownloadInfo = {
+  id: string;
+  files: DownloadProgress[];
+} & DownloadProgress;
 
 export default {
   type: 'games',

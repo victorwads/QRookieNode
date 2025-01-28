@@ -1,10 +1,39 @@
 import { Command, CommandEvent } from "../../shared";
 import AdbManager from "./manager";
-import { AppInfo, Device, User } from "./types";
 
 export type AdbCommandName = 'adb';
 export type AdbCommand = Command<AdbCommandInput, AdbCommandOutput, AdbCommandName>;
 export type AdbCommandEvent = CommandEvent<AdbCommandInput, AdbCommandName>
+export type AdbCommandInput = { 
+  command: 'selectDevice';
+  deviceId: string;
+} | void
+
+export type Device = {
+  serial: string;
+  model: string;
+  ip?: string;
+  batteryLevel?: number;
+  androidVersion?: string;
+  sdkVersion?: number;
+  spaceUsage?: {
+      total: number;
+      used: number;
+  };
+}
+
+export type User = {
+  id: number;
+  name: string;
+  running: boolean;
+  installedApps?: number;
+}
+
+export type AppInfo = {
+  packageName: string;
+  versionCode: number;
+}
+
 export interface AdbCommandOutput {
   devices: Device[];
   deviceInfo?: Device;
@@ -12,10 +41,6 @@ export interface AdbCommandOutput {
   apps: AppInfo[];
   helthCheck: string;
 }
-export type AdbCommandInput = { 
-  command: 'selectDevice';
-  deviceId: string;
-} | void
 
 export default {
   type: 'adb',

@@ -1,30 +1,23 @@
 import React, { useEffect } from 'react';
-import sendCommand, { AdbCommandName, AdbCommandOutput } from '../bridge';
+
 import { CenteredLoading } from './Loading';
 import Icon, { Icons } from '../components/Icons';
+import UsersList from '../components/UsersList';
 import DevicesList from '../components/DeviceList';
 import DeviceInfoCard from '../components/DeviceInfoCard';
-import UsersList from '../components/UsersList';
 
+import deviceManager from '../bridge/devices';
+import type { AdbCommandOutput } from '../bridge/devices';
 
-let cache: AdbCommandOutput = {
-  devices: [],
-  users: [],
-  apps: [],
-  helthCheck: 'loading...',
-};
 
 const Devices: React.FC = () => {
-  const [result, setResult] = React.useState<AdbCommandOutput>(cache);
+  const [result, setResult] = React.useState<AdbCommandOutput>(deviceManager.getDevicesCache());
   const [loading, setLoading] = React.useState<boolean>(true);
 
   const getAdbDevices = async () => {
     setLoading(true);
-    const result = sendCommand<AdbCommandName, any, AdbCommandOutput>({
-      type: 'adb',
-    });
-    cache = await result;
-    setResult(cache);
+    const devices = await deviceManager.getDevices();
+    setResult(devices);
     setLoading(false)
   };
 

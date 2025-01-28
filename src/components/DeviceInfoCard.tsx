@@ -1,5 +1,6 @@
 import React from "react";
-import { Device } from "../../electron/comands/adb/types";
+
+import type { Device } from "../bridge/devices";
 import { formatSize } from "./GameCard";
 
 function calculateColor(value: number, max: number, isReversed: boolean = false): string {

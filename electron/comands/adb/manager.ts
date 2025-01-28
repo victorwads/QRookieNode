@@ -2,9 +2,8 @@ import * as path from "path";
 import { execFile } from "child_process";
 import { promisify } from "util";
 
-import { Device, User, AppInfo } from "./types";
 import { platformToolsDir, binExt, setupTools } from "./androidToolsSetup";
-
+import type { Device, User, AppInfo } from "./";
 
 let adbPath = path.join(platformToolsDir, "adb" + binExt);
 const execFileAsync = promisify(execFile);

@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import gamesManager from '../bridge/games';
+import type { Game } from '../bridge/games';
+
 import "./Games.css";
-import sendCommand, { GamesCommandName, GamesCommandPayload, Game } from '../bridge';
-import GameCard from '../components/GameCard';
 import { CenteredLoading } from './Loading';
 import Icon, { Icons } from '../components/Icons';
+import GameCard from '../components/GameCard';
 
-let cache: Game[] = [];
 const Games: React.FC = () => {
-  const [result, setResult] = React.useState<Game[]>(cache);
+  const [result, setResult] = React.useState<Game[]>(gamesManager.getCache());
   const [search, setSearch] = React.useState<string>("");
   const [loading, setLoading] = React.useState<boolean>(true);
   const [limit, setLimit] = React.useState<number>(50);
@@ -19,15 +20,8 @@ const Games: React.FC = () => {
 
   const getAdbDevices = async () => {
     setLoading(true);
-    const result = sendCommand<GamesCommandName, GamesCommandPayload, Game[]>({
-      type: 'games',
-      payload: {
-        action: 'list',
-      },
-    });
-    cache = await result;
-    console.log('cache', cache);
-    setResult(cache);
+  
+    setResult(await gamesManager.getGames());
     setLoading(false);
   };
 
@@ -36,13 +30,7 @@ const Games: React.FC = () => {
   }, []);
 
   const startDownloading = async (game: Game) => {
-    sendCommand<GamesCommandName, GamesCommandPayload, Game[]>({
-      type: 'games',
-      payload: {
-        action: 'download',
-        game,
-      },
-    });
+    gamesManager.downloadGame(game);
   }
 
   if (result.length > 0 && id) {

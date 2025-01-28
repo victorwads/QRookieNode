@@ -1,25 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import sendCommand, { DevToolsCommandName, AdbCommandName, AdbCommandOutput } from '../bridge';
+
+import type { GitHubRelease } from '../bridge/settings';
+import settingsManager from '../bridge/settings';
+
 import Icon, { Icons } from '../components/Icons';
-import { GitHubRelease } from '../../electron/comands/adb/androidToolsSetup';
 
 const Settings: React.FC = () => {
   const [infos, set] = useState<RepoDownloadsInfo>(repoDownloadsInfo);
   const [adbHelth, setAdbHelth] = useState<string>("loading...");
 
   const openDevTools = () => {
-    sendCommand<DevToolsCommandName>({
-      type: 'devTools',
-    });
+    settingsManager.openDevTools();
   };
 
   useEffect(() => {
     promisse.then(() => set({...repoDownloadsInfo}));
-    sendCommand<AdbCommandName, any, AdbCommandOutput>({
-      type: 'adb',
-    }).then(result => {
-      setAdbHelth(result.helthCheck);
-    });
+    settingsManager.getAdbHelth().then(setAdbHelth);
   }, []);
 
   const reposInfos = Object.values(infos);

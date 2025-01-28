@@ -160,16 +160,16 @@ export class HttpDownloader {
     return body;
   }
 
-  async downloadDir(baseUrl: string, dirPath: string): Promise<boolean> {
-    const url = new URL(dirPath + '/', baseUrl);
+  async downloadDir(baseUrl: string, id: string): Promise<boolean> {
+    const url = new URL(id + '/', baseUrl);
     const progressInfo: DownloadInfo = {
-      url: url.toString(),
+      id, url: url.toString(),
       bytesReceived: 0,
       bytesTotal: 0,
       percent: 0,
       files: [],
     }
-    progress(progressInfo, dirPath);
+    progress(progressInfo, id);
     
     const listBody = await this.getBodyWithHttp2(url) as string;
     const preTagMatch = listBody.match(/<pre>([\s\S]*?)<\/pre>/);
@@ -204,9 +204,9 @@ export class HttpDownloader {
 
     progressInfo.bytesTotal = totalSize;
     progressInfo.files = files;
-    progress(progressInfo, dirPath);
+    progress(progressInfo, id);
 
-    const downloadDirectory = path.join(downloadDir, "games", dirPath);
+    const downloadDirectory = path.join(downloadDir, "games", id);
     if (!fs.existsSync(downloadDirectory)) {
       fs.mkdirSync(downloadDirectory, { recursive: true });
     }
@@ -222,7 +222,7 @@ export class HttpDownloader {
         progressInfo.percent = progressInfo.bytesReceived / progressInfo.bytesTotal * 100;
         file.bytesReceived += addSize;
         file.percent = file.bytesReceived / file.bytesTotal * 100;
-        progress(progressInfo, dirPath);
+        progress(progressInfo, id);
       }).then(() => {
         console.log(`Downloaded: ${name} (${file.bytesTotal} bytes)`);
         resolve(true);
@@ -237,9 +237,9 @@ export class HttpDownloader {
       file.percent = 100;
       file.bytesReceived = file.bytesTotal;
     });
-    progress(progressInfo, dirPath);
+    progress(progressInfo, id);
 
-    console.log(`Download complete: ${dirPath}`);
+    console.log(`Download complete: ${id}`);
     return true;
   }
 }

@@ -1,7 +1,8 @@
-import { HttpDownloader } from "./httpDownloader";
-import Game from "./game";
-import vrpManager from './vrpManager';
 import * as crypto from 'crypto';
+
+import vrpManager from './vrpManager';
+import { HttpDownloader } from "./httpDownloader";
+import type { Game } from "./";
 
 interface WebGame {
   name?: string;

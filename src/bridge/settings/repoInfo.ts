@@ -1,31 +1,4 @@
-import sendCommand from '.';
-import { AdbCommandName, AdbCommandOutput, DevToolsCommandName, GitHubRelease } from '../../electron/shared';
-export type { GitHubRelease } from '../../electron/shared';
-
-class SettingsManager {
-  public async getAdbHelth(): Promise<string> {
-    return sendCommand<AdbCommandName, any, AdbCommandOutput['list']>({
-      type: 'adb',
-    }).then(result => result.helthCheck);
-  }
-
-  public openDevTools() {
-    sendCommand<DevToolsCommandName>({
-      type: 'devTools',
-    });
-  }
-
-  public getReposInfo(): RepoDownloadsInfo {
-    return repoDownloadsInfo;
-  }
-
-  public async fetchReposInfo(): Promise<RepoDownloadsInfo> {
-    await promisse;
-    return repoDownloadsInfo;
-  }
-}
-
-export default new SettingsManager();
+import { GitHubRelease } from '../../../electron/shared';
 
 // https://api.github.com/rate_limit
 const storageKey = 'repoDownloadsInfo';
@@ -49,7 +22,7 @@ export type RepoDownloadsInfo = {
 };
 
 export const repoDownloadsInfo: RepoDownloadsInfo = JSON.parse(localStorage.getItem(storageKey) || '{}');
-const promisse = Promise.all(Object.entries(repos).map(([repoName, alias]) => {
+export const promisse = Promise.all(Object.entries(repos).map(([repoName, alias]) => {
   const cache = repoDownloadsInfo[repoName];
   if (cache) {
     const cacheUntil = cache.lastUpdate + storageValidTime;

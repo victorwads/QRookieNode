@@ -1,4 +1,4 @@
-import { HttpDownloader } from "./httpDownloader";
+import HttpDownloader from "./httpDownloader";
 
 export interface VprPublicData {
     baseUri: string;

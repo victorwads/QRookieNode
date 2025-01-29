@@ -3,12 +3,14 @@ import { ipcMain, IpcMainInvokeEvent } from "electron";
 import DevToolsCommand from "./devTools";
 import AdbCommand from "./adb";
 import GamesCommand from "./games";
+import SettingsCommand from "./settings";
 import { BridgeSendCommandEvent, Command, CommandEvent } from "../shared";
 
 const commands: Command<any, any, any>[] = [
   DevToolsCommand,
   AdbCommand,
   GamesCommand,
+  SettingsCommand,
 ];
 
 const setupBridge = () => {

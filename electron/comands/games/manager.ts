@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 
 import vrpManager from './vrpManager';
-import { HttpDownloader } from "./httpDownloader";
+import HttpDownloader from "./httpDownloader";
 import type { Game } from "./";
 
 interface WebGame {
@@ -13,6 +13,8 @@ interface WebGame {
   category?: string;
 }
 
+let loadedGames: boolean = false;
+
 class GameManager {
   private games: Game[] = [];
   private downloader = new HttpDownloader();
@@ -20,7 +22,11 @@ class GameManager {
   private static readonly GAMES_URL = "https://torrents.vrpirates.wiki/torrents.json";
 
   public async update(): Promise<boolean> {
+    if (loadedGames) {
+      return true;
+    }
     try {
+      console.log("Downloading games data from...", GameManager.GAMES_URL);
       const data = await this.downloader.download(GameManager.GAMES_URL);
 
       const json = JSON.parse(data);
@@ -45,6 +51,7 @@ class GameManager {
         } as Game
       });
 
+      loadedGames = true;
       return true;
     } catch (err) {
       console.error("Error updating games:", err);

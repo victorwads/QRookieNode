@@ -4,11 +4,12 @@ import * as path from "path";
 import * as fs from "fs";
 import { WriteStream } from "fs";
 
+import settingsManager from "../settings/manager";
 import { DownloadInfo, DownloadProgress } from "../../shared";
 import { getMainWindow } from "../../main";
-import { gamesDir } from "../dirs";
 
 const downloadingInfo: Record<string, DownloadInfo> = {};
+const instanceUniqId = Math.random().toString(36);
 
 let shouldSend = true;
 setInterval(() => { shouldSend = true; }, 100);
@@ -21,7 +22,7 @@ const progress = (info: DownloadInfo, id: string) => {
   }
 }
 
-export class HttpDownloader {
+export default class HttpDownloader {
   public download(url: string): Promise<string> {
     console.log(`Downloading with https: ${url}`);
     return new Promise((resolve, reject) => {
@@ -160,7 +161,38 @@ export class HttpDownloader {
     return body;
   }
 
-  async downloadDir(baseUrl: string, id: string): Promise<boolean> {
+  private initDownloadFileLock(downloadPath: string) {
+    fs.readdirSync(downloadPath).forEach((file) => {
+      const filePath = path.join(downloadPath, file);
+      fs.unlinkSync(filePath);
+    });
+    fs.writeFileSync(path.join(downloadPath, instanceUniqId), new Date().toISOString());
+  }
+
+  private isLockedDownloadFile(downloadPath: string): boolean {
+    return fs.existsSync(path.join(downloadPath, instanceUniqId));
+  }
+
+  private isFinishedDownloadFile(downloadPath: string): boolean {
+    return fs.existsSync(path.join(downloadPath, "finished"));
+  }
+
+  public async downloadDir(baseUrl: string, id: string): Promise<boolean> {
+    const downloadDirectory = path.join(settingsManager.getDownloadsDir(), id);
+    if (!fs.existsSync(downloadDirectory)) {
+      fs.mkdirSync(downloadDirectory, { recursive: true });
+    }
+
+    if (this.isFinishedDownloadFile(downloadDirectory)) {
+      console.log(`Download already finished: ${id}`);
+      return true;
+    }
+    if (this.isLockedDownloadFile(downloadDirectory)) {
+      console.log(`Download already in progress: ${id}`);
+      return true;
+    }
+    this.initDownloadFileLock(downloadDirectory);
+
     const url = new URL(id + '/', baseUrl);
     const progressInfo: DownloadInfo = {
       id, url: url.toString(),
@@ -206,11 +238,6 @@ export class HttpDownloader {
     progressInfo.files = files;
     progress(progressInfo, id);
 
-    const downloadDirectory = path.join(gamesDir, id);
-    if (!fs.existsSync(downloadDirectory)) {
-      fs.mkdirSync(downloadDirectory, { recursive: true });
-    }
-
     const batch = files.map(file => new Promise((resolve, reject) => {
       const { url: name} = file;
       const fileUrl = new URL(name, url);
@@ -225,6 +252,7 @@ export class HttpDownloader {
         progress(progressInfo, id);
       }).then(() => {
         console.log(`Downloaded: ${name} (${file.bytesTotal} bytes)`);
+        fs.writeFileSync(filePath + ".finished", new Date().toISOString());
         resolve(true);
       }).catch((err) => {
         console.error(`Download Error: ${name}`, err);
@@ -239,6 +267,7 @@ export class HttpDownloader {
     });
     progress(progressInfo, id);
 
+    fs.writeFileSync(path.join(downloadDirectory, "finished"), new Date().toISOString());
     console.log(`Download complete: ${id}`);
     return true;
   }

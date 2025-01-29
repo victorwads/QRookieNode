@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import type { RepoDownloadsInfo } from '../bridge/settings';
+import type { RepoDownloadsInfo, Settings as SettingsModel } from '../bridge/settings';
 import settingsManager from '../bridge/settings';
 
 import Icon, { Icons } from '../components/Icons';
@@ -8,14 +8,20 @@ import Icon, { Icons } from '../components/Icons';
 const Settings: React.FC = () => {
   const [infos, set] = useState<RepoDownloadsInfo>(settingsManager.getReposInfo());
   const [adbHelth, setAdbHelth] = useState<string>("loading...");
+  const [settings, setSettings] = useState<SettingsModel>({});
 
   const openDevTools = () => {
     settingsManager.openDevTools();
   };
 
+  const changeDownloadsDir = async () => {
+    setSettings(await settingsManager.setDownloadPath());
+  };
+
   useEffect(() => {
     settingsManager.fetchReposInfo().then(info => {set({...info})});
     settingsManager.getAdbHelth().then(setAdbHelth);
+    settingsManager.getSettings().then(setSettings);
   }, []);
 
   const reposInfos = Object.values(infos);
@@ -27,7 +33,10 @@ const Settings: React.FC = () => {
     <div className='horizontal-display'>
       <h1><Icon icon={Icons.solid.faGear} size="lg" />Settings Page</h1>
       <button onClick={openDevTools}>Open DevTools</button>
+      <button onClick={changeDownloadsDir}>Change Downloads Dir</button>
     </div>
+    <h2>Settings</h2>
+    <pre>{JSON.stringify(settings, null, 2)}</pre>
     <h2>Total Downloads: {totalDownloads}</h2>
     {reposInfos.map(({byExt, name, total}) => {
       return <>

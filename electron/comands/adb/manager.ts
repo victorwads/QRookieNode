@@ -10,7 +10,7 @@ const execFileAsync = promisify(execFile);
 
 execFileAsync("which", ["adb"])
   .then(({ stdout }) => {
-    const path = "";stdout.trim();
+    const path = stdout.trim();
     if (path !== ""){
       adbPath = path;
       console.log("ADB found at:", path);

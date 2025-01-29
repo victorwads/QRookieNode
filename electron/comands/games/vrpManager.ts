@@ -3,9 +3,11 @@ import * as path from "path";
 import sevenBin from '7zip-bin'
 import { extractFull } from 'node-7z'
 
-import { HttpDownloader } from "./httpDownloader";
 import vrpPublic from "./vrpPublic";
-import { downloadDir, gamesDir } from "../dirs";
+import settingsManager from "../settings/manager";
+import HttpDownloader from "./httpDownloader";
+
+import { downloadDir } from "../dirs";
 
 export interface GameInfo {
   name: string;
@@ -176,7 +178,7 @@ export class VprManager {
   }
 
   public getDownloadedGames(): string[] {
-    return fs.readdirSync(gamesDir);
+    return fs.readdirSync(settingsManager.getDownloadsDir());
   }
 }
 

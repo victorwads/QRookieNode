@@ -10,6 +10,7 @@ export * from '../comands/adb';
 export * from '../comands/adb/androidToolsSetup';
 export * from '../comands/devTools';
 export * from '../comands/games';
+export * from '../comands/settings';
 
 const All = {}
 export default All;

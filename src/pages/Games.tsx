@@ -70,7 +70,7 @@ const Games: React.FC = () => {
         .filter((_, i) => i < limit)
         .map((item) => item.game)
         .map((game) =>
-          <GameCard key={game.id} game={game} onSelect={game => navigate(game.packageName ?? "")} />
+          <GameCard key={game.id} game={game} onSelect={game => navigate(game.packageName ?? "")} onDownload={startDownloading} />
         )}
     </div>
   </>

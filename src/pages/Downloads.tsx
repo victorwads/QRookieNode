@@ -37,16 +37,16 @@ const Downloads: React.FC = () => {
 
   return <>
     <h1><Icon icon={Icons.solid.faDownload} size="lg" />Downloads Page</h1>
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
+    <div style={{ display: 'flex', flexDirection: 'row', padding: '1em' }}>
       <div style={{flex: 1}}>
         <h2>Downloading Games</h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+        <div className="game-list">
           {downloading.map(game => <GameCard game={game} key={game.id}/>)}
         </div>
       </div>
       <div style={{flex: 1}}>
         <h2>Downloaded Games</h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+        <div className='game-list'>
           {downloads.map(game => <GameCard game={game} key={game.id}/>)}
         </div>
       </div>

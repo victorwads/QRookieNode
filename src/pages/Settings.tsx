@@ -8,9 +8,11 @@ import Icon, { Icons } from '../components/Icons';
 import { BasicLoading } from './Loading';
 import { SystemHelth } from '../../electron/shared';
 
+let sysTemHelthCache: SystemHelth|null = null;
+
 const Settings: React.FC = () => {
   const [infos, set] = useState<RepoDownloadsInfo>(settingsManager.getReposInfo());
-  const [systemHelth, setSystemHelth] = useState<SystemHelth|null>(null);
+  const [systemHelth, setSystemHelth] = useState<SystemHelth|null>(sysTemHelthCache);
   const [settings, setSettings] = useState<SettingsModel>({});
 
   const openDevTools = () => {
@@ -23,7 +25,10 @@ const Settings: React.FC = () => {
 
   useEffect(() => {
     settingsManager.fetchReposInfo().then(info => {set({...info})});
-    settingsManager.getHelthInfo().then(setSystemHelth);
+    settingsManager.getHelthInfo().then(info => {
+      sysTemHelthCache = info;
+      setSystemHelth(info);
+    });
     settingsManager.getSettings().then(setSettings);
   }, []);
 

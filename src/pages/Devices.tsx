@@ -40,6 +40,12 @@ const Devices: React.FC = () => {
 
   useEffect(() => {
     getAdbDevices()
+    const interval = setInterval(() => {
+      getAdbDevices()
+    }, 10000);
+    return () => {
+      clearInterval(interval);
+    }
   }, []);
 
   return <div>

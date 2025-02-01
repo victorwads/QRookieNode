@@ -177,7 +177,7 @@ export default class HttpDownloader {
     return fs.existsSync(path.join(downloadPath, "finished"));
   }
 
-  public async downloadDir(baseUrl: string, id: string): Promise<boolean> {
+  private prepareDownloadIfNeeded(id: string): string|boolean {
     const downloadDirectory = path.join(settingsManager.getDownloadsDir(), id);
     if (!fs.existsSync(downloadDirectory)) {
       fs.mkdirSync(downloadDirectory, { recursive: true });
@@ -193,6 +193,16 @@ export default class HttpDownloader {
     }
     this.initDownloadFileLock(downloadDirectory);
 
+    return downloadDirectory;
+  }
+
+  public async downloadDir(baseUrl: string, id: string): Promise<boolean> {
+    const prepareResult = this.prepareDownloadIfNeeded(id);
+    if(prepareResult === true) {
+      return true;
+    }
+    
+    const downloadDirectory = prepareResult as string;
     const url = new URL(id + '/', baseUrl);
     const progressInfo: DownloadInfo = {
       id, url: url.toString(),
@@ -201,44 +211,36 @@ export default class HttpDownloader {
       percent: 0,
       files: [],
     }
-    progress(progressInfo, id);
     
-    const listBody = await this.getBodyWithHttp2(url) as string;
-    const preTagMatch = listBody.match(/<pre>([\s\S]*?)<\/pre>/);
-    if (!preTagMatch) {
-      console.warn(`Downloading Error: No pre tag found: ${url}`);
-      return false;
-    }
-
-    const preText = preTagMatch[1];
-    const lines = preText.split('\n');
-
-    let totalSize = 0;
-    const files: DownloadProgress[] = [];
-    for (const line of lines) {
-      const match = line.match(/<a href="([^"]+)">[^<]+<\/a>\s+(\d{2}-\w{3}-\d{4}\s+\d{2}:\d{2})\s+(\d+)/);
-      if (match) {
-        const name = match[1];
-        const bytesTotal = parseInt(match[3], 10);
-        totalSize += bytesTotal;
-        files.push({
-          url: name,
-          bytesTotal,
-          bytesReceived: 0,
-          percent: 0,
-        });
-      }
-    }
+    progress(progressInfo, id);
+    const {files, totalSize} = await this.getGameDownloadFiles(url);
     if (files.length === 0) {
       console.log(`Downloading Error: No files found: ${url}`);
       return false;
     }
-
     progressInfo.bytesTotal = totalSize;
     progressInfo.files = files;
     progress(progressInfo, id);
 
-    const batch = files.map(file => new Promise((resolve, reject) => {
+    await this.batchDownloadFiles(id, url, downloadDirectory, files, progressInfo);
+
+    progressInfo.percent = 100;
+    files.forEach(file => {
+      file.percent = 100;
+      file.bytesReceived = file.bytesTotal;
+    });
+    progress(progressInfo, id);
+
+    fs.writeFileSync(path.join(downloadDirectory, "finished"), new Date().toISOString());
+    console.log(`Download complete: ${id}`);
+    return true;
+  }
+  
+  private batchDownloadFiles(
+    id: string, url: URL, downloadDirectory: string,
+    files: DownloadProgress[], progressInfo: DownloadInfo
+  ) {
+    return Promise.all(files.map(file => new Promise((resolve, reject) => {
       const { url: name} = file;
       const fileUrl = new URL(name, url);
       
@@ -258,17 +260,40 @@ export default class HttpDownloader {
         console.error(`Download Error: ${name}`, err);
         reject(err);
       });
-    }));
-    await Promise.all(batch);
-    progressInfo.percent = 100;
-    files.forEach(file => {
-      file.percent = 100;
-      file.bytesReceived = file.bytesTotal;
-    });
-    progress(progressInfo, id);
+    })));
+  }
 
-    fs.writeFileSync(path.join(downloadDirectory, "finished"), new Date().toISOString());
-    console.log(`Download complete: ${id}`);
-    return true;
+  private async getGameDownloadFiles(url: URL): Promise<{
+    files: DownloadProgress[],
+    totalSize: number
+  }> {
+    const listBody = await this.getBodyWithHttp2(url) as string;
+    const preTagMatch = listBody.match(/<pre>([\s\S]*?)<\/pre>/);
+    let lines: string[] = [];
+    if (!preTagMatch) {
+      console.log(`Downloading Error: No pre tag found: ${url}`);
+    } else {
+      const preText = preTagMatch[1];
+      lines = preText.split('\n');  
+    }
+
+    let totalSize = 0;
+    const files: DownloadProgress[] = [];
+    for (const line of lines) {
+      const match = line.match(/<a href="([^"]+)">[^<]+<\/a>\s+(\d{2}-\w{3}-\d{4}\s+\d{2}:\d{2})\s+(\d+)/);
+      if (match) {
+        const name = match[1];
+        const bytesTotal = parseInt(match[3], 10);
+        totalSize += bytesTotal;
+        files.push({
+          url: name,
+          bytesTotal,
+          bytesReceived: 0,
+          percent: 0,
+        });
+      }
+    }
+
+    return {files, totalSize};
   }
 }

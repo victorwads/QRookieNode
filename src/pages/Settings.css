@@ -1,12 +1,13 @@
 .settings .sections {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     gap: 1rem;
     padding: 1em;
 }
 
 .settings section {
-    flex: 1;
+    /* flex: 1; */
     min-width: 400px;
 }
 
@@ -27,4 +28,6 @@
 
 .settings ul > li > pre {
     margin: 0;
+    word-wrap: break-word;
+    text-wrap: wrap;
 }

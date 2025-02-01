@@ -16,7 +16,7 @@ setInterval(() => { shouldSend = true; }, 100);
 
 const progress = (info: DownloadInfo, id: string) => {
   downloadingInfo[id] = info;
-  if(shouldSend) {
+  if(shouldSend || info.percent === 100) {
     shouldSend = false;
     getMainWindow()?.webContents.send("downloadProgress", info);
   }

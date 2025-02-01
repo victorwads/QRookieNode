@@ -42,13 +42,13 @@ const Devices: React.FC = () => {
     getAdbDevices()
   }, []);
 
-  return (
-    <div>
-      <div className='horizontal-display'>
-        <h1><Icon icon={Icons.solid.faTabletAlt} size="lg" />Devices Page</h1>
-        <CenteredLoading visible={loading} />
-        <button onClick={() => getAdbDevices()}><Icon icon={Icons.solid.faRefresh} /> Reload Devices</button>
-      </div>
+  return <div>
+    <div className='horizontal-display'>
+      <h1><Icon icon={Icons.solid.faTabletAlt} size="lg" />Devices Page</h1>
+      <CenteredLoading visible={loading} />
+      <button onClick={() => getAdbDevices()}><Icon icon={Icons.solid.faRefresh} /> Reload Devices</button>
+    </div>
+    <div style={{padding: 20}}>{result.devices.length === 0 ? <p>No devices found</p> : <>
       <DevicesList devices={result.devices} onConnect={getAdbDevices} onConnectWifi={connectWifi} />
       {result.deviceInfo && <DeviceInfoCard deviceInfo={result.deviceInfo} />}
       <UsersList users={result.users} />
@@ -68,8 +68,8 @@ const Devices: React.FC = () => {
             {game.packageName}
           </li>)}
       </ul>
-    </div>
-  );
+    </>}</div>
+  </div>;
 };
 
 export default Devices;

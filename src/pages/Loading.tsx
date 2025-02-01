@@ -17,7 +17,7 @@ export const BasicLoading: React.FC<LoadingProps> = ({ visible }: LoadingProps) 
 }
 
 export const CenteredLoading: React.FC<LoadingProps> = ({ visible }: LoadingProps) => {
-  return <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+  return <div style={{ display: visible?"flex":"none", justifyContent: "center", alignItems: "center" }}>
     <BasicLoading visible={visible} />
   </div>;
 }

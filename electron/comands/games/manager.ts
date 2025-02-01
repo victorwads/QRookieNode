@@ -63,11 +63,8 @@ class GameManager {
     return this.games;
   }
 
-  public async getDownloadedGames(): Promise<Game[]> {
-    return vrpManager
-      .getDownloadedGames()
-      .map(id => this.games.find(g => g.id === id))
-      .filter(g => g) as Game[];
+  public getDownloadedGames(): string[] {
+    return vrpManager.getDownloadedGames()
     ;
   }
 

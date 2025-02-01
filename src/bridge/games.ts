@@ -34,8 +34,8 @@ class GamesManager {
     return this.cache;
   }
 
-  public async getDownloadedGames(): Promise<Game[]> {
-    return await sendCommand<GamesCommandName, GamesCommandPayload, Game[]>({
+  public async getDownloadedGames(): Promise<string[]> {
+    return await sendCommand<GamesCommandName, GamesCommandPayload, string[]>({
       type: 'games',
       payload: {
         action: 'listDownloaded',

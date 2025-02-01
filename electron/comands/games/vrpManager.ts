@@ -178,7 +178,9 @@ export class VprManager extends RunSystemCommand {
   }
 
   public getDownloadedGames(): string[] {
-    return fs.readdirSync(settingsManager.getDownloadsDir());
+    return fs.readdirSync(settingsManager.getDownloadsDir()).filter((file) => 
+      fs.existsSync(path.join(settingsManager.getDownloadsDir(), file, "finished"))
+    );
   }
 }
 

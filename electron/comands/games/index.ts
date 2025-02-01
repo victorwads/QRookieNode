@@ -2,6 +2,7 @@ import { Command, CommandEvent } from "../../shared";
 import GamesManager from "./manager";
 
 export type GamesCommandPayload = GamesActionList | GamesActionDownload;
+export type GamesCommandOutput = Game[] | string[];
 export type GamesCommandName = 'games';
 export type GamesCommand = Command<GamesCommandPayload, Game[], GamesCommandName>;
 export type GamesCommandEvent = CommandEvent<GamesCommandPayload, GamesCommandName>
@@ -41,7 +42,7 @@ export type DownloadInfo = {
 
 export default {
   type: 'games',
-  receiver: async function (payload: GamesCommandPayload): Promise<Game[]> {
+  receiver: async function (payload: GamesCommandPayload): Promise<GamesCommandOutput> {
     if (payload.action === 'list') {
       await GamesManager.update();
       return GamesManager.listGames();

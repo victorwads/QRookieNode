@@ -1,44 +1,20 @@
-import * as path from "path";
-import { execFile } from "child_process";
-import { promisify } from "util";
-
-import { platformToolsDir, binExt, setupTools } from "./androidToolsSetup";
+import RunSystemCommand from "../runSystemCommand";
 import type { Device, User, AppInfo } from "./";
 
-let adbPath = path.join(platformToolsDir, "adb" + binExt);
-const execFileAsync = promisify(execFile);
 
-execFileAsync("which", ["adb"])
-  .then(({ stdout }) => {
-    const path = stdout.trim();
-    if (path !== ""){
-      adbPath = path;
-      console.log("ADB found at:", path);
-    } else {
-      console.log("ADB not found, downloading platform-tools. which returned:", path);
-      setupTools();
-    }
-  })
-  .catch(() => {
-    console.log("ADB not found, downloading platform-tools");
-    setupTools();
-  });
-
-
-class AdbManager {
+class AdbManager extends RunSystemCommand {
   private devices: Device[] = [];
   private users: User[] = [];
   private apps: AppInfo[] = [];
   public serial: string|null = null;
 
+  constructor() {
+    super();  
+  }
+
   private async runAdbCommand(args: string[]): Promise<string> {
-    try {
-      const { stdout } = await execFileAsync(adbPath, args);
-      return stdout.trim();
-    } catch (error: any) {
-      console.error("ADB Command Error:", error.message);
-      return "error"
-    }
+    const { stdout } = await this.runCommand(this.getAdbPath(), args);
+    return stdout;
   }
 
   public async helthCheck(): Promise<string> {

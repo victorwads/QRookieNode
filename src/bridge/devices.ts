@@ -8,7 +8,6 @@ class DeviceManager {
     devices: [],
     users: [],
     apps: [],
-    helthCheck: 'loading...',
   };
 
   public getDevicesCache(): AdbCommandOutput['list'] {

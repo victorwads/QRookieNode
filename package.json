@@ -1,6 +1,6 @@
 {
   "name": "qrookie-node",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "private": true,
   "description": "QRookieNode is a cross-platform tool to manage Quest devices and games.",
   "author": {
@@ -9,7 +9,7 @@
   },
   "homepage": "./",
   "scripts": {
-    "build": "bash ./script-bundle.sh",
+    "build": "bash ./script-build.sh",
     "dev": "bash ./script-dev.sh",
     "bundle": "yarn build && electron-builder",
     "bundle:mac-dev": "yarn bundle --mac --dir -c.mac.identity=null",

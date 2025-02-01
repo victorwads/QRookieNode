@@ -40,9 +40,6 @@ generate_icons_macos() {
   iconutil -c icns -o "icon.icns" "$iconset_dir"
 }
 
-echo "Current directory: $(pwd)"
-ls -lha ./
-
 # if running on CI and Icons alvery exists, skip generating icons
 if [[ 
   "$1" != "--force"

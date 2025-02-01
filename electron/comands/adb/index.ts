@@ -43,7 +43,6 @@ export type AdbCommandOutput = {
     deviceInfo?: Device;
     users: User[];
     apps: AppInfo[];
-    helthCheck: string;
   }
 }
 
@@ -66,7 +65,6 @@ export default {
       deviceInfo: AdbManager.getDeviceInfo(),
       users: AdbManager.listUsers(),
       apps: AdbManager.listPackagesForUser(),
-      helthCheck: AdbManager.helthCheck(),
     };
     const info = await promises.deviceInfo;
     return {
@@ -79,7 +77,6 @@ export default {
       deviceInfo: await promises.deviceInfo || undefined,
       users: await promises.users,
       apps: await promises.apps,
-      helthCheck: await promises.helthCheck,
     }
   }
 } as AdbCommand;

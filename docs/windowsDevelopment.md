@@ -23,12 +23,15 @@ After thaat you will need to use Git Bash to run yarn and our bash scripts.
 Open git bash on the project folder use for running dev mode:
 
 ```bash
+git clone https://github.com/victorwads/QRookieNode
+cd QRookieNode
+
 yarn install # Do not use npm install
-yarn dev
+yarn dev # To run the project in development mode
 ```
 
 To Export the project:
 
 ```bash
-yarn bundle --win
+yarn bundle --win # To export the project to windows on the dist folder
 ```

@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import * as path from "path";
-import sevenBin from '7zip-bin'
 import { extractFull } from 'node-7z'
 
 import vrpPublic from "./vrpPublic";
@@ -8,6 +7,7 @@ import settingsManager from "../settings/manager";
 import HttpDownloader from "./httpDownloader";
 
 import { downloadDir } from "../dirs";
+import RunSystemCommand from "../runSystemCommand";
 
 export interface GameInfo {
   name: string;
@@ -22,10 +22,11 @@ export interface GameInfo {
 const metaFileName = "meta.7z";
 const metaFilePath = path.join(downloadDir, metaFileName);
 
-export class VprManager {
+export class VprManager extends RunSystemCommand {
   private games: Map<string, GameInfo> = new Map();
 
   constructor() {
+    super();
     this.loadGamesInfo();
   }
 
@@ -94,10 +95,9 @@ export class VprManager {
       }
 
       await (new Promise((resolve, reject) => {
-        const binPath = sevenBin.path7za.replace("app.asar", "app.asar.unpacked");
-        console.log("Extracting metadata...", binPath);
+        console.log("Extracting metadata...", this.getSevenZipPath());
         const seven = extractFull(metaFilePath, downloadDir, {
-          $bin: binPath,
+          $bin: this.getSevenZipPath(),
           password: vrpInfo.password
         })
         seven.on('end', function () {

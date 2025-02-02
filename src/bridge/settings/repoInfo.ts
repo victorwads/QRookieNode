@@ -27,7 +27,6 @@ export const promisse = Promise.all(Object.entries(repos).map(([repoName, alias]
   if (cache) {
     const cacheUntil = cache.lastUpdate + storageValidTime;
     if (cacheUntil > Date.now()) {
-      console.log('Using cache for', repoName);
       console.log('Cache will be used for more', (cacheUntil - Date.now()) / 1000, 'seconds');
       return Promise.resolve();
     }

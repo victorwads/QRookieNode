@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import type { Game } from "./";
 import vrpManager from './vrpManager';
 import adbManager from '../adb/manager';
-import HttpDownloader, { extractDirName } from "./httpDownloader";
+import HttpDownloader, { extractDirName, progress } from "./httpDownloader";
 import settingsManager from '../settings/manager';
 
 interface WebGame {
@@ -101,18 +101,19 @@ class GameManager {
         + "We will support this feature soon"
       ;
     }
-    const apkPath = fs.readdirSync(gameDir)
-      .find((file) => file.endsWith(".apk"));
 
+    const apkPath = fs.readdirSync(gameDir).find((file) => file.endsWith(".apk"));
     if (!apkPath) {
       return "No apk file found on the downloaded game folder " + gameDir;
     }
 
     try {
+      progress({ id , status: 'installing', installingFile: apkPath });
       await adbManager.install(path.join(gameDir, apkPath));
     } catch (err) {
       return "Failed to install game: " + err;
     }
+    progress({ id , status: 'installed'});
     return null;
   }
 

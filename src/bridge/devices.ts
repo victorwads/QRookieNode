@@ -4,14 +4,23 @@ import type { AdbCommandInput, AdbCommandName, AdbCommandOutput } from '../../el
 export type { Device, AdbCommandOutput } from '../../electron/shared';
 
 class DeviceManager {
+  
   private cache: AdbCommandOutput['list'] = {
     devices: [],
     users: [],
     apps: [],
   };
 
+  constructor() {
+    this.getDevices();
+  }
+
   public getDevicesCache(): AdbCommandOutput['list'] {
     return this.cache;
+  }
+
+  public isGameInstalled(packageName?: string): boolean {
+    return this.cache.apps.some(app => app.packageName === packageName);
   }
 
   public async getDevices(): Promise<AdbCommandOutput['list']> {

@@ -61,7 +61,6 @@ export class VprManager extends RunSystemCommand {
     try {
       const json = Array.from(this.games.values());
       fs.writeFileSync(this.gamesFilePath, JSON.stringify(json, null, 2), "utf-8");
-      console.log("Games saved successfully");
       return true;
     } catch (error) {
       console.error("Failed to save games_info.json:", error);

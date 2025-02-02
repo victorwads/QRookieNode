@@ -47,7 +47,7 @@ export default abstract class RunSystemCommand {
       console.log("Command executed successfully", stdout.trim(), stderr.trim());
       return { stdout: stdout.trim(), stderr: stderr.trim() };
     } catch (error: any) {
-      console.log(error.message);
+      console.log("Command error: ", error.message);
       return { stdout: "", stderr: error.message }
     }
   }

@@ -26,8 +26,6 @@ export class VprPublic {
       const baseUri = json.baseUri;
       const password = Buffer.from(json.password, "base64").toString("utf-8");
 
-      console.log("Fetched VPR public data successfully:", { baseUri, password });
-
       return { baseUri, password };
     } catch (error) {
       console.error("Failed to fetch VPR public data:", error);

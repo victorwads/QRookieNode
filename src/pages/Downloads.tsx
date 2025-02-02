@@ -57,7 +57,7 @@ const Downloads: React.FC = () => {
       {downloads.length !== 0 && <div style={{flex: 1}}>
         <h2>Downloaded Games</h2>
         <div className='game-list'>
-          {downloads.map(game => <GameCard game={game} key={game.id}/>)}
+          {downloads.map(game => <GameCard downloaded game={game} key={game.id}/>)}
         </div>
       </div>}
     </div>

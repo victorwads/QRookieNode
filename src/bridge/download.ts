@@ -10,7 +10,7 @@ type DownloadingListener = (ids: string[]) => void;
 class GameDownloadManager {
   private listeners: { [id: string]: ListenerCallback[] } = {};
   private downloadingGamesChangeListeners: DownloadingListener[] = [];
-  private downloadingGames: string[] = [];
+  private downloadingGames: DownloadInfo[] = [];
   private downloadedCache: string[] = [];
 
   constructor() {
@@ -44,7 +44,7 @@ class GameDownloadManager {
 
   public addDownloadingListener(callback: DownloadingListener) {
     this.downloadingGamesChangeListeners.push(callback);
-    callback(this.downloadingGames);
+    callback(this.downloadingGames.map(info => info.id));
 
     return () => {
       this.removeDownloadingListener(callback);
@@ -56,20 +56,24 @@ class GameDownloadManager {
   }
 
   public emitDownloading() {
-    this.downloadingGamesChangeListeners.forEach(callback => callback(this.downloadingGames));
+    this.downloadingGamesChangeListeners.forEach(callback => 
+      callback(this.downloadingGames.map(info => info.id))
+    );
+  }
+
+  public getGameInfo(id: string): DownloadInfo | null {
+    return this.downloadingGames.find(info => info.id === id) || null;
   }
 
   private async emit(id: string, info: DownloadInfo) {
-    if(info.percent === -2) {
-      this.downloadingGames = this.downloadingGames.filter(gameId => gameId !== id);
-      await this.getDownloadedGames();
+    if(this.getGameInfo(id)) {
+      this.downloadingGames.push(info);
       this.emitDownloading();
-    } else if(!this.downloadingGames.includes(id)) {
-      this.downloadingGames.push(id);
+    } else if(info.status !== 'downloading') {
       this.emitDownloading();
     }
-    if (!this.listeners[id]) return;
 
+    if (!this.listeners[id]) return;
     this.listeners[id].forEach(callback => callback(info));
   }
 

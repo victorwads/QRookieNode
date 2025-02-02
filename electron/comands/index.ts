@@ -16,7 +16,7 @@ const commands: Command<any, any, any>[] = [
 const setupBridge = () => {
   ipcMain.handle(BridgeSendCommandEvent, async (event: IpcMainInvokeEvent, comandEvent: CommandEvent<any, any>) => {
     const command = commands.filter((command) => command.type === comandEvent.type)
-    if (command.length == 1) {
+    if (command.length === 1) {
       return await command[0].receiver(comandEvent.payload);
     } if (command.length > 1) {
       console.error(`Multiple commands with the same type: ${comandEvent.type}`, commands);

@@ -35,10 +35,18 @@ export type DownloadProgress = {
   percent: number;
 }
 
-export type DownloadInfo = {
-  id: string;
+export type DownloadInfo = ({
+  status: 'downloaded' | 'unzipping' | 'installed' | 'none';
+} | {
+  status: 'error';
+  message: string;
+} | ({
+  status: 'downloading'
   files: DownloadProgress[];
-} & DownloadProgress;
+} & DownloadProgress) | {
+  status: 'installing' | 'pushing app data',
+  installingFile: string;
+}) & { id: string; }
 
 export default {
   type: 'games',

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import gameManager from "../bridge/games";
+import deviceManager from "../bridge/devices";
 import downloadManager from "../bridge/download";
 import type { DownloadInfo } from "../bridge/download";
 import type { Game } from "../bridge/games";
@@ -18,31 +19,22 @@ export function formatSize(size: number = 0): string {
 export interface GameCardProps {
   game: Game;
   verbose?: boolean;
+  downloaded?: boolean;
   onDownload?: (game: Game) => void;
   onSelect?: (game: Game) => void;
 }
 
-const installingGames: { [id: string]: boolean } = {};
-
-const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose }: GameCardProps) => {
-  const [downloadInfo, setDownloadInfo] = useState<DownloadInfo|null>(null);
-  const [isInstalling, setIsInstalling] = useState<boolean>(installingGames[game.id] || false);
-
-  const updateInstallStatus = (isInstalling: boolean) => {
-    installingGames[game.id] = isInstalling;
-    setIsInstalling(isInstalling);
-  }
-
+const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose, downloaded }: GameCardProps) => {
+  const [downloadInfo, setDownloadInfo] = useState<DownloadInfo|null>(downloadManager.getGameInfo(game.id));
+  
   const install = async () => {
-    if (isInstalling) return;
-    updateInstallStatus(true);
+    if (downloadInfo?.status === 'installing' || downloadInfo?.status === 'unzipping' || downloadInfo?.status === 'pushing app data') return;
     const result = await gameManager.install(game.id);
     if (result) {
       alert(result);
     } else {
       alert('Game installed successfully');
     }
-    updateInstallStatus(false);
   };
 
   useEffect(() => {
@@ -51,36 +43,51 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
     });
   }, [game]);
 
+  const status: React.ReactNode[] = [];
+  if(downloadInfo?.status === 'installing') {
+    status.push(<div className="game-card-unzipping">Installing</div>)
+  } else if (downloadInfo?.status === 'downloading') {
+    status.push(<div className="game-card-download-progress">
+      {downloadInfo.files.map((file, index) => {
+        const totalPercentage = file.bytesReceived / downloadInfo.bytesTotal * 100;
+        return <div key={index} style={{width: totalPercentage+'%'}}></div>
+      })}
+    </div>)
+  } else if (downloadInfo?.status === 'unzipping') {
+    status.push(<div className="game-card-unzipping">Unzipping</div>)
+  } else if (downloadInfo?.status === 'pushing app data') {
+    status.push(<div className="game-card-unzipping">Pushing App data</div>)
+  } else {
+    if (downloadInfo?.status === 'installed' || deviceManager.isGameInstalled(game.packageName)) {
+      status.push(<Button wide onClick={() => {alert('not implemented')}} icon={Icons.solid.faBoxOpen}>Reinstall</Button>)    
+      status.push(<Button wide onClick={() => {alert('not implemented')}} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
+    } else {
+      status.push(<Button wide onClick={install} icon={Icons.solid.faDownload}>Install</Button>)
+    }
+    if (downloaded || downloadManager.isGameDownloaded(game.id)) {
+      status.push(<Button onClick={() => downloadManager.remove(game.id)} icon={Icons.solid.faTrash}>Remove</Button>)
+    } else if (onDownload) {
+      <Button wide onClick={() => onDownload(game)} icon={Icons.solid.faDownload}>Download</Button>
+    }
+  }
+
   return <>
-    <div className="game-card" onClick={() => onSelect && onSelect(game)}>
-      <div className="game-card-image">
+    <div className="game-card">
+      <div className="game-card-image" onClick={() => onSelect && onSelect(game)}>
         <img src={'game-image://' + game.packageName} alt={game.name} loading='lazy' />
       </div>
       <div className="game-card-content">
-        <h3 className="game-card-title">{game.normalName}</h3>
+        <h3 className="game-card-title" onClick={() => onSelect && onSelect(game)}>{game.normalName}</h3>
         {game.name !== game.normalName && <p className="game-card-subtitle">{game.name}</p>}
         <p className="game-card-category">{game.category}</p>
         <p className="game-card-size">{formatSize(game.size)}</p>
       </div>
-      <div  style={{display: 'flex', gap: 10, padding: 10}}>
-        {isInstalling && <div className="game-card-unzipping">Installing</div>}
-        {(!downloadInfo || downloadInfo.percent === -2) && !isInstalling && (downloadManager.isGameDownloaded(game.id)
-          ? <>
-            <Button wide onClick={install} icon={Icons.solid.faBoxOpen}>Install</Button>
-            <Button onClick={() => downloadManager.remove(game.id)} icon={Icons.solid.faTrash}>Remove</Button>
-          </>
-          : onDownload && <Button wide onClick={() => onDownload(game)} icon={Icons.solid.faDownload}>Download</Button>)}
-        {downloadInfo && downloadInfo.percent !== -2 && (downloadInfo.percent === -1
-          ? <div className="game-card-unzipping">Unzipping</div>
-          : <div className="game-card-download-progress">{downloadInfo.files.map((file, index) => {
-            const totalPercentage = file.bytesReceived / downloadInfo.bytesTotal * 100;
-            return <div key={index} style={{width: totalPercentage+'%'}}></div>
-          })
-          }</div>
-        )}
+      <div  style={{display: 'flex', gap: 5, padding: 10}}>
+        {status}
       </div>
+      {downloadInfo?.status === 'downloading' && <Button onClick={() => downloadManager.remove(game.id)} icon={Icons.solid.faTrash}>Cancel</Button>}
     </div>
-    {verbose && downloadInfo && downloadInfo.percent >= 0 && <>
+    {verbose && downloadInfo?.status === 'downloading' && <>
       <div className="game-card-download-info">
         <div>Download URL: {downloadInfo.url}</div>
         <div>Bytes Received: {downloadInfo.bytesReceived}</div>

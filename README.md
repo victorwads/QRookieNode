@@ -2,8 +2,8 @@
 
 **Under development**
 ```
-This project is in alpha releases just to test on several operational systems.
-Is not ready for final users. Just developers
+This project is in alpha releases not tested on all supported operational systems.
+You can already download the latest release and test it, but be aware that it may contain bugs.
 ```
 
 QRookie-Node is an application for downloading and installing games for Quest devices, inspired by the [QRookie](https://github.com/glaumar/QRookie) project by **@glaumar**. This project adapts the original implementation to a modern development environment, leveraging **Node.js** and **React** for greater flexibility and ease of use across multiple platforms.

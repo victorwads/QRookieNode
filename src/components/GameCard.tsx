@@ -5,7 +5,7 @@ import downloadManager from "../bridge/download";
 import type { DownloadInfo } from "../bridge/download";
 import type { Game } from "../bridge/games";
 
-import Icon, { Icons } from "./Icons";
+import { Icons } from "./Icons";
 import Button from "./Button";
 
 export function formatSize(size: number = 0): string {
@@ -22,8 +22,28 @@ export interface GameCardProps {
   onSelect?: (game: Game) => void;
 }
 
+const installingGames: { [id: string]: boolean } = {};
+
 const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose }: GameCardProps) => {
   const [downloadInfo, setDownloadInfo] = useState<DownloadInfo|null>(null);
+  const [isInstalling, setIsInstalling] = useState<boolean>(installingGames[game.id] || false);
+
+  const updateInstallStatus = (isInstalling: boolean) => {
+    installingGames[game.id] = isInstalling;
+    setIsInstalling(isInstalling);
+  }
+
+  const install = async () => {
+    if (isInstalling) return;
+    updateInstallStatus(true);
+    const result = await gameManager.install(game.id);
+    if (result) {
+      alert(result);
+    } else {
+      alert('Game installed successfully');
+    }
+    updateInstallStatus(false);
+  };
 
   useEffect(() => {
     return downloadManager.addListener(game.id, (info) => {
@@ -43,35 +63,38 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
         <p className="game-card-size">{formatSize(game.size)}</p>
       </div>
       <div  style={{display: 'flex', gap: 10, padding: 10}}>
-        {(!downloadInfo || downloadInfo.percent === 100) && (downloadManager.isGameDownloaded(game.id)
+        {isInstalling && <div className="game-card-unzipping">Installing</div>}
+        {(!downloadInfo || downloadInfo.percent === -2) && !isInstalling && (downloadManager.isGameDownloaded(game.id)
           ? <>
-            <Button wide onClick={() => gameManager.install(game.id)} icon={Icons.solid.faBoxOpen}>Install</Button>
+            <Button wide onClick={install} icon={Icons.solid.faBoxOpen}>Install</Button>
             <Button onClick={() => downloadManager.remove(game.id)} icon={Icons.solid.faTrash}>Remove</Button>
           </>
           : onDownload && <Button wide onClick={() => onDownload(game)} icon={Icons.solid.faDownload}>Download</Button>)}
+        {downloadInfo && downloadInfo.percent !== -2 && (downloadInfo.percent === -1
+          ? <div className="game-card-unzipping">Unzipping</div>
+          : <div className="game-card-download-progress">{downloadInfo.files.map((file, index) => {
+            const totalPercentage = file.bytesReceived / downloadInfo.bytesTotal * 100;
+            return <div key={index} style={{width: totalPercentage+'%'}}></div>
+          })
+          }</div>
+        )}
       </div>
-      {downloadInfo && downloadInfo?.percent !== 100 && (downloadInfo.percent === -1
-        ? <div className="game-card-unzipping">Unzipping...</div>
-        : <div className="game-card-download-progress">{downloadInfo.files.map((file, index) => {
-          const totalPercentage = file.bytesReceived / downloadInfo.bytesTotal * 100;
-          return <div key={index} style={{width: totalPercentage+'%'}}>{file.percent.toFixed(2)}%</div>
-        })
-        }</div>
-      )}
     </div>
-    {verbose && downloadInfo && downloadInfo.percent != -1 && downloadInfo.percent != 100 && <>
+    {verbose && downloadInfo && downloadInfo.percent >= 0 && <>
       <div className="game-card-download-info">
         <div>Download URL: {downloadInfo.url}</div>
         <div>Bytes Received: {downloadInfo.bytesReceived}</div>
         <div>Bytes Total: {downloadInfo.bytesTotal}</div>
         <div>Percent: {downloadInfo.percent.toFixed(2)}%</div>
         <ul>
-          {downloadInfo.files.map((file, index) => <li key={index}>
-            <div>File: {file.url}</div>
-            <div>Bytes Received: {file.bytesReceived}</div>
-            <div>Bytes Total: {file.bytesTotal}</div>
-            <div>Percent: {file.percent.toFixed(2)}%</div>
-          </li>)}
+          {downloadInfo.files
+            .filter(info => info.percent !== 100 && info.percent !== 0)
+            .map((file, index) => <li key={index}>
+              <div>File: {file.url}</div>
+              <div>Bytes Received: {file.bytesReceived}</div>
+              <div>Bytes Total: {file.bytesTotal}</div>
+              <div>Percent: {file.percent.toFixed(2)}%</div>
+            </li>)}
         </ul>
       </div>
     </>}

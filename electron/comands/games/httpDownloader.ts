@@ -10,6 +10,8 @@ import RunSystemCommand from "../runSystemCommand";
 import settingsManager from "../settings/manager";
 import vrpPublic from "./vrpPublic";
 
+export const extractDirName = "extracted";
+
 const downloadingInfo: Record<string, DownloadInfo> = {};
 const instanceUniqId = Math.random().toString(36);
 
@@ -20,7 +22,6 @@ const progress = (info: DownloadInfo) => {
   downloadingInfo[info.id] = info;
   if(shouldSend || info.percent === 100 || info.percent === -1) {
     shouldSend = false;
-    console.log("Download Progress:", info);
     getMainWindow()?.webContents.send("downloadProgress", info);
   }
 }
@@ -231,16 +232,11 @@ export default class HttpDownloader extends RunSystemCommand {
 
     await this.batchDownloadFiles(id, url, downloadDirectory, files, progressInfo);
 
-    files.forEach(file => {
-      file.percent = 100;
-      file.bytesReceived = file.bytesTotal;
-    });
-
     progressInfo.percent = -1;
     progress(progressInfo);
     await this.unZipDownloadedFiles(id, downloadDirectory);
 
-    progressInfo.percent = 100;
+    progressInfo.percent = -2;
     progress(progressInfo);
 
     fs.writeFileSync(path.join(downloadDirectory, "finished"), new Date().toISOString());
@@ -259,9 +255,9 @@ export default class HttpDownloader extends RunSystemCommand {
     fs.readdirSync(downloadDirectory)
       .filter(item => fs.statSync(path.join(downloadDirectory, item)).isDirectory())
       .forEach(dir => {
-        fs.renameSync(path.join(downloadDirectory, dir), path.join(downloadDirectory, "extracted"));
+        fs.renameSync(path.join(downloadDirectory, dir), path.join(downloadDirectory, extractDirName));
       });
-    // clean up
+
     fs.readdirSync(downloadDirectory)
       .filter(item => item.startsWith(id))
       .forEach(file => {
@@ -273,7 +269,32 @@ export default class HttpDownloader extends RunSystemCommand {
     id: string, url: URL, downloadDirectory: string,
     files: DownloadProgress[], progressInfo: DownloadInfo
   ) {
-    return Promise.all(files.map(file => new Promise((resolve, reject) => {
+    let resolvePromise: () => void;
+    const finalPromise = new Promise((resolve) => { resolvePromise = resolve as () => void; });
+
+    const queeeMaxSimultaneous = 3;
+    let downloadingNow = 0;
+    let currentIndex = 0;
+
+    const downloadNext = async () => {
+      if (currentIndex >= files.length) {
+        const isFinished = files.reduce((acc, file) => file?.percent === 100, true);
+        if (isFinished) {
+          resolvePromise();
+        }
+        return;
+      }
+      while (downloadingNow < queeeMaxSimultaneous && currentIndex < files.length) {
+        downloadingNow++;
+        downloadOne(files[currentIndex]).finally(() => {
+          downloadingNow--;
+          downloadNext();
+        });;
+        currentIndex++;
+      }
+    };
+
+    const downloadOne = async (file: DownloadProgress) => new Promise((resolve, reject) => {
       const { url: name} = file;
       const fileUrl = new URL(name, url);
       
@@ -309,7 +330,10 @@ export default class HttpDownloader extends RunSystemCommand {
         console.error(`Download Error: ${name}`, err);
         reject(err);
       });
-    })));
+    });
+
+    downloadNext();
+    return finalPromise;
   }
 
   private async getGameDownloadFiles(url: URL): Promise<{

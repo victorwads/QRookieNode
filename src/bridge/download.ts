@@ -60,7 +60,7 @@ class GameDownloadManager {
   }
 
   private async emit(id: string, info: DownloadInfo) {
-    if(info.percent === 100) {
+    if(info.percent === -2) {
       this.downloadingGames = this.downloadingGames.filter(gameId => gameId !== id);
       await this.getDownloadedGames();
       this.emitDownloading();

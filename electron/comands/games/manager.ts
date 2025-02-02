@@ -1,8 +1,12 @@
 import * as crypto from 'crypto';
+import * as path from 'path';
+import * as fs from 'fs';
 
-import vrpManager from './vrpManager';
-import HttpDownloader from "./httpDownloader";
 import type { Game } from "./";
+import vrpManager from './vrpManager';
+import adbManager from '../adb/manager';
+import HttpDownloader, { extractDirName } from "./httpDownloader";
+import settingsManager from '../settings/manager';
 
 interface WebGame {
   name?: string;
@@ -79,8 +83,39 @@ class GameManager {
   }
 
   public remove(id: string) {
-    // vrpManager.remove(id);
+    console.log("Removing game not implemented yet", id);
   }
+
+  public async install(id: string): Promise<string|null> {
+    const game = this.games.find((g) => g.id === id);
+    if (!game) {
+      return "Game not found:" + id;
+    }
+
+    const gameDir = path.join(settingsManager.getDownloadsDir(), id, extractDirName);
+    const dataPath = path.join(gameDir, game.packageName || "");
+
+    if (fs.existsSync(dataPath)) {
+      return "Install games with custom app data is not supported yet\n\nThis game has " + 
+        fs.readdirSync(dataPath).reduce((acc) => acc+1, 0) + " custom app data files that needed to be installed\n\n"
+        + "We will support this feature soon"
+      ;
+    }
+    const apkPath = fs.readdirSync(gameDir)
+      .find((file) => file.endsWith(".apk"));
+
+    if (!apkPath) {
+      return "No apk file found on the downloaded game folder " + gameDir;
+    }
+
+    try {
+      await adbManager.install(path.join(gameDir, apkPath));
+    } catch (err) {
+      return "Failed to install game: " + err;
+    }
+    return null;
+  }
+
 }
 
 const manager = new GameManager();

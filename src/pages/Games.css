@@ -104,9 +104,11 @@
     border: 1px solid #bbb;
     border-radius: 4px;
     background-color: #ddd;
+    width: 100%;
 }
 
 .game-card-unzipping {
+    flex: 1;
     justify-content: center;
     align-items: center;
     font-size: 0.8em;

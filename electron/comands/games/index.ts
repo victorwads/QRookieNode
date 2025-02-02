@@ -2,7 +2,7 @@ import { Command, CommandEvent } from "../../shared";
 import GamesManager from "./manager";
 
 export type GamesCommandPayload = GamesActionList | GamesActionWithId;
-export type GamesCommandOutput = Game[] | string[];
+export type GamesCommandOutput = Game[] | string[] | string | null | void;
 export type GamesCommandName = 'games';
 export type GamesCommand = Command<GamesCommandPayload, Game[], GamesCommandName>;
 export type GamesCommandEvent = CommandEvent<GamesCommandPayload, GamesCommandName>
@@ -51,7 +51,9 @@ export default {
     } else if (payload.action === 'download') {
       GamesManager.download(payload.id);
     } else if (payload.action === 'removeDownload') {
-      GamesManager.remove(payload.id);
+      return GamesManager.remove(payload.id);
+    } else if (payload.action === 'install') {
+      return GamesManager.install(payload.id);
     }
     return [];
   }

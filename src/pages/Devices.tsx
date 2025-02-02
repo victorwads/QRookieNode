@@ -60,7 +60,7 @@ const Devices: React.FC = () => {
       {result.deviceInfo && <DeviceInfoCard deviceInfo={result.deviceInfo} />}
       <UsersList users={result.users} />
       <h2>Installed Games</h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+      <div className='game-list'>
         {(result.apps
           .map(game => gamesManager.getGameFromCache(game.packageName))
           .filter(game => game) as Game[])

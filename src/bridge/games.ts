@@ -34,8 +34,8 @@ class GamesManager {
     return this.cache;
   }
 
-  public install(id: string): void {
-    sendCommand<GamesCommandName, GamesCommandPayload>({
+  public async install(id: string): Promise<string|null> {
+    return await sendCommand<GamesCommandName, GamesCommandPayload, string|null>({
       type: 'games',
       payload: {
         action: 'install',

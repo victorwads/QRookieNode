@@ -1,3 +1,5 @@
+import * as fs from "fs";
+
 import RunSystemCommand from "../runSystemCommand";
 import type { Device, User, AppInfo } from "./";
 
@@ -147,6 +149,21 @@ class AdbManager extends RunSystemCommand {
     }
     this.serial = newSerial;
     return newSerial;
+  }
+
+  public async install(apkPath: string): Promise<boolean> {
+    const serial = this.getDeviceSerial()
+    if (!serial)
+      throw new Error("No device selected");
+    if (!fs.existsSync(apkPath))
+      throw new Error("APK not found " + apkPath);
+
+    await this.runAdbCommand([
+      "-s", serial,
+      "install", apkPath
+    ]);
+
+    return true;
   }
 }
 

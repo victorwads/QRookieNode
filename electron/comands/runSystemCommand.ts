@@ -41,11 +41,13 @@ export default abstract class RunSystemCommand {
     stdout: string;
     stderr: string;
   }> {
+    console.log("Running command:", comandWithPath, args.join(" "));
     try {
       const { stdout, stderr } = await execFileAsync(comandWithPath, args);
+      console.log("Command executed successfully", stdout.trim(), stderr.trim());
       return { stdout: stdout.trim(), stderr: stderr.trim() };
     } catch (error: any) {
-      console.error(error.message);
+      console.log(error.message);
       return { stdout: "", stderr: error.message }
     }
   }

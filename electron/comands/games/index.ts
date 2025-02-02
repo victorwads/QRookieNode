@@ -1,7 +1,7 @@
 import { Command, CommandEvent } from "../../shared";
 import GamesManager from "./manager";
 
-export type GamesCommandPayload = GamesActionList | GamesActionDownload;
+export type GamesCommandPayload = GamesActionList | GamesActionWithId;
 export type GamesCommandOutput = Game[] | string[];
 export type GamesCommandName = 'games';
 export type GamesCommand = Command<GamesCommandPayload, Game[], GamesCommandName>;
@@ -23,9 +23,9 @@ export type GamesActionList = {
   action: 'list' | 'listDownloaded';
 }
 
-export type GamesActionDownload = {
-  action: 'download';
-  game: Game;
+export type GamesActionWithId = {
+  action: 'download' | 'install' | 'removeDownload';
+  id: string;
 }
 
 export type DownloadProgress = {
@@ -49,7 +49,9 @@ export default {
     } else if (payload.action === 'listDownloaded') {
       return GamesManager.getDownloadedGames();
     } else if (payload.action === 'download') {
-      GamesManager.download(payload.game);
+      GamesManager.download(payload.id);
+    } else if (payload.action === 'removeDownload') {
+      GamesManager.remove(payload.id);
     }
     return [];
   }

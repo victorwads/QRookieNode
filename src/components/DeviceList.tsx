@@ -1,5 +1,9 @@
 import React from "react";
+
 import { Device } from "../bridge/devices";
+
+import Button from "./Button";
+import { Icons } from "./Icons";
 
 interface DeviceListProps {
   devices: Device[];
@@ -15,8 +19,8 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices, onConnect, onConnectW
         {devices.map((device) => (
           <li key={device.serial}>
             <strong>Serial:</strong> {device.serial} - <strong>Model:</strong> {device.model || "Unknown"}
-            <button onClick={() =>onConnect(device.serial)}>Connect</button>
-            {device.ip && <button onClick={() =>onConnectWifi(device.serial)}>Connect With Ip</button>}
+            <Button onClick={() =>onConnect(device.serial)} icon={Icons.solid.faLink}>Connect</Button>
+            {device.ip && <Button onClick={() =>onConnectWifi(device.serial)} icon={Icons.solid.faWifi}>Network Connect</Button>}
           </li>
         ))}
       </ul>

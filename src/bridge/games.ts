@@ -34,24 +34,16 @@ class GamesManager {
     return this.cache;
   }
 
-  public async getDownloadedGames(): Promise<string[]> {
-    return await sendCommand<GamesCommandName, GamesCommandPayload, string[]>({
+  public install(id: string): void {
+    sendCommand<GamesCommandName, GamesCommandPayload>({
       type: 'games',
       payload: {
-        action: 'listDownloaded',
-      },
-    })
-  }
-
-  public downloadGame(game: Game) {
-    sendCommand<GamesCommandName, GamesCommandPayload, Game[]>({
-      type: 'games',
-      payload: {
-        action: 'download',
-        game,
+        action: 'install',
+        id,
       },
     });
   }
+
 }
 
 export default new GamesManager();

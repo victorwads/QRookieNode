@@ -12,7 +12,7 @@ interface Tab {
 
 const tabs: Tab[] = [
   { name: 'Games', path: '/games', icon: Icons.solid.faGamepad, isFlexible: true },
-  { name: 'Downloads', path: '/downloads', icon: Icons.solid.faDownload, isFlexible: true },
+  { name: 'Library', path: '/downloads', icon: Icons.solid.faLayerGroup, isFlexible: true },
   { name: 'Devices', path: '/devices', icon: Icons.solid.faTabletAlt, isFlexible: true },
   // { name: 'Users', path: '/users', icon: Icons.solid.faUsers, isFlexible: true },
   { name: 'Settings', path: '/settings', icon: Icons.solid.faCog, isFlexible: false },

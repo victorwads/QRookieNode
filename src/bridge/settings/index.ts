@@ -1,7 +1,7 @@
 import sendCommand from '..';
 import { DevToolsCommandName, Settings, SettingsCommandName, SettingsCommandOutputs, SettingsCommandPayload, SystemHelth } from '../../../electron/shared';
 import { promisse, RepoDownloadsInfo, repoDownloadsInfo } from './repoInfo';
-export type { GitHubRelease, Settings } from '../../../electron/shared';
+export type { GitHubRelease, Settings, SystemHelth } from '../../../electron/shared';
 
 export type { RepoDownloadsInfo }
 

@@ -74,8 +74,12 @@ class GameManager {
     return hash.digest('hex');
   }
 
-  public download(game: Game) {
-    vrpManager.downloadGame(game.id);
+  public download(id: string) {
+    vrpManager.downloadGame(id);
+  }
+
+  public remove(id: string) {
+    // vrpManager.remove(id);
   }
 }
 

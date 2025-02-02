@@ -26,3 +26,7 @@ code {
 h1 > svg {
   margin-right: 0.4em;
 }
+
+.spacer {
+  flex: 1;
+}

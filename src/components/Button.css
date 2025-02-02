@@ -1,0 +1,23 @@
+.simple-buttom {
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+    color: #333;
+    cursor: pointer;
+    font-size: 0.8em;
+    margin-bottom: 0;
+    padding: 8px 12px;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.simple-buttom svg {
+    margin-right: 0.4em;
+}
+
+.simple-buttom.wide {
+    flex: 1;
+}

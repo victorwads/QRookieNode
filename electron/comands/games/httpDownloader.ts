@@ -4,9 +4,11 @@ import * as path from "path";
 import * as fs from "fs";
 import { WriteStream } from "fs";
 
-import settingsManager from "../settings/manager";
 import { DownloadInfo, DownloadProgress } from "../../shared";
 import { getMainWindow } from "../../main";
+import RunSystemCommand from "../runSystemCommand";
+import settingsManager from "../settings/manager";
+import vrpPublic from "./vrpPublic";
 
 const downloadingInfo: Record<string, DownloadInfo> = {};
 const instanceUniqId = Math.random().toString(36);
@@ -14,15 +16,16 @@ const instanceUniqId = Math.random().toString(36);
 let shouldSend = true;
 setInterval(() => { shouldSend = true; }, 100);
 
-const progress = (info: DownloadInfo, id: string) => {
-  downloadingInfo[id] = info;
-  if(shouldSend || info.percent === 100) {
+const progress = (info: DownloadInfo) => {
+  downloadingInfo[info.id] = info;
+  if(shouldSend || info.percent === 100 || info.percent === -1) {
     shouldSend = false;
+    console.log("Download Progress:", info);
     getMainWindow()?.webContents.send("downloadProgress", info);
   }
 }
 
-export default class HttpDownloader {
+export default class HttpDownloader extends RunSystemCommand {
   public download(url: string): Promise<string> {
     console.log(`Downloading with https: ${url}`);
     return new Promise((resolve, reject) => {
@@ -164,6 +167,10 @@ export default class HttpDownloader {
   private initDownloadFileLock(downloadPath: string) {
     fs.readdirSync(downloadPath).forEach((file) => {
       const filePath = path.join(downloadPath, file);
+      const finishedPath = filePath + ".finished";
+      if (file.endsWith("finished") || fs.existsSync(finishedPath)) {
+        return;
+      }
       fs.unlinkSync(filePath);
     });
     fs.writeFileSync(path.join(downloadPath, instanceUniqId), new Date().toISOString());
@@ -212,7 +219,7 @@ export default class HttpDownloader {
       files: [],
     }
     
-    progress(progressInfo, id);
+    progress(progressInfo);
     const {files, totalSize} = await this.getGameDownloadFiles(url);
     if (files.length === 0) {
       console.log(`Downloading Error: No files found: ${url}`);
@@ -220,20 +227,46 @@ export default class HttpDownloader {
     }
     progressInfo.bytesTotal = totalSize;
     progressInfo.files = files;
-    progress(progressInfo, id);
+    progress(progressInfo);
 
     await this.batchDownloadFiles(id, url, downloadDirectory, files, progressInfo);
 
-    progressInfo.percent = 100;
     files.forEach(file => {
       file.percent = 100;
       file.bytesReceived = file.bytesTotal;
     });
-    progress(progressInfo, id);
+
+    progressInfo.percent = -1;
+    progress(progressInfo);
+    await this.unZipDownloadedFiles(id, downloadDirectory);
+
+    progressInfo.percent = 100;
+    progress(progressInfo);
 
     fs.writeFileSync(path.join(downloadDirectory, "finished"), new Date().toISOString());
     console.log(`Download complete: ${id}`);
     return true;
+  }
+
+  private async unZipDownloadedFiles(id: string, downloadDirectory: string) {
+    await this.runCommand(this.getSevenZipPath(), [
+      "x",
+      "-y",
+      "-o" + downloadDirectory,
+      "-p" + (await vrpPublic)?.password,
+      path.join(downloadDirectory, id + ".7z.001"),
+    ])
+    fs.readdirSync(downloadDirectory)
+      .filter(item => fs.statSync(path.join(downloadDirectory, item)).isDirectory())
+      .forEach(dir => {
+        fs.renameSync(path.join(downloadDirectory, dir), path.join(downloadDirectory, "extracted"));
+      });
+    // clean up
+    fs.readdirSync(downloadDirectory)
+      .filter(item => item.startsWith(id))
+      .forEach(file => {
+        fs.unlinkSync(path.join(downloadDirectory, file));
+      });
   }
   
   private batchDownloadFiles(
@@ -245,16 +278,32 @@ export default class HttpDownloader {
       const fileUrl = new URL(name, url);
       
       const filePath = path.join(downloadDirectory, name);
+      const finishedPath = filePath + ".finished";
+
+      const finishProgress = () => {
+        file.bytesReceived = file.bytesTotal;
+        file.percent = 100;
+        progress(progressInfo);
+      }
+
+      if (fs.existsSync(finishedPath)) {
+        console.log(`File already exists: ${name}`);
+        finishProgress();
+        resolve(true);
+        return;
+      }
+
       const fileStream = fs.createWriteStream(filePath);
       this.getBodyWithHttp2(fileUrl, fileStream, (addSize) => {
         progressInfo.bytesReceived += addSize;
         progressInfo.percent = progressInfo.bytesReceived / progressInfo.bytesTotal * 100;
         file.bytesReceived += addSize;
         file.percent = file.bytesReceived / file.bytesTotal * 100;
-        progress(progressInfo, id);
+        progress(progressInfo);
       }).then(() => {
         console.log(`Downloaded: ${name} (${file.bytesTotal} bytes)`);
-        fs.writeFileSync(filePath + ".finished", new Date().toISOString());
+        fs.writeFileSync(finishedPath, new Date().toISOString());
+        finishProgress();
         resolve(true);
       }).catch((err) => {
         console.error(`Download Error: ${name}`, err);

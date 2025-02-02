@@ -97,13 +97,33 @@
     margin-top: 8px;
 }
 
-.game-card-download-progress {
+.game-card-download-progress, .game-card-unzipping {
     display: flex;
     flex-direction: row;
-    height: 15px;
+    height: 18px;
     border: 1px solid #bbb;
     border-radius: 4px;
     background-color: #ddd;
+}
+
+.game-card-unzipping {
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+}
+
+.game-card-unzipping::after, .game-card-unzipping::before {
+    content: ".";
+    animation: dots 2s steps(3, end) infinite;
+}
+
+@keyframes dots {
+    0%, 16% { content: ""; }
+    16%, 32% { content: "."; }
+    32%, 48%  { content: ".."; }
+    48%, 64% { content: "..."; }
+    64%, 80%  { content: ".."; }
+    80%, 100% { content: "."; }
 }
 
 .game-card-download-progress > div {

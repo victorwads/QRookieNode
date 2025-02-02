@@ -5,12 +5,13 @@ import Icon, { Icons } from '../components/Icons';
 import UsersList from '../components/UsersList';
 import DevicesList from '../components/DeviceList';
 import DeviceInfoCard from '../components/DeviceInfoCard';
+import GameCard from '../components/GameCard';
+import Button from '../components/Button';
 
 import gamesManager from '../bridge/games';
 import type { Game } from '../bridge/games';
 import deviceManager from '../bridge/devices';
 import type { AdbCommandOutput } from '../bridge/devices';
-import GameCard from '../components/GameCard';
 
 
 const Devices: React.FC = () => {
@@ -52,9 +53,9 @@ const Devices: React.FC = () => {
     <div className='horizontal-display'>
       <h1><Icon icon={Icons.solid.faTabletAlt} size="lg" />Devices Page</h1>
       <CenteredLoading visible={loading} />
-      <button onClick={() => getAdbDevices()}><Icon icon={Icons.solid.faRefresh} /> Reload Devices</button>
+      <Button onClick={() => getAdbDevices()} icon={Icons.solid.faRefresh}>Reload Devices</Button>
     </div>
-    <div style={{padding: 20}}>{result.devices.length === 0 ? <p>No devices found</p> : <>
+    <div style={{padding: '0 20px'}}>{result.devices.length === 0 ? <p>No devices found</p> : <>
       <DevicesList devices={result.devices} onConnect={getAdbDevices} onConnectWifi={connectWifi} />
       {result.deviceInfo && <DeviceInfoCard deviceInfo={result.deviceInfo} />}
       <UsersList users={result.users} />

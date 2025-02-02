@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
 import type { RepoDownloadsInfo, Settings as SettingsModel } from '../bridge/settings';
-import settingsManager from '../bridge/settings';
+import settingsManager, { SystemHelth } from '../bridge/settings';
 
 import './Settings.css';
 import Icon, { Icons } from '../components/Icons';
+import Button from '../components/Button';
 import { BasicLoading } from './Loading';
-import { SystemHelth } from '../../electron/shared';
 
 let sysTemHelthCache: SystemHelth|null = null;
 
@@ -40,8 +40,9 @@ const Settings: React.FC = () => {
   return <div className='settings'>
     <div className='horizontal-display'>
       <h1><Icon icon={Icons.solid.faGear} size="lg" />Settings Page</h1>
-      <button onClick={openDevTools}>Open DevTools</button>
-      <button onClick={changeDownloadsDir}>Change Downloads Dir</button>
+      <div className='spacer' />
+      <Button onClick={openDevTools} icon={Icons.solid.faTools}>DevTools</Button>
+      <Button onClick={changeDownloadsDir} icon={Icons.solid.faFolderOpen}>Change Downloads Dir</Button>
     </div>
     <div className='sections'>
       <section>

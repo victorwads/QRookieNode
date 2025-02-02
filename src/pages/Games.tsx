@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import downloadManager from '../bridge/download';
 import gamesManager from '../bridge/games';
 import type { Game } from '../bridge/games';
 
@@ -30,13 +31,14 @@ const Games: React.FC = () => {
   }, []);
 
   const startDownloading = async (game: Game) => {
-    gamesManager.downloadGame(game);
+    downloadManager.downloadGame(game.id);
   }
 
   if (result.length > 0 && id) {
-    const game = result.find(game => game.packageName === id)!;
+    const game = result.find(game => game.id === id)!;
     return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
       <h1>{game.name}</h1>
+      <span><strong>ID:</strong> {game.id}</span>
       <span><strong>Category:</strong> {game.category}</span>
       <span><strong>Version:</strong> {game.version}</span>
       <span><strong>Last Updated:</strong> {game.lastUpdated}</span>
@@ -70,7 +72,7 @@ const Games: React.FC = () => {
         .filter((_, i) => i < limit)
         .map((item) => item.game)
         .map((game) =>
-          <GameCard key={game.id} game={game} onSelect={game => navigate(game.packageName ?? "")} onDownload={startDownloading} />
+          <GameCard key={game.id} game={game} onSelect={game => navigate(game.id ?? "")} onDownload={startDownloading} />
         )}
     </div>
   </>
@@ -108,6 +110,10 @@ function searchItemIsIncluded(search: string, item: Game): SearchRelevance {
     }, 0);
     relevance += fieldRelevance;
   });
+
+  // if(item.id === search) {
+  //   relevance += 1000;
+  // }
 
   return { relevance, game: item };
 }

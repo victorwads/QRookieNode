@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import type { Game } from '../bridge/games';
 import gamesManager from '../bridge/games';
@@ -14,6 +15,8 @@ let hasPedingDownloadFolderSearch = false;
 const Downloads: React.FC = () => {
   const [downloads, setDownloads] = React.useState<Game[]>([]);
   const [downloading, setDownloading] = React.useState<Game[]>([]);
+  const navigate = useNavigate();
+
 
   const updateDownloadedGames = async () => {
     if(hasPedingDownloadFolderSearch)
@@ -33,10 +36,11 @@ const Downloads: React.FC = () => {
   }
 
   useEffect(() => {
-    return downloadManager.addDownloadingListener((ids) => {
+    return downloadManager.addDownloadingListener(infos => {
       updateDownloadedGames();
-      setDownloading(ids
-        .map(id => gamesManager.getGameFromCacheById(id))
+      setDownloading(infos
+        .filter(info => info.status === 'downloading')
+        .map(({id}) => gamesManager.getGameFromCacheById(id))
         .filter(game => game) as Game[]
       );
     });
@@ -51,13 +55,13 @@ const Downloads: React.FC = () => {
       {downloading.length !== 0 && <div style={{flex: 1}}>
         <h2>Downloading Games</h2>
         <div className="game-list">
-          {downloading.map(game => <GameCard game={game} key={game.id}/>)}
+          {downloading.map(game => <GameCard game={game} key={game.id} onSelect={() => navigate('/games/' + game.id)}/>)}
         </div>
       </div>}
       {downloads.length !== 0 && <div style={{flex: 1}}>
         <h2>Downloaded Games</h2>
         <div className='game-list'>
-          {downloads.map(game => <GameCard downloaded game={game} key={game.id}/>)}
+          {downloads.map(game => <GameCard downloaded game={game} key={game.id} onSelect={() => navigate('/games/' + game.id)}/>)}
         </div>
       </div>}
     </div>

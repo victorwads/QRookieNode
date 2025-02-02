@@ -3,7 +3,6 @@ import * as fs from "fs";
 import RunSystemCommand from "../runSystemCommand";
 import type { Device, User, AppInfo } from "./";
 
-
 class AdbManager extends RunSystemCommand {
   private devices: Device[] = [];
   private users: User[] = [];
@@ -164,6 +163,30 @@ class AdbManager extends RunSystemCommand {
     ]);
 
     return true;
+  }
+
+  public createObbDir(packageName: string): void {
+    const serial = this.getDeviceSerial()
+    if (!serial)
+      throw new Error("No device selected");
+
+    this.runAdbCommand([
+      "-s", serial,
+      "shell", "mkdir", "-p", `/sdcard/Android/obb/${packageName}/`
+    ]);
+  }
+
+  public async pushObbFile(filePath: string, packageName: string): Promise<void> {
+    const serial = this.getDeviceSerial()
+    if (!serial)
+      throw new Error("No device selected");
+    if (!fs.existsSync(filePath))
+      throw new Error("File not found " + filePath);
+    
+    await this.runAdbCommand([
+      "-s", serial,
+      "push", "-p", filePath, `/sdcard/Android/obb/${packageName}/`
+    ]);
   }
 }
 

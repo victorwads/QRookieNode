@@ -68,8 +68,7 @@ class GameManager {
   }
 
   public getDownloadedGames(): string[] {
-    return vrpManager.getDownloadedGames()
-    ;
+    return vrpManager.getDownloadedGames();
   }
 
   private getGameId(releaseName: string): string {
@@ -82,8 +81,9 @@ class GameManager {
     vrpManager.downloadGame(id);
   }
 
-  public remove(id: string) {
-    console.log("Removing game not implemented yet", id);
+  public async remove(id: string) {
+    await this.downloader.removeDownload(id);
+    this.getDownloadedGames();
   }
 
   public async install(id: string): Promise<string|null> {
@@ -95,11 +95,8 @@ class GameManager {
     const gameDir = path.join(settingsManager.getDownloadsDir(), id, extractDirName);
     const dataPath = path.join(gameDir, game.packageName || "");
 
-    if (fs.existsSync(dataPath)) {
-      return "Install games with custom app data is not supported yet\n\nThis game has " + 
-        fs.readdirSync(dataPath).reduce((acc) => acc+1, 0) + " custom app data files that needed to be installed\n\n"
-        + "We will support this feature soon"
-      ;
+    if (fs.existsSync(dataPath) && !game.packageName) {
+      return "Game has custom app data but no game has no package name";;
     }
 
     const apkPath = fs.readdirSync(gameDir).find((file) => file.endsWith(".apk"));
@@ -110,7 +107,21 @@ class GameManager {
     try {
       progress({ id , status: 'installing', installingFile: apkPath });
       await adbManager.install(path.join(gameDir, apkPath));
-    } catch (err) {
+
+      if (fs.existsSync(dataPath)) {
+        await adbManager.createObbDir(game.packageName || "");
+        const files = fs.readdirSync(dataPath);
+
+        for(let index = 0; index < files.length; index++) {
+          const name = files[index];
+          if(name.endsWith(".obb"))
+            continue;
+          progress({ id , status: 'pushing app data', file: { index, name }, totalFiles: files.length });
+          await adbManager.pushObbFile(path.join(dataPath, name), game.packageName || "");
+        }
+      }
+    } catch (err: any) {
+      progress({ id , status: 'error', message: err });
       return "Failed to install game: " + err;
     }
     progress({ id , status: 'installed'});

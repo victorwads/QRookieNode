@@ -37,6 +37,12 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
     }
   };
 
+  const remove = async () => {
+    if(!window.confirm('Are you sure you want to remove this game?')) return;
+    await downloadManager.remove(game.id);
+    setDownloadInfo(null);
+  }
+
   useEffect(() => {
     return downloadManager.addListener(game.id, (info) => {
       setDownloadInfo(info ? {...info} : null);
@@ -53,21 +59,21 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
         return <div key={index} style={{width: totalPercentage+'%'}}></div>
       })}
     </div>)
+    status.push(<Button onClick={remove} icon={Icons.solid.faTrash}>Cancel</Button>)
   } else if (downloadInfo?.status === 'unzipping') {
     status.push(<div className="game-card-unzipping">Unzipping</div>)
   } else if (downloadInfo?.status === 'pushing app data') {
     status.push(<div className="game-card-unzipping">Pushing App data</div>)
   } else {
     if (downloadInfo?.status === 'installed' || deviceManager.isGameInstalled(game.packageName)) {
-      status.push(<Button wide onClick={() => {alert('not implemented')}} icon={Icons.solid.faBoxOpen}>Reinstall</Button>)    
+      status.push(<Button wide onClick={install} icon={Icons.solid.faBoxOpen}>Reinstall</Button>)    
       status.push(<Button wide onClick={() => {alert('not implemented')}} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
-    } else {
-      status.push(<Button wide onClick={install} icon={Icons.solid.faDownload}>Install</Button>)
     }
     if (downloaded || downloadManager.isGameDownloaded(game.id)) {
-      status.push(<Button onClick={() => downloadManager.remove(game.id)} icon={Icons.solid.faTrash}>Remove</Button>)
+      status.push(<Button wide onClick={install} icon={Icons.solid.faDownload}>Install</Button>)
+      status.push(<Button onClick={remove} icon={Icons.solid.faTrash}>Remove</Button>)
     } else if (onDownload) {
-      <Button wide onClick={() => onDownload(game)} icon={Icons.solid.faDownload}>Download</Button>
+      status.push(<Button wide onClick={() => onDownload(game)} icon={Icons.solid.faDownload}>Download</Button>)
     }
   }
 
@@ -82,27 +88,40 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
         <p className="game-card-category">{game.category}</p>
         <p className="game-card-size">{formatSize(game.size)}</p>
       </div>
-      <div  style={{display: 'flex', gap: 5, padding: 10}}>
+      <div  style={{display: 'flex', gap: 5, padding: 10, alignItems: 'center'}}>
         {status}
       </div>
-      {downloadInfo?.status === 'downloading' && <Button onClick={() => downloadManager.remove(game.id)} icon={Icons.solid.faTrash}>Cancel</Button>}
     </div>
     {verbose && downloadInfo?.status === 'downloading' && <>
       <div className="game-card-download-info">
-        <div>Download URL: {downloadInfo.url}</div>
-        <div>Bytes Received: {downloadInfo.bytesReceived}</div>
-        <div>Bytes Total: {downloadInfo.bytesTotal}</div>
-        <div>Percent: {downloadInfo.percent.toFixed(2)}%</div>
+        <strong>Downloading</strong>
+        <div><strong>Download URL: </strong>{downloadInfo.url}</div>
+        <div><strong>Bytes Received: </strong>{downloadInfo.bytesReceived}</div>
+        <div><strong>Bytes Total: </strong>{downloadInfo.bytesTotal}</div>
+        <div><strong>Percent: </strong>{downloadInfo.percent.toFixed(2)}%</div>
         <ul>
           {downloadInfo.files
             .filter(info => info.percent !== 100 && info.percent !== 0)
             .map((file, index) => <li key={index}>
-              <div>File: {file.url}</div>
-              <div>Bytes Received: {file.bytesReceived}</div>
-              <div>Bytes Total: {file.bytesTotal}</div>
-              <div>Percent: {file.percent.toFixed(2)}%</div>
+              <div><strong>File: </strong>{file.url}</div>
+              <div><strong>Bytes Received: </strong>{file.bytesReceived}</div>
+              <div><strong>Bytes Total: </strong>{file.bytesTotal}</div>
+              <div><strong>Percent: </strong>{file.percent.toFixed(2)}%</div>
             </li>)}
         </ul>
+      </div>
+    </>}
+    {verbose && downloadInfo?.status === 'installing' && <>
+      <div className="game-card-download-info">
+        <strong>Installing</strong>
+        <div><strong>Filename:</strong> {downloadInfo.installingFile}</div>
+      </div>
+    </>}
+    {verbose && downloadInfo?.status === 'pushing app data' && <>
+      <div className="game-card-download-info">
+        <strong>Pusing App Data</strong>
+        <div><strong>Files:</strong>{downloadInfo.file.index + 1}/{downloadInfo.totalFiles}</div>
+        <div><strong>File Name: </strong>{downloadInfo.file.name}</div>
       </div>
     </>}
   </>;

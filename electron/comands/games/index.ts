@@ -44,8 +44,15 @@ export type DownloadInfo = ({
   status: 'downloading'
   files: DownloadProgress[];
 } & DownloadProgress) | {
-  status: 'installing' | 'pushing app data',
+  status: 'installing',
   installingFile: string;
+} | {
+  status: 'pushing app data',
+  totalFiles: number;
+  file: {
+    index: number;
+    name: string;
+  }
 }) & { id: string; }
 
 export default {

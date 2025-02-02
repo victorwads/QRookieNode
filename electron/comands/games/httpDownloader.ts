@@ -52,6 +52,11 @@ export default class HttpDownloader extends RunSystemCommand {
     });
   }
 
+  public removeDownload(id: string) {
+    const downloadDirectory = path.join(settingsManager.getDownloadsDir(), id);
+    fs.rmSync(downloadDirectory, { recursive: true });
+  }
+
   public async downloadFile(fileName: string, baseUrl: string, finalPath: string): Promise<boolean> {
     const tempPath = `${finalPath}`;
 
@@ -235,7 +240,7 @@ export default class HttpDownloader extends RunSystemCommand {
     progress(progressInfo);
     await this.unZipDownloadedFiles(id, downloadDirectory);
 
-    progressInfo.status = "downloaded";
+    progressInfo = { id, status: 'downloaded' };
     progress(progressInfo);
 
     fs.writeFileSync(path.join(downloadDirectory, "finished"), new Date().toISOString());
@@ -281,7 +286,7 @@ export default class HttpDownloader extends RunSystemCommand {
 
     const downloadNext = async () => {
       if (currentIndex >= files.length) {
-        const isFinished = files.reduce((acc, file) => file?.percent === 100, true);
+        const isFinished = files.reduce((acc, file) => acc && file?.percent === 100, true);
         if (isFinished) {
           resolvePromise();
         }

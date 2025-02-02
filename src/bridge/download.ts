@@ -5,12 +5,12 @@ import type { DownloadInfo } from '../../electron/shared';
 export type { DownloadInfo } from '../../electron/shared';
 
 type ListenerCallback = (info: DownloadInfo) => void;
-type DownloadingListener = (ids: string[]) => void;
+type DownloadingListener = (info: DownloadInfo[]) => void;
 
 class GameDownloadManager {
   private listeners: { [id: string]: ListenerCallback[] } = {};
   private downloadingGamesChangeListeners: DownloadingListener[] = [];
-  private downloadingGames: DownloadInfo[] = [];
+  private downloadingGames: { [id: string]: DownloadInfo } = {};
   private downloadedCache: string[] = [];
 
   constructor() {
@@ -26,6 +26,7 @@ class GameDownloadManager {
       this.listeners[id] = [];
     }
     this.listeners[id].push(callback);
+    callback(this.getGameInfo(id) || { id, status: 'none' });
 
     return () => {
       this.removeListener(id, callback);
@@ -44,7 +45,7 @@ class GameDownloadManager {
 
   public addDownloadingListener(callback: DownloadingListener) {
     this.downloadingGamesChangeListeners.push(callback);
-    callback(this.downloadingGames.map(info => info.id));
+    callback(Object.values(this.downloadingGames));
 
     return () => {
       this.removeDownloadingListener(callback);
@@ -57,19 +58,20 @@ class GameDownloadManager {
 
   public emitDownloading() {
     this.downloadingGamesChangeListeners.forEach(callback => 
-      callback(this.downloadingGames.map(info => info.id))
+      callback(Object.values(this.downloadingGames))
     );
   }
 
   public getGameInfo(id: string): DownloadInfo | null {
-    return this.downloadingGames.find(info => info.id === id) || null;
+    return this.downloadingGames[id] || null;
   }
 
   private async emit(id: string, info: DownloadInfo) {
-    if(this.getGameInfo(id)) {
-      this.downloadingGames.push(info);
+    this.downloadingGames[id] = info;
+    if(!this.getGameInfo(id)) {
       this.emitDownloading();
-    } else if(info.status !== 'downloading') {
+    }
+    if(!this.getGameInfo(id) || info.status !== 'downloading') {
       this.emitDownloading();
     }
 
@@ -89,7 +91,7 @@ class GameDownloadManager {
   }
 
   public isGameDownloaded(id: string): boolean {
-    return this.downloadedCache.includes(id);
+    return this.downloadedCache.includes(id) || this.downloadingGames[id]?.status === 'downloaded';
   }
 
   public downloadGame(id: string) {
@@ -102,14 +104,17 @@ class GameDownloadManager {
     });
   }
 
-  public remove(id: string): void {
-    sendCommand<GamesCommandName, GamesCommandPayload>({
+  public async remove(id: string): Promise<void> {
+    await sendCommand<GamesCommandName, GamesCommandPayload>({
       type: 'games',
       payload: {
-        action: 'download',
+        action: 'removeDownload',
         id,
       },
     });
+    this.downloadedCache = this.downloadedCache.filter(gameId => gameId !== id);
+    delete this.downloadingGames[id];
+    this.emitDownloading();
   }
 }
 

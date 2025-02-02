@@ -165,7 +165,7 @@ export default class HttpDownloader extends RunSystemCommand {
       if (file.endsWith("finished") || fs.existsSync(finishedPath)) {
         return;
       }
-      fs.unlinkSync(filePath);
+      fs.rmSync(filePath, { recursive: true });
     });
     fs.writeFileSync(path.join(downloadPath, instanceUniqId), new Date().toISOString());
   }
@@ -203,6 +203,7 @@ export default class HttpDownloader extends RunSystemCommand {
     let progressInfo: DownloadInfo = {
       id, url: url.toString(),
       status: "downloading",
+      speed: "loading...",
       bytesReceived: 0,
       bytesTotal: 0,
       percent: 0,
@@ -272,17 +273,26 @@ export default class HttpDownloader extends RunSystemCommand {
   private batchDownloadFiles(
     id: string, url: URL, downloadDirectory: string,
     files: DownloadProgress[], progressInfo: DownloadInfo
-  ) {
+  ): Promise<void> {
+    if(progressInfo.status !== 'downloading')
+      return Promise.resolve();
+
     let resolvePromise: () => void;
     let rejectPromise: () => void;
-    const finalPromise = new Promise((resolve, reject) => { 
+    const finalPromise = new Promise<void>((resolve, reject) => { 
       resolvePromise = resolve as () => void; 
       rejectPromise = reject as () => void;
     });
 
     const queeeMaxSimultaneous = 3;
+    let downloadSpeed = 0; 
     let downloadingNow = 0;
     let currentIndex = 0;
+
+    const interval = setInterval(() => {
+      progressInfo.speed = formatSpeed(downloadSpeed);
+      downloadSpeed = 0;
+    }, 1000);
 
     const downloadNext = async () => {
       if (currentIndex >= files.length) {
@@ -317,6 +327,8 @@ export default class HttpDownloader extends RunSystemCommand {
 
       if (fs.existsSync(finishedPath)) {
         console.log(`File already exists: ${name}`);
+        progressInfo.bytesReceived! += file.bytesTotal;
+        progressInfo.percent = progressInfo.bytesReceived! / progressInfo.bytesTotal! * 100;
         finishProgress();
         resolve(true);
         return;
@@ -324,10 +336,9 @@ export default class HttpDownloader extends RunSystemCommand {
 
       const fileStream = fs.createWriteStream(filePath);
       this.getBodyWithHttp2(fileUrl, fileStream, (addSize) => {
-        if(progressInfo.status === 'downloading') {
-          progressInfo.bytesReceived! += addSize;
-          progressInfo.percent = progressInfo.bytesReceived! / progressInfo.bytesTotal! * 100;
-        }
+        downloadSpeed += addSize;
+        progressInfo.bytesReceived! += addSize;
+        progressInfo.percent = progressInfo.bytesReceived! / progressInfo.bytesTotal! * 100;
         file.bytesReceived += addSize;
         file.percent = file.bytesReceived / file.bytesTotal * 100;
         progress(progressInfo);
@@ -342,7 +353,7 @@ export default class HttpDownloader extends RunSystemCommand {
     });
 
     downloadNext();
-    return finalPromise;
+    return finalPromise.then(() => clearInterval(interval));
   }
 
   private async getGameDownloadFiles(url: URL): Promise<{
@@ -378,4 +389,15 @@ export default class HttpDownloader extends RunSystemCommand {
 
     return {files, totalSize};
   }
+}
+
+function formatSpeed(bytesPerSecond: number): string {
+  if (bytesPerSecond >= 1e9) {
+    return (bytesPerSecond / 1e9).toFixed(2) + " GB/s";
+  } else if (bytesPerSecond >= 1e6) {
+    return (bytesPerSecond / 1e6).toFixed(2) + " MB/s";
+  } else if (bytesPerSecond >= 1e3) {
+    return (bytesPerSecond / 1e3).toFixed(2) + " KB/s";
+  }
+  return bytesPerSecond + " B/s";
 }

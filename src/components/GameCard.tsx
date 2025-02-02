@@ -65,14 +65,18 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
   } else if (downloadInfo?.status === 'pushing app data') {
     status.push(<div className="game-card-unzipping">Pushing App data</div>)
   } else {
-    if (downloadInfo?.status === 'installed' || deviceManager.isGameInstalled(game.packageName)) {
-      status.push(<Button wide onClick={install} icon={Icons.solid.faBoxOpen}>Reinstall</Button>)    
-      status.push(<Button wide onClick={() => {alert('not implemented')}} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
-    }
-    if (downloaded || downloadManager.isGameDownloaded(game.id)) {
-      status.push(<Button wide onClick={install} icon={Icons.solid.faDownload}>Install</Button>)
+    const isInstalled = downloadInfo?.status === 'installed' || deviceManager.isGameInstalled(game.packageName);
+    const isDownloaded = downloaded || downloadManager.isGameDownloaded(game.id);
+    if (isDownloaded) {
+      if (isInstalled) {
+        status.push(<Button wide onClick={install} icon={Icons.solid.faBoxOpen}>Reinstall</Button>)    
+        status.push(<Button wide onClick={() => {alert('not implemented')}} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
+      } else {
+        status.push(<Button wide onClick={install} icon={Icons.solid.faDownload}>Install</Button>)
+      }
       status.push(<Button onClick={remove} icon={Icons.solid.faTrash}>Remove</Button>)
-    } else if (onDownload) {
+    }
+    if (onDownload && !isDownloaded) {
       status.push(<Button wide onClick={() => onDownload(game)} icon={Icons.solid.faDownload}>Download</Button>)
     }
   }
@@ -98,6 +102,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
         <div><strong>Download URL: </strong>{downloadInfo.url}</div>
         <div><strong>Bytes Received: </strong>{downloadInfo.bytesReceived}</div>
         <div><strong>Bytes Total: </strong>{downloadInfo.bytesTotal}</div>
+        <div><strong>Speed: </strong>{downloadInfo.speed}</div>
         <div><strong>Percent: </strong>{downloadInfo.percent.toFixed(2)}%</div>
         <ul>
           {downloadInfo.files

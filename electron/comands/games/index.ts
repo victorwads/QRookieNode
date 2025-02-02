@@ -41,7 +41,8 @@ export type DownloadInfo = ({
   status: 'error';
   message: string;
 } | ({
-  status: 'downloading'
+  status: 'downloading',
+  speed: string;
   files: DownloadProgress[];
 } & DownloadProgress) | {
   status: 'installing',

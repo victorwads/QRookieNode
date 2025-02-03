@@ -111,9 +111,5 @@ function searchItemIsIncluded(search: string, item: Game): SearchRelevance {
     relevance += fieldRelevance;
   });
 
-  // if(item.id === search) {
-  //   relevance += 1000;
-  // }
-
   return { relevance, game: item };
 }

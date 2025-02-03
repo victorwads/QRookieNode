@@ -16,11 +16,11 @@ const downloadingInfo: Record<string, DownloadInfo> = {};
 const instanceUniqId = Math.random().toString(36);
 
 let shouldSend = true;
-setInterval(() => { shouldSend = true; }, 100);
+setInterval(() => { shouldSend = true; }, 30);
 
-export const progress = (info: DownloadInfo) => {
+export const progress = async (info: DownloadInfo) => {
   downloadingInfo[info.id] = info;
-  if(shouldSend || info.status !==  'downloaded') {
+  if(shouldSend || info.status !==  'downloading') {
     shouldSend = false;
     getMainWindow()?.webContents.send("downloadProgress", info);
   }

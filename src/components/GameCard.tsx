@@ -59,24 +59,25 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
         return <div key={index} style={{width: totalPercentage+'%'}}></div>
       })}
     </div>)
-    status.push(<Button onClick={remove} icon={Icons.solid.faTrash}>Cancel</Button>)
+    status.push(<Button onClick={() => alert('not implemented yet')} icon={Icons.solid.faTrash}>Cancel</Button>)
   } else if (downloadInfo?.status === 'unzipping') {
     status.push(<div className="game-card-unzipping">Unzipping</div>)
   } else if (downloadInfo?.status === 'pushing app data') {
     status.push(<div className="game-card-unzipping">Pushing App data</div>)
   } else {
     const isInstalled = downloadInfo?.status === 'installed' || deviceManager.isGameInstalled(game.packageName);
+    if (isInstalled) {
+      status.push(<Button wide onClick={() => {alert('not implemented')}} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
+    }
     const isDownloaded = downloaded || downloadManager.isGameDownloaded(game.id);
     if (isDownloaded) {
       if (isInstalled) {
         status.push(<Button wide onClick={install} icon={Icons.solid.faBoxOpen}>Reinstall</Button>)    
-        status.push(<Button wide onClick={() => {alert('not implemented')}} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
       } else {
         status.push(<Button wide onClick={install} icon={Icons.solid.faDownload}>Install</Button>)
       }
       status.push(<Button onClick={remove} icon={Icons.solid.faTrash}>Remove</Button>)
-    }
-    if (onDownload && !isDownloaded) {
+    } else if (onDownload) {
       status.push(<Button wide onClick={() => onDownload(game)} icon={Icons.solid.faDownload}>Download</Button>)
     }
   }

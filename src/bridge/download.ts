@@ -1,21 +1,21 @@
 import sendCommand from '../bridge';
 import type { GamesCommandName, GamesCommandPayload } from '../../electron/shared';
-import type { DownloadInfo } from '../../electron/shared';
+import type { GameStatusInfo } from '../../electron/shared';
 
-export type { DownloadInfo } from '../../electron/shared';
+export type { GameStatusInfo } from '../../electron/shared';
 
-type ListenerCallback = (info: DownloadInfo) => void;
-type DownloadingListener = (info: DownloadInfo[]) => void;
+type ListenerCallback = (info: GameStatusInfo) => void;
+type DownloadingListener = (info: GameStatusInfo[]) => void;
 
 class GameDownloadManager {
   private listeners: { [id: string]: ListenerCallback[] } = {};
   private downloadingGamesChangeListeners: DownloadingListener[] = [];
-  private downloadingGames: { [id: string]: DownloadInfo } = {};
+  private downloadingGames: { [id: string]: GameStatusInfo } = {};
   private downloadedCache: string[] = [];
 
   constructor() {
     const { downloads } = (window as any);
-    downloads.receive((info: DownloadInfo) => {
+    downloads.receive((info: GameStatusInfo) => {
       this.emit(info.id, info);
     });
     this.getDownloadedGames();
@@ -26,7 +26,7 @@ class GameDownloadManager {
       this.listeners[id] = [];
     }
     this.listeners[id].push(callback);
-    callback(this.getGameInfo(id) || { id, status: 'none' });
+    callback(this.getGameStatusInfo(id) || { id, status: 'none' });
 
     return () => {
       this.removeListener(id, callback);
@@ -62,16 +62,16 @@ class GameDownloadManager {
     );
   }
 
-  public getGameInfo(id: string): DownloadInfo | null {
+  public getGameStatusInfo(id: string): GameStatusInfo | null {
     return this.downloadingGames[id] || null;
   }
 
-  private async emit(id: string, info: DownloadInfo) {
+  private async emit(id: string, info: GameStatusInfo) {
     this.downloadingGames[id] = info;
-    if(!this.getGameInfo(id)) {
+    if(!this.getGameStatusInfo(id)) {
       this.emitDownloading();
     }
-    if(!this.getGameInfo(id) || info.status !== 'downloading') {
+    if(!this.getGameStatusInfo(id) || info.status !== 'downloading') {
       this.emitDownloading();
     }
 

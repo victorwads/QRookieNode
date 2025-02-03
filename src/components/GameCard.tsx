@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import gameManager from "../bridge/games";
 import deviceManager from "../bridge/devices";
 import downloadManager from "../bridge/download";
-import type { DownloadInfo } from "../bridge/download";
+import type { GameStatusInfo } from "../bridge/download";
 import type { Game } from "../bridge/games";
 
 import { Icons } from "./Icons";
@@ -25,10 +25,10 @@ export interface GameCardProps {
 }
 
 const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose, downloaded }: GameCardProps) => {
-  const [downloadInfo, setDownloadInfo] = useState<DownloadInfo|null>(downloadManager.getGameInfo(game.id));
+  const [gameStatus, setGameStatus] = useState<GameStatusInfo|null>(downloadManager.getGameStatusInfo(game.id));
   
   const install = async () => {
-    if (downloadInfo?.status === 'installing' || downloadInfo?.status === 'unzipping' || downloadInfo?.status === 'pushing app data') return;
+    if (gameStatus?.status === 'installing' || gameStatus?.status === 'unzipping' || gameStatus?.status === 'pushing app data') return;
     const result = await gameManager.install(game.id);
     if (result) {
       alert(result);
@@ -40,32 +40,32 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
   const remove = async () => {
     if(!window.confirm('Are you sure you want to remove this game?')) return;
     await downloadManager.remove(game.id);
-    setDownloadInfo(null);
+    setGameStatus(null);
   }
 
   useEffect(() => {
     return downloadManager.addListener(game.id, (info) => {
-      setDownloadInfo(info ? {...info} : null);
+      setGameStatus(info ? {...info} : null);
     });
   }, [game]);
 
   const status: React.ReactNode[] = [];
-  if(downloadInfo?.status === 'installing') {
+  if(gameStatus?.status === 'installing') {
     status.push(<div className="game-card-unzipping">Installing</div>)
-  } else if (downloadInfo?.status === 'downloading') {
+  } else if (gameStatus?.status === 'downloading') {
     status.push(<div className="game-card-download-progress">
-      {downloadInfo.files.map((file, index) => {
-        const totalPercentage = file.bytesReceived / downloadInfo.bytesTotal * 100;
+      {gameStatus.files.map((file, index) => {
+        const totalPercentage = file.bytesReceived / gameStatus.bytesTotal * 100;
         return <div key={index} style={{width: totalPercentage+'%'}}></div>
       })}
     </div>)
     status.push(<Button onClick={() => alert('not implemented yet')} icon={Icons.solid.faTrash}>Cancel</Button>)
-  } else if (downloadInfo?.status === 'unzipping') {
+  } else if (gameStatus?.status === 'unzipping') {
     status.push(<div className="game-card-unzipping">Unzipping</div>)
-  } else if (downloadInfo?.status === 'pushing app data') {
+  } else if (gameStatus?.status === 'pushing app data') {
     status.push(<div className="game-card-unzipping">Pushing App data</div>)
   } else {
-    const isInstalled = downloadInfo?.status === 'installed' || deviceManager.isGameInstalled(game.packageName);
+    const isInstalled = gameStatus?.status === 'installed' || deviceManager.isGameInstalled(game.packageName);
     if (isInstalled) {
       status.push(<Button wide onClick={() => {alert('not implemented')}} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
     }
@@ -85,6 +85,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
   return <>
     <div className="game-card">
       <div className="game-card-image" onClick={() => onSelect && onSelect(game)}>
+        {/* Add Eye Icon */}
         <img src={'game-image://' + game.packageName} alt={game.name} loading='lazy' />
       </div>
       <div className="game-card-content">
@@ -97,16 +98,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
         {status}
       </div>
     </div>
-    {verbose && downloadInfo?.status === 'downloading' && <>
+    {verbose && gameStatus?.status === 'downloading' && <>
       <div className="game-card-download-info">
         <strong>Downloading</strong>
-        <div><strong>Download URL: </strong>{downloadInfo.url}</div>
-        <div><strong>Bytes Received: </strong>{downloadInfo.bytesReceived}</div>
-        <div><strong>Bytes Total: </strong>{downloadInfo.bytesTotal}</div>
-        <div><strong>Speed: </strong>{downloadInfo.speed}</div>
-        <div><strong>Percent: </strong>{downloadInfo.percent.toFixed(2)}%</div>
+        <div><strong>Download URL: </strong>{gameStatus.url}</div>
+        <div><strong>Bytes Received: </strong>{gameStatus.bytesReceived}</div>
+        <div><strong>Bytes Total: </strong>{gameStatus.bytesTotal}</div>
+        <div><strong>Speed: </strong>{gameStatus.speed}</div>
+        <div><strong>Percent: </strong>{gameStatus.percent.toFixed(2)}%</div>
         <ul>
-          {downloadInfo.files
+          {gameStatus.files
             .filter(info => info.percent !== 100 && info.percent !== 0)
             .map((file, index) => <li key={index}>
               <div><strong>File: </strong>{file.url}</div>
@@ -117,17 +118,17 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
         </ul>
       </div>
     </>}
-    {verbose && downloadInfo?.status === 'installing' && <>
+    {verbose && gameStatus?.status === 'installing' && <>
       <div className="game-card-download-info">
         <strong>Installing</strong>
-        <div><strong>Filename:</strong> {downloadInfo.installingFile}</div>
+        <div><strong>Filename:</strong> {gameStatus.installingFile}</div>
       </div>
     </>}
-    {verbose && downloadInfo?.status === 'pushing app data' && <>
+    {verbose && gameStatus?.status === 'pushing app data' && <>
       <div className="game-card-download-info">
         <strong>Pusing App Data</strong>
-        <div><strong>Files:</strong>{downloadInfo.file.index + 1}/{downloadInfo.totalFiles}</div>
-        <div><strong>File Name: </strong>{downloadInfo.file.name}</div>
+        <div><strong>Files:</strong>{gameStatus.file.index + 1}/{gameStatus.totalFiles}</div>
+        <div><strong>File Name: </strong>{gameStatus.file.name}</div>
       </div>
     </>}
   </>;

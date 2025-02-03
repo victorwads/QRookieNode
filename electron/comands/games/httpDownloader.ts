@@ -4,7 +4,7 @@ import * as path from "path";
 import * as fs from "fs";
 import { WriteStream } from "fs";
 
-import { DownloadInfo, DownloadProgress } from "../../shared";
+import { GameStatusInfo, DownloadProgress } from "../../shared";
 import { getMainWindow } from "../../main";
 import RunSystemCommand from "../runSystemCommand";
 import settingsManager from "../settings/manager";
@@ -12,13 +12,13 @@ import vrpPublic from "./vrpPublic";
 
 export const extractDirName = "extracted";
 
-const downloadingInfo: Record<string, DownloadInfo> = {};
+const downloadingInfo: Record<string, GameStatusInfo> = {};
 const instanceUniqId = Math.random().toString(36);
 
 let shouldSend = true;
 setInterval(() => { shouldSend = true; }, 30);
 
-export const progress = async (info: DownloadInfo) => {
+export const progress = async (info: GameStatusInfo) => {
   downloadingInfo[info.id] = info;
   if(shouldSend || info.status !==  'downloading') {
     shouldSend = false;
@@ -197,10 +197,10 @@ export default class HttpDownloader extends RunSystemCommand {
     return downloadDirectory;
   }
 
-  public async downloadDir(baseUrl: string, id: string): Promise<DownloadInfo|null> {
+  public async downloadDir(baseUrl: string, id: string): Promise<GameStatusInfo|null> {
     const prepareResult = this.prepareDownloadIfNeeded(id);
     const url = new URL(id + '/', baseUrl);
-    let progressInfo: DownloadInfo = {
+    let progressInfo: GameStatusInfo = {
       id, url: url.toString(),
       status: "downloading",
       speed: "loading...",
@@ -272,7 +272,7 @@ export default class HttpDownloader extends RunSystemCommand {
   
   private batchDownloadFiles(
     id: string, url: URL, downloadDirectory: string,
-    files: DownloadProgress[], progressInfo: DownloadInfo
+    files: DownloadProgress[], progressInfo: GameStatusInfo
   ): Promise<void> {
     if(progressInfo.status !== 'downloading')
       return Promise.resolve();

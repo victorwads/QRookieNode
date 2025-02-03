@@ -35,7 +35,7 @@ export type DownloadProgress = {
   percent: number;
 }
 
-export type DownloadInfo = ({
+export type GameStatusInfo = ({
   status: 'downloaded' | 'unzipping' | 'installed' | 'none';
 } | {
   status: 'error';

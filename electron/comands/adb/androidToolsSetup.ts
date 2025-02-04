@@ -15,10 +15,9 @@ type ToolURLs = { [platform in Platform]?: ToolURL };
 const TOOL_URLS: ToolURLs = {
   darwin: "https://dl.google.com/android/repository/platform-tools-latest-darwin.zip",
   win32: "https://dl.google.com/android/repository/platform-tools-latest-windows.zip",
-  linux: "https://dl.google.com/android/repository/platform-tools-latest-linux.zip",
-  android: async () => {
+  linux: async () => {
     if (process.arch.indexOf("arm") === -1) {
-      return TOOL_URLS.linux as string;
+      return "https://dl.google.com/android/repository/platform-tools-latest-linux.zip";
     }
 
     const getLastReleaseUrl = "https://api.github.com/repos/lzhiyong/android-sdk-tools/releases";

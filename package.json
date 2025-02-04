@@ -1,6 +1,6 @@
 {
   "name": "qrookie-node",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "private": true,
   "description": "QRookieNode is a cross-platform tool to manage Quest devices and games.",
   "author": {

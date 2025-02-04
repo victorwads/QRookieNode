@@ -32,9 +32,14 @@ export default abstract class RunSystemCommand {
   }
 
   public async getCommanPath(comandName: string): Promise<string|null> {
-    const { stdout } = await execFileAsync("which", [comandName]);
-    const path = (stdout||'').trim();
-    return path !== "" ? path : null;
+    try {
+      const { stdout } = await execFileAsync("which", [comandName]);
+      const path = (stdout||'').trim();
+      return path !== "" ? path : null;
+    } catch (error: any) {
+      console.log("Command error: ", error.message);
+      return null;
+    }
   }
 
   public async runCommand(comandWithPath: string, args: string[]): Promise<{

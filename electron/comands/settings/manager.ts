@@ -5,7 +5,6 @@ import { app, dialog } from "electron";
 import type { Settings, SystemHelth } from ".";
 import { gamesDir, gamesDirName, userDataDir } from "../dirs";
 
-import adbManager from "../adb/manager";
 import RunSystemCommand from "../runSystemCommand";
 
 const settingsPath = path.join(userDataDir, "settings.json");
@@ -50,14 +49,28 @@ class SettingsManager extends RunSystemCommand {
     return gamesDir;
   }
 
+  private async getCommandInfo(path: string|null, name: string, lines: number, arg: string = "-h"): Promise<string> {
+    if (!path) {
+      return "Not found, Please install " + name;
+    }
+    const { stdout } = await this.runCommand(path, [arg]);
+    return path + "\n" +
+      stdout.split("\n").slice(0, lines).join("\n");
+  }
+
   public async getSystemHelth(): Promise<SystemHelth> {
-    
+    const asyncResults = {
+      adb: this.getCommandInfo(this.getAdbPath(), "adb", 2, "version"),
+      unzip: this.getCommanPath('unzip').then(path => this.getCommandInfo(path, "unzip", 1)),
+      sevenZip: this.getCommandInfo(this.getSevenZipPath(), "7zip", 2),
+      java: this.getCommanPath('java').then(path => this.getCommandInfo(path, "java", 3, "--version")),
+    }
     return {
       appVersion: app.getVersion(),
-      adb: await adbManager.helthCheck(),
-      unzip: (await this.getCommanPath('unzip')) || "Not found, Please install unzip",
-      sevenZip: this.getSevenZipPath(),
-      java: (await this.getCommanPath('java')) || "Not found, Please install java",
+      adb: await asyncResults.adb,
+      unzip: await asyncResults.unzip,
+      sevenZip: await asyncResults.sevenZip,
+      java: await asyncResults.java,
     };
   }
 

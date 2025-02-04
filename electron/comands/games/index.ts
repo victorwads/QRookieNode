@@ -56,6 +56,8 @@ export type GameStatusInfo = ({
   }
 }) & { id: string; }
 
+export type GameStatusType = GameStatusInfo['status'];
+
 export default {
   type: 'games',
   receiver: async function (payload: GamesCommandPayload): Promise<GamesCommandOutput> {

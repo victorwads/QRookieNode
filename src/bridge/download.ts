@@ -2,7 +2,7 @@ import sendCommand from '../bridge';
 import type { GamesCommandName, GamesCommandPayload } from '../../electron/shared';
 import type { GameStatusInfo } from '../../electron/shared';
 
-export type { GameStatusInfo } from '../../electron/shared';
+export type { GameStatusInfo, GameStatusType } from '../../electron/shared';
 
 type ListenerCallback = (info: GameStatusInfo) => void;
 type DownloadingListener = (info: GameStatusInfo[]) => void;

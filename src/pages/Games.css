@@ -1,10 +1,8 @@
-.game-list {
+.games-page {
     display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    justify-content: center;
-    padding: 16px;
-    flex: 1;    
+    flex-direction: column;
+    flex: 1;
+    max-height: 100%;
 }
 
 .game-list-header {
@@ -30,6 +28,20 @@
     text-align: center;
     max-width: 80px;
 }
+
+.game-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    padding: 16px;
+    flex: 1;
+    overflow: auto;
+}
+
+/* .games-page > .game-list{
+    overflow: auto;
+} */
 
 .game-card {
     display: flex;

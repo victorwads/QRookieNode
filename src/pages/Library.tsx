@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import type { Game } from '../bridge/games';
 import gamesManager from '../bridge/games';
-import downloadManager from "../bridge/download";
+import downloadManager, { GameStatusType } from "../bridge/download";
 import settingsManager from '../bridge/settings';
 
 import Icon, { Icons } from '../components/Icons';
@@ -12,7 +12,8 @@ import Button from '../components/Button';
 
 let hasPedingDownloadFolderSearch = false;
 
-const Downloads: React.FC = () => {
+const installingStates: GameStatusType[] = ['installing', 'unzipping', 'downloading', 'pushing app data'];
+const Library: React.FC = () => {
   const [downloads, setDownloads] = React.useState<Game[]>([]);
   const [downloading, setDownloading] = React.useState<Game[]>([]);
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ const Downloads: React.FC = () => {
     return downloadManager.addDownloadingListener(infos => {
       updateDownloadedGames();
       setDownloading(infos
-        .filter(info => info.status === 'downloading')
+        .filter(info => installingStates.includes(info.status))
         .map(({id}) => gamesManager.getGameFromCacheById(id))
         .filter(game => game) as Game[]
       );
@@ -51,6 +52,9 @@ const Downloads: React.FC = () => {
       <h1><Icon icon={Icons.solid.faLayerGroup} size="lg" />Library Page</h1>
       <Button onClick={changeDownloadsDir} icon={Icons.solid.faFolderOpen}>Change Downloads Dir</Button>
     </div>
+    {downloading.length === 0 && downloads.length === 0 && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+      <h2>No Games Found</h2>
+    </div>}
     <div style={{ display: 'flex', flexDirection: 'row', padding: '1em' }}>
       {downloading.length !== 0 && <div style={{flex: 1}}>
         <h2>Downloading Games</h2>
@@ -68,4 +72,4 @@ const Downloads: React.FC = () => {
   </div>;
 };
 
-export default Downloads;
+export default Library;

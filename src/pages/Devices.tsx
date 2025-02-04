@@ -55,7 +55,9 @@ const Devices: React.FC = () => {
       <CenteredLoading visible={loading} />
       <Button onClick={() => getAdbDevices()} icon={Icons.solid.faRefresh}>Reload Devices</Button>
     </div>
-    <div style={{padding: '0 20px'}}>{result.devices.length === 0 ? <p>No devices found</p> : <>
+    {result.devices.length === 0 ? <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+      <h2>No Devices Found</h2>
+    </div> : <div style={{padding: '0 20px'}}>
       <DevicesList devices={result.devices} onConnect={getAdbDevices} onConnectWifi={connectWifi} />
       {result.deviceInfo && <DeviceInfoCard deviceInfo={result.deviceInfo} />}
       <UsersList users={result.users} />
@@ -75,7 +77,7 @@ const Devices: React.FC = () => {
             {game.packageName}
           </li>)}
       </ul>
-    </>}</div>
+    </div>}
   </div>;
 };
 

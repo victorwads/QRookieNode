@@ -9,6 +9,9 @@ import Button from '../components/Button';
 import { BasicLoading } from './Loading';
 
 let sysTemHelthCache: SystemHelth|null = null;
+settingsManager.getHelthInfo().then(info => {
+  sysTemHelthCache = info;
+});
 
 const Settings: React.FC = () => {
   const [infos, set] = useState<RepoDownloadsInfo>(settingsManager.getReposInfo());
@@ -25,10 +28,12 @@ const Settings: React.FC = () => {
 
   useEffect(() => {
     settingsManager.fetchReposInfo().then(info => {set({...info})});
-    settingsManager.getHelthInfo().then(info => {
-      sysTemHelthCache = info;
-      setSystemHelth(info);
-    });
+    if(!systemHelth) {
+      settingsManager.getHelthInfo().then(info => {
+        sysTemHelthCache = info;
+        setSystemHelth(info);
+      });
+    }
     settingsManager.getSettings().then(setSettings);
   }, []);
 
@@ -50,16 +55,6 @@ const Settings: React.FC = () => {
         <pre>{JSON.stringify(settings, null, 2)}</pre>
       </section>
       <section>
-        <h2>System Helth Check</h2>
-        {systemHelth ? <ul>
-          <li><pre><strong>App Version:</strong> {systemHelth.appVersion}</pre></li>
-          <li><pre><strong>ADB:</strong> {systemHelth.adb}</pre></li>
-          <li><pre><strong>Unzip:</strong> {systemHelth.unzip}</pre></li>
-          <li><pre><strong>7Zip:</strong> {systemHelth.sevenZip}</pre></li>
-          <li><pre><strong>Java:</strong> {systemHelth.java}</pre></li>
-        </ul> : <BasicLoading visible={!systemHelth} />}
-      </section>
-      <section>
         <h2>Total Downloads: {totalDownloads}</h2>
         {reposInfos.map(({byExt, name, total}) => {
           return <>
@@ -72,6 +67,16 @@ const Settings: React.FC = () => {
           </>;
         })}
         <span>Last Update: {lastUpdate.toLocaleString()}</span>
+      </section>
+      <section>
+        <h2>System Helth Check</h2>
+        {systemHelth ? <ul>
+          <li><pre><strong>App Version:</strong> {systemHelth.appVersion}</pre></li>
+          <li><pre><strong>ADB:</strong> {systemHelth.adb}</pre></li>
+          <li><pre><strong>Unzip:</strong> {systemHelth.unzip}</pre></li>
+          <li><pre><strong>7Zip:</strong> {systemHelth.sevenZip}</pre></li>
+          <li><pre><strong>Java:</strong> {systemHelth.java}</pre></li>
+        </ul> : <BasicLoading visible={!systemHelth} />}
       </section>
     </div>
   </div>;

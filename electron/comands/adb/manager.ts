@@ -18,14 +18,6 @@ class AdbManager extends RunSystemCommand {
     return stdout;
   }
 
-  public async helthCheck(): Promise<string> {
-    try {
-      return await this.runAdbCommand(["version"]);;
-    } catch (error: any) {
-      return error.toString();
-    }
-  }
-
   private getDeviceSerial(): string|undefined {
     if(!(this.serial && this.devices.find((device) => device.serial === this.serial))) {
       this.serial = this.devices[0]?.serial || null;

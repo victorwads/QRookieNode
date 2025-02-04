@@ -8,6 +8,7 @@ import vrpManager from './vrpManager';
 import adbManager from '../adb/manager';
 import HttpDownloader, { extractDirName, progress } from "./httpDownloader";
 import settingsManager from '../settings/manager';
+import vrpPublic from './vrpPublic';
 
 interface WebGame {
   name?: string;
@@ -78,8 +79,14 @@ class GameManager {
     return hash.digest('hex');
   }
 
-  public download(id: string) {
-    vrpManager.downloadGame(id);
+  public async download(id: string) {
+    const vrpInfo = await vrpPublic;
+    if (!vrpInfo) {
+      log.error("Failed to get VRP info");
+      return;
+    }
+
+    this.downloader.downloadDir(vrpInfo.baseUri, id)    
   }
 
   public async remove(id: string) {
@@ -129,6 +136,9 @@ class GameManager {
     return null;
   }
 
+  public cancel(id: string): void {
+    this.downloader.cancel(id);
+  }
 }
 
 const manager = new GameManager();

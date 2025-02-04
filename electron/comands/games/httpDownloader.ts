@@ -15,17 +15,23 @@ export const extractDirName = "extracted";
 
 const downloadingInfo: Record<string, GameStatusInfo> = {};
 const instanceUniqId = Math.random().toString(36);
+const CANCELLED = -1
 
 let shouldSend = true;
 setInterval(() => { shouldSend = true; }, 30);
 
 export const progress = async (info: GameStatusInfo) => {
+  if(info.status !== 'cancelling' && cancelRequests[info.id]) {
+    info = { id: info.id, status: 'cancelling' };
+  }
   downloadingInfo[info.id] = info;
   if(shouldSend || info.status !==  'downloading') {
     shouldSend = false;
     getMainWindow()?.webContents.send("downloadProgress", info);
   }
 }
+
+const cancelRequests: { [id: string]: () => void } = {};
 
 export default class HttpDownloader extends RunSystemCommand {
   public download(url: string): Promise<string> {
@@ -111,7 +117,7 @@ export default class HttpDownloader extends RunSystemCommand {
     });
   }
 
-  private async getBodyWithHttp2(url: URL, stream?: WriteStream, progress?: (addSize: number) => void): Promise<string|boolean> {
+  private async getBodyWithHttp2(url: URL, stream?: WriteStream, progress?: (addSize: number) => boolean): Promise<string|boolean> {
     log.info(`Downloading: ${url}`);
     const client = http2.connect(url.origin);
     const headers: Record<string, string> = {
@@ -123,19 +129,25 @@ export default class HttpDownloader extends RunSystemCommand {
     const req = client.request(headers);
 
     let body = stream ? false : "";
+    let canceled = false;
     await new Promise((resolve, reject) => {
       req.on("response", (headers) => {
         if (headers[":status"] !== 200) {
-          reject(new Error(`HTTP/2 Error: ${headers[":status"]}`));
+          reject(`HTTP/2 Error: ${headers[":status"]} ${url}`);
           req.close();
           return;
         }
         req.on("data", (chunk) => {
-          progress?.(chunk.length);
           if(stream) {
             stream.write(chunk);
           } else {
             body += chunk;
+          }
+          if(progress?.(chunk.length) === false) {
+            canceled = true;
+            req.close();
+            client.close();
+            log.debug(`Download on data, canceled: ${url}`);
           }
         });
         req.on("end", () => {
@@ -143,12 +155,20 @@ export default class HttpDownloader extends RunSystemCommand {
             body = true;
             stream.close();
           }
-          resolve(true);
           client.close();
+          if(canceled) {
+            log.debug(`Download on end, canceled: ${url}`);
+            reject("Download canceled " + url);
+          } else {
+            resolve(true);
+          }
         });
       });
       req.on("error", (err) => {
-        reject(err);
+        if(canceled) {
+          log.debug(`Download on error, canceled: ${url}`);
+        }
+        reject("Download error " + url + " " + err);
         client.close();
         if(stream) {
           stream.close();
@@ -198,6 +218,22 @@ export default class HttpDownloader extends RunSystemCommand {
     return downloadDirectory;
   }
 
+  private isCanceled(id: string): boolean {
+    if(cancelRequests[id]) {
+      return true;
+    }
+    return false;
+  }
+
+  private cancelIfRequested(id: string): boolean {
+    if(cancelRequests[id]) {
+      log.debug(`Canceling previous download: ${id}`);
+      cancelRequests[id]();
+      return true;
+    }
+    return false;
+  }
+
   public async downloadDir(baseUrl: string, id: string): Promise<GameStatusInfo|null> {
     const prepareResult = this.prepareDownloadIfNeeded(id);
     const url = new URL(id + '/', baseUrl);
@@ -224,17 +260,32 @@ export default class HttpDownloader extends RunSystemCommand {
       log.error(`Downloading Error: No files found: ${url}`);
       return null;
     }
+    
     progressInfo.bytesTotal = totalSize;
     progressInfo.files = files;
     progress(progressInfo);
 
+    if(this.cancelIfRequested(id)) {
+      return null;
+    }
+
+    let batchResult: boolean = false;
     try {
-      await this.batchDownloadFiles(id, url, downloadDirectory, files, progressInfo);
+      batchResult = await this.batchDownloadFiles(id, url, downloadDirectory, files, progressInfo);
     } catch (err: any) {
       progressInfo = { id, status: 'error', message: err.message };
 
       progressInfo.status = "error";
       progressInfo.message = err.message;
+      return null;
+    }
+
+    if(this.cancelIfRequested(id)) {
+      return null;
+    }
+    if(batchResult === false) {
+      progressInfo = { id, status: 'error', message: 'Unknown error, see logs' };
+      progress(progressInfo);
       return null;
     }
 
@@ -274,21 +325,20 @@ export default class HttpDownloader extends RunSystemCommand {
   private batchDownloadFiles(
     id: string, url: URL, downloadDirectory: string,
     files: DownloadProgress[], progressInfo: GameStatusInfo
-  ): Promise<void> {
+  ): Promise<boolean> {
     if(progressInfo.status !== 'downloading')
-      return Promise.resolve();
+      return Promise.resolve(false);
 
-    let resolvePromise: () => void;
-    let rejectPromise: () => void;
-    const finalPromise = new Promise<void>((resolve, reject) => { 
-      resolvePromise = resolve as () => void; 
-      rejectPromise = reject as () => void;
+    let resolvePromise: (result: boolean) => void;
+    const finalPromise = new Promise<boolean>((resolve) => { 
+      resolvePromise = resolve; 
     });
 
     const queeeMaxSimultaneous = 3;
     let downloadSpeed = 0; 
     let downloadingNow = 0;
     let currentIndex = 0;
+    let success = true;
 
     const interval = setInterval(() => {
       progressInfo.speed = formatSpeed(downloadSpeed);
@@ -297,23 +347,32 @@ export default class HttpDownloader extends RunSystemCommand {
 
     const downloadNext = async () => {
       if (currentIndex >= files.length) {
-        const isFinished = files.reduce((acc, file) => acc && file?.percent === 100, true);
+        const isFinished = files.reduce((acc, file) => acc && (file?.percent === 100 || file?.percent === CANCELLED), true);
         if (isFinished) {
-          resolvePromise();
+          resolvePromise(success);
         }
         return;
       }
       while (downloadingNow < queeeMaxSimultaneous && currentIndex < files.length) {
         downloadingNow++;
-        downloadOne(files[currentIndex]).finally(() => {
-          downloadingNow--;
-          downloadNext();
-        }).catch(rejectPromise);
+        downloadOne(files[currentIndex])
+          .then((result) => { success = success && result; })
+          .finally(() => {
+            downloadingNow--;
+            log.debug(`Handling next ${currentIndex}/${files.length}`);
+            downloadNext();
+          })
         currentIndex++;
       }
     };
 
-    const downloadOne = async (file: DownloadProgress) => new Promise((resolve, reject) => {
+    const downloadOne = async (file: DownloadProgress) => new Promise<boolean>((resolve) => {
+      if (this.isCanceled(id)) {
+        file.percent = CANCELLED;
+        resolve(false);
+        return false;
+      }
+
       const { url: name} = file;
       const fileUrl = new URL(name, url);
       
@@ -335,6 +394,7 @@ export default class HttpDownloader extends RunSystemCommand {
         return;
       }
 
+      log.debug(`Downloading ${currentIndex}/${files.length}: ${file.url}`);
       const fileStream = fs.createWriteStream(filePath);
       this.getBodyWithHttp2(fileUrl, fileStream, (addSize) => {
         downloadSpeed += addSize;
@@ -342,19 +402,24 @@ export default class HttpDownloader extends RunSystemCommand {
         progressInfo.percent = progressInfo.bytesReceived! / progressInfo.bytesTotal! * 100;
         file.bytesReceived += addSize;
         file.percent = file.bytesReceived / file.bytesTotal * 100;
+        if (this.isCanceled(id)) {
+          file.percent = CANCELLED;
+          return false;
+        }
         progress(progressInfo);
+        return true;
       }).then(() => {
         fs.writeFileSync(finishedPath, new Date().toISOString());
         finishProgress();
         resolve(true);
       }).catch((err) => {
         log.error(`Download Error: ${name}`, err);
-        reject(err);
+        resolve(false);
       });
     });
 
     downloadNext();
-    return finalPromise.then(() => clearInterval(interval));
+    return finalPromise.finally(() => clearInterval(interval));
   }
 
   private async getGameDownloadFiles(url: URL): Promise<{
@@ -389,6 +454,22 @@ export default class HttpDownloader extends RunSystemCommand {
     }
 
     return {files, totalSize};
+  }
+
+  public async cancel(id: string) {
+    const cancelRequest = cancelRequests[id];
+    progress({ id, status: 'cancelling' });
+    return new Promise<void>((resolve) => {
+      cancelRequests[id] = () => {
+        if (cancelRequest) {
+          cancelRequest();
+        }
+        log.debug(`Canceled download: ${id}`);
+        delete cancelRequests[id];
+        progress({ id, status: 'none' });
+        resolve();
+      }
+    });
   }
 }
 

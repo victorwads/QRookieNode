@@ -4824,10 +4824,19 @@ electron-to-chromium@^1.5.73:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.80.tgz#ca7a8361d7305f0ec9e203ce4e633cbb8a8ef1b1"
   integrity sha512-LTrKpW0AqIuHwmlVNV+cjFYTnXtM9K37OGhpe0ZI10ScPSxqVSryZHIY3WnCS5NSYbBODRTZyhRMS2h5FAEqAw==
 
-electron@*, electron@^33.3.1:
+electron@*:
   version "33.3.1"
   resolved "https://registry.yarnpkg.com/electron/-/electron-33.3.1.tgz#26d63b3a110c4a9db639c33633bf806f91b4f649"
   integrity sha512-Z7l2bVgpdKxHQMI4i0CirBX2n+iCYKOx5mbzNM3BpOyFELwlobEXKmzCmEnwP+3EcNeIhUQyIEBFQxN06QgdIw==
+  dependencies:
+    "@electron/get" "^2.0.0"
+    "@types/node" "^20.9.0"
+    extract-zip "^2.0.1"
+
+electron@^34.0.2:
+  version "34.0.2"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-34.0.2.tgz#84432ab1efa165e260ce943c472879228b620573"
+  integrity sha512-u3F+DSUlg9NaGS+9qnYmSRN8VjAnc3LJDDk1ye1uISJnh4gjG76y3681qLowsPMx4obvCP2eBINnmbLo0yT5WA==
   dependencies:
     "@electron/get" "^2.0.0"
     "@types/node" "^20.9.0"

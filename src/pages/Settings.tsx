@@ -72,9 +72,11 @@ const Settings: React.FC = () => {
         <h2>System Helth Check</h2>
         {systemHelth ? <ul>
           <li><pre><strong>App Version:</strong> {systemHelth.appVersion}</pre></li>
+          <li><pre><strong>Electron Version:</strong> {systemHelth.electronVersion}</pre></li>
+          <li><pre><strong>Bundled Node Version:</strong> {systemHelth.bundledNodeVersion}</pre></li>
           <li><pre><strong>ADB:</strong> {systemHelth.adb}</pre></li>
-          <li><pre><strong>Unzip:</strong> {systemHelth.unzip}</pre></li>
           <li><pre><strong>7Zip:</strong> {systemHelth.sevenZip}</pre></li>
+          <li><pre><strong>Unzip:</strong> {systemHelth.unzip}</pre></li>
           <li><pre><strong>Java:</strong> {systemHelth.java}</pre></li>
         </ul> : <BasicLoading visible={!systemHelth} />}
       </section>

@@ -15,6 +15,8 @@ export type Settings = {
 }
 export type SystemHelth = {
   appVersion: string;
+  electronVersion: string;
+  bundledNodeVersion: string;
   adb: string;
   unzip: string;
   sevenZip: string;

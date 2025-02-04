@@ -12,7 +12,7 @@ import Button from '../components/Button';
 
 let hasPedingDownloadFolderSearch = false;
 
-const installingStates: GameStatusType[] = ['installing', 'unzipping', 'downloading', 'pushing app data'];
+const installingStates: GameStatusType[] = ['installing', 'unzipping', 'downloading', 'pushing app data', 'cancelling'];
 const Library: React.FC = () => {
   const [downloads, setDownloads] = React.useState<Game[]>([]);
   const [downloading, setDownloading] = React.useState<Game[]>([]);

@@ -43,6 +43,11 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
     setGameStatus(null);
   }
 
+  const cancel = async (id: string) => {
+    if(!window.confirm('Are you sure you want to cancel this download?')) return;
+    downloadManager.cancel(id);
+  }
+
   useEffect(() => {
     return downloadManager.addListener(game.id, (info) => {
       setGameStatus(info ? {...info} : null);
@@ -51,7 +56,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
 
   const status: React.ReactNode[] = [];
   if(gameStatus?.status === 'installing') {
-    status.push(<div className="game-card-unzipping">Installing</div>)
+    status.push(<div className="game-card-task">Installing</div>)
   } else if (gameStatus?.status === 'downloading') {
     status.push(<div className="game-card-download-progress">
       {gameStatus.files.map((file, index) => {
@@ -59,15 +64,17 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
         return <div key={index} style={{width: totalPercentage+'%'}}></div>
       })}
     </div>)
-    status.push(<Button onClick={() => alert('not implemented yet')} icon={Icons.solid.faTrash}>Cancel</Button>)
+    status.push(<Button onClick={() => cancel(game.id)} icon={Icons.solid.faTrash}>Cancel</Button>)
   } else if (gameStatus?.status === 'unzipping') {
-    status.push(<div className="game-card-unzipping">Unzipping</div>)
+    status.push(<div className="game-card-task">Unzipping</div>)
   } else if (gameStatus?.status === 'pushing app data') {
-    status.push(<div className="game-card-unzipping">Pushing App data</div>)
+    status.push(<div className="game-card-task">Pushing App data</div>)
+  } else if (gameStatus?.status === 'cancelling') {
+    status.push(<div className="game-card-task">Cancelling Download</div>)
   } else {
     const isInstalled = gameStatus?.status === 'installed' || deviceManager.isGameInstalled(game.packageName);
     if (isInstalled) {
-      status.push(<Button wide onClick={() => {alert('not implemented')}} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
+      status.push(<Button wide onClick={() => {alert('not implemented yet')}} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
     }
     const isDownloaded = downloaded || downloadManager.isGameDownloaded(game.id);
     if (isDownloaded) {

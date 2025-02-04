@@ -82,9 +82,7 @@ class GameDownloadManager {
   public async getDownloadedGames(): Promise<string[]> {
     const downloadedIds = await sendCommand<GamesCommandName, GamesCommandPayload, string[]>({
       type: 'games',
-      payload: {
-        action: 'listDownloaded',
-      },
+      payload: { action: 'listDownloaded' },
     })
     this.downloadedCache = downloadedIds;
     return downloadedIds;
@@ -97,25 +95,27 @@ class GameDownloadManager {
   public downloadGame(id: string) {
     sendCommand<GamesCommandName, GamesCommandPayload>({
       type: 'games',
-      payload: {
-        action: 'download',
-        id,
-      },
+      payload: { action: 'download', id},
     });
   }
 
   public async remove(id: string): Promise<void> {
     await sendCommand<GamesCommandName, GamesCommandPayload>({
       type: 'games',
-      payload: {
-        action: 'removeDownload',
-        id,
-      },
+      payload: { action: 'removeDownload', id},
     });
     this.downloadedCache = this.downloadedCache.filter(gameId => gameId !== id);
     delete this.downloadingGames[id];
     this.emitDownloading();
   }
+
+  public cancel(id: string) {
+    sendCommand<GamesCommandName, GamesCommandPayload>({
+      type: 'games',
+      payload: { action: 'cancel', id },
+    });
+  }
+
 }
 
 export default new GameDownloadManager();

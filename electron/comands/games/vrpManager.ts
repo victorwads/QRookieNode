@@ -166,17 +166,6 @@ export class VprManager extends RunSystemCommand {
     }
   }
 
-  async downloadGame(id: string): Promise<void> {
-    const vrpInfo = await vrpPublic;
-    if (!vrpInfo) {
-      log.error("Failed to get VRP info");
-      return;
-    }
-
-    const downloader = new HttpDownloader();
-    downloader.downloadDir(vrpInfo.baseUri, id)
-  }
-
   public getDownloadedGames(): string[] {
     return fs.readdirSync(settingsManager.getDownloadsDir()).filter((file) => 
       fs.existsSync(path.join(settingsManager.getDownloadsDir(), file, "finished"))

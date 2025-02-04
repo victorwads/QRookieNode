@@ -68,6 +68,8 @@ class SettingsManager extends RunSystemCommand {
     }
     return {
       appVersion: app.getVersion(),
+      electronVersion: process.versions.electron,
+      bundledNodeVersion: process.versions.node,
       adb: await asyncResults.adb,
       unzip: await asyncResults.unzip,
       sevenZip: await asyncResults.sevenZip,

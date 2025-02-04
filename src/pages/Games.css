@@ -109,7 +109,7 @@ input, select {
     margin-top: 8px;
 }
 
-.game-card-download-progress, .game-card-unzipping {
+.game-card-download-progress, .game-card-task {
     display: flex;
     flex-direction: row;
     height: 18px;
@@ -119,14 +119,14 @@ input, select {
     width: 100%;
 }
 
-.game-card-unzipping {
+.game-card-task {
     flex: 1;
     justify-content: center;
     align-items: center;
     font-size: 0.8em;
 }
 
-.game-card-unzipping::after, .game-card-unzipping::before {
+.game-card-task::after, .game-card-task::before {
     content: ".";
     animation: dots 2s steps(3, end) infinite;
 }

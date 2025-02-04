@@ -24,7 +24,7 @@ export type GamesActionList = {
 }
 
 export type GamesActionWithId = {
-  action: 'download' | 'install' | 'removeDownload';
+  action: 'download' | 'install' | 'removeDownload' | 'cancel';
   id: string;
 }
 
@@ -36,7 +36,7 @@ export type DownloadProgress = {
 }
 
 export type GameStatusInfo = ({
-  status: 'downloaded' | 'unzipping' | 'installed' | 'none';
+  status: 'downloaded' | 'unzipping' | 'installed' | 'none' | 'cancelling';
 } | {
   status: 'error';
   message: string;
@@ -72,6 +72,8 @@ export default {
       return GamesManager.remove(payload.id);
     } else if (payload.action === 'install') {
       return GamesManager.install(payload.id);
+    } else if (payload.action === 'cancel') {
+      GamesManager.cancel(payload.id);
     }
     return [];
   }

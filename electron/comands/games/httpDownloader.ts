@@ -347,7 +347,7 @@ export default class HttpDownloader extends RunSystemCommand {
         finishProgress();
         resolve(true);
       }).catch((err) => {
-        console.error(`Download Error: ${name}`, err);
+        console.log(`Download Error: ${name}`, err);
         reject(err);
       });
     });

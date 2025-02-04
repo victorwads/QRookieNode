@@ -19,9 +19,9 @@ const setupBridge = () => {
     if (command.length === 1) {
       return await command[0].receiver(comandEvent.payload);
     } if (command.length > 1) {
-      console.error(`Multiple commands with the same type: ${comandEvent.type}`, commands);
+      console.log(`Multiple commands with the same type: ${comandEvent.type}`, commands);
     } else {
-      console.error(`Unknown command type: ${comandEvent.type}`);
+      console.log(`Unknown command type: ${comandEvent.type}`);
     }
     return null;
   });

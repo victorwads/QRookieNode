@@ -35,7 +35,7 @@ class GameManager {
 
       const json = JSON.parse(data);
       if (!Array.isArray(json)) {
-        console.error("Invalid data format:", data);
+        console.log("Invalid data format:", data);
         return false;
       }
 
@@ -58,7 +58,7 @@ class GameManager {
       loadedGames = true;
       return true;
     } catch (err) {
-      console.error("Error updating games:", err);
+      console.log("Error updating games:", err);
       return false;
     }
   }

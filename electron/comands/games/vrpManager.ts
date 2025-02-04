@@ -36,7 +36,7 @@ export class VprManager extends RunSystemCommand {
 
   public async loadGamesInfo(): Promise<boolean> {
     if (!fs.existsSync(this.gamesFilePath)) {
-      console.warn("games_info.json not found");
+      console.log("games_info.json not found");
       await this.updateMetadata();
     }
 
@@ -52,7 +52,7 @@ export class VprManager extends RunSystemCommand {
       console.log("Games loaded successfully");
       return true;
     } catch (error) {
-      console.error("Failed to load games_info.json:", error);
+      console.log("Failed to load games_info.json:", error);
       return false;
     }
   }
@@ -63,7 +63,7 @@ export class VprManager extends RunSystemCommand {
       fs.writeFileSync(this.gamesFilePath, JSON.stringify(json, null, 2), "utf-8");
       return true;
     } catch (error) {
-      console.error("Failed to save games_info.json:", error);
+      console.log("Failed to save games_info.json:", error);
       return false;
     }
   }
@@ -81,7 +81,7 @@ export class VprManager extends RunSystemCommand {
     const downloader = new HttpDownloader();
     const vrpInfo = await vrpPublic;
     if (!vrpInfo) {
-      console.error("Failed to get VRP info");
+      console.log("Failed to get VRP info");
       return false
     }
 
@@ -89,7 +89,7 @@ export class VprManager extends RunSystemCommand {
       const downloaded = await downloader.downloadFile(metaFileName, vrpInfo?.baseUri, metaFilePath);
 
       if (!downloaded) {
-        console.error("Failed to download metadata");
+        console.log("Failed to download metadata");
         return false;
       }
 
@@ -110,7 +110,7 @@ export class VprManager extends RunSystemCommand {
       this.loadGamesInfo();
       return true;
     } catch (error) {
-      console.error("Metadata update failed:", error);
+      console.log("Metadata update failed:", error);
       return false;
     }
   }
@@ -120,7 +120,7 @@ export class VprManager extends RunSystemCommand {
 
     // Verifica se o arquivo existe
     if (!fs.existsSync(filePath)) {
-      console.warn("VRP-GameList.txt not found");
+      console.log("VRP-GameList.txt not found");
       return false;
     }
 
@@ -138,7 +138,7 @@ export class VprManager extends RunSystemCommand {
       const parts = line.split(";");
 
       if (parts.length < 6) {
-        console.warn("Invalid line in VRP-GameList.txt:", line);
+        console.log("Invalid line in VRP-GameList.txt:", line);
         continue;
       }
 
@@ -157,7 +157,7 @@ export class VprManager extends RunSystemCommand {
 
     this.saveGamesInfo();
     if (isEmpty) {
-      console.warn("No games found in VRP-GameList.txt");
+      console.log("No games found in VRP-GameList.txt");
       return false;
     } else {
       console.log("Metadata parsed successfully");
@@ -168,7 +168,7 @@ export class VprManager extends RunSystemCommand {
   async downloadGame(id: string): Promise<void> {
     const vrpInfo = await vrpPublic;
     if (!vrpInfo) {
-      console.error("Failed to get VRP info");
+      console.log("Failed to get VRP info");
       return;
     }
 

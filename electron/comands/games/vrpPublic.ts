@@ -18,7 +18,7 @@ export class VprPublic {
       const json = JSON.parse(data);
 
       if (!json.baseUri || !json.password) {
-        console.error("Invalid data format:", json);
+        console.log("Invalid data format:", json);
         return null;
       }
 
@@ -28,7 +28,7 @@ export class VprPublic {
 
       return { baseUri, password };
     } catch (error) {
-      console.error("Failed to fetch VPR public data:", error);
+      console.log("Failed to fetch VPR public data:", error);
       return null;
     }
   }

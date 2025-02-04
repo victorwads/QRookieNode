@@ -131,15 +131,24 @@ class AdbManager extends RunSystemCommand {
       return null;
     }
     await this.runAdbCommand(["-s", serial, "tcpip", "5555"]);
-    await this.runAdbCommand(["connect", ip]);
+    return this.connectTcp(ip);
+  }
+
+  public async connectTcp(address: string): Promise<string|null> {
+    await this.runAdbCommand(["connect", address]);
     const serials = await this.getSerials();
-    const newSerial = serials.find((s) => s.includes(ip));
+    const newSerial = serials.find((s) => s.includes(address));
     if (!newSerial) {
-      console.error(new Error("Failed to connect to the device"));
+      console.log(new Error("Failed to connect to the device" + address));
       return null;
     }
     this.serial = newSerial;
     return newSerial;
+  }
+
+  public async pair(address: string, code: string): Promise<boolean> {
+    const output = await this.runAdbCommand(["pair", address, code]);
+    return output.includes("connected to") || output.includes("successfully");
   }
 
   public async install(apkPath: string): Promise<boolean> {

@@ -18,7 +18,7 @@
     gap: 0.6em;
 }
 
-.game-list-header > input, .game-list-header > select {
+input, select {
     border-radius: 8px;
     border: 1px solid #ccc;
     padding: 0 1em;

@@ -10,6 +10,13 @@ export type AdbCommandInput = {
 } | {
   command: 'connectWifi';
   serial: string;
+} | {
+  command: 'connectTcp';
+  address: string;
+} | {
+  command: 'pair';
+  address: string;
+  code: string;
 } | void
 
 export type Device = {
@@ -47,7 +54,7 @@ export type AdbCommandOutput = {
 }
 
 type AdbCommandOutputs = 
-  AdbCommandOutput['list'] | void | string | null
+  AdbCommandOutput['list'] | void | string | null | boolean
 ;
 
 export default {
@@ -58,6 +65,10 @@ export default {
       return;
     } else if(payload?.command === 'connectWifi') {
       return await AdbManager.connectWifi(payload.serial);;
+    } else if(payload?.command === 'connectTcp') {
+      return await AdbManager.connectTcp(payload.address);
+    } else if(payload?.command === 'pair') {
+      return await AdbManager.pair(payload.address, payload.code)
     }
     
     const devices = await AdbManager.listDevices();

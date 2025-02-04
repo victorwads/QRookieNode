@@ -13,12 +13,16 @@ import type { Game } from '../bridge/games';
 import deviceManager from '../bridge/devices';
 import type { AdbCommandOutput } from '../bridge/devices';
 
+const LAST_IP_KEY = 'device.lastIp';
 
 const Devices: React.FC = () => {
   const [result, setResult] = React.useState<AdbCommandOutput['list']>(deviceManager.getDevicesCache());
   const [loading, setLoading] = React.useState<boolean>(true);
+  const [connectIp, setConnectIp] = React.useState<string>(localStorage.getItem(LAST_IP_KEY) || '');
+  const [pairIp, setPairIp] = React.useState<string>('');
+  const [pairCode, setPairCode] = React.useState<string>('');
 
-  const getAdbDevices = async (serial?: string) => {
+  const getDevices = async (serial?: string) => {
     if (serial) {
       await deviceManager.setDevice(serial);
     }
@@ -28,21 +32,38 @@ const Devices: React.FC = () => {
     setLoading(false)
   };
 
-  const connectWifi = async (serial: string) => {
+  const connectionFeedback = async (task: Promise<any>, message: string) => {
     setLoading(true);
-    const newSerial = await deviceManager.connectWifi(serial);
-    if(newSerial) {
-      await getAdbDevices();
-    } else {
-      alert('Failed to connect to wifi');
+    const result = await task;
+    const devices = getDevices();
+    if(!result) {
+      alert(message);
     }
+    await devices;
     setLoading(false);
   }
 
+  const connectWifi = async (serial: string) => {
+    connectionFeedback(deviceManager.connectWifi(serial), 'Failed to connect with tcp to device ' + serial);
+  }
+
+  const connectTcp = async (connectIp: string) => {
+    localStorage.setItem(LAST_IP_KEY, connectIp);
+    connectionFeedback(deviceManager.connectTcp(connectIp), 'Failed to connect to address' + connectIp);
+  }
+
+  const pair = async (pairIp: string, pairCode: string) => {
+    connectionFeedback(
+      deviceManager.pair(pairIp, pairCode),
+      'Failed to pair with device ' + pairIp + ' and code ' + pairCode +
+      '. But maybe it is already paired.'
+    );
+  }
+
   useEffect(() => {
-    getAdbDevices()
+    getDevices()
     const interval = setInterval(() => {
-      getAdbDevices()
+      getDevices()
     }, 10000);
     return () => {
       clearInterval(interval);
@@ -53,12 +74,25 @@ const Devices: React.FC = () => {
     <div className='horizontal-display'>
       <h1><Icon icon={Icons.solid.faTabletAlt} size="lg" />Devices Page</h1>
       <CenteredLoading visible={loading} />
-      <Button onClick={() => getAdbDevices()} icon={Icons.solid.faRefresh}>Reload Devices</Button>
+      <Button onClick={() => getDevices()} icon={Icons.solid.faRefresh}>Reload Devices</Button>
+    </div>
+    <div style={{padding: '0 20px'}}>
+      <h2>Network Connection</h2>
+      <strong>With address: </strong>
+      <input type="text" placeholder="0.0.0.0:5555" value={connectIp} onChange={e => setConnectIp(e.target.value)} style={{width: '11em'}} />
+      <Button onClick={() => connectTcp(connectIp)} icon={Icons.solid.faWifi}>Try Connect TCP</Button>
+    </div>
+    <div style={{padding: '0 20px'}}>
+      <strong>Pair with Code: </strong>
+      <input type="text" placeholder="0.0.0.0:5555" style={{width: '7.4em'}} value={pairIp} onChange={e => setPairIp(e.target.value)} />
+      <input type="text" placeholder="Code" style={{width: '4em'}} value={pairCode} onChange={e => setPairCode(e.target.value)} />
+      <Button onClick={() => pair(pairIp, pairCode)} icon={Icons.solid.faWifi}>Try Pair</Button>
+      <a href="https://developer.android.com/tools/adb?hl=pt-br#connect-to-a-device-over-wi-fi" target="_blank" rel="noreferrer">Instructions (Use Android System Configs)</a>
     </div>
     {result.devices.length === 0 ? <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
       <h2>No Devices Found</h2>
     </div> : <div style={{padding: '0 20px'}}>
-      <DevicesList devices={result.devices} onConnect={getAdbDevices} onConnectWifi={connectWifi} />
+      <DevicesList devices={result.devices} onConnect={getDevices} onConnectWifi={connectWifi} />
       {result.deviceInfo && <DeviceInfoCard deviceInfo={result.deviceInfo} />}
       <UsersList users={result.users} />
       <h2>Installed Games</h2>

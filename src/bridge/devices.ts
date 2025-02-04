@@ -4,7 +4,6 @@ import type { AdbCommandInput, AdbCommandName, AdbCommandOutput } from '../../el
 export type { Device, AdbCommandOutput } from '../../electron/shared';
 
 class DeviceManager {
-  
   private cache: AdbCommandOutput['list'] = {
     devices: [],
     users: [],
@@ -38,17 +37,26 @@ class DeviceManager {
     });
   }
 
-  async connectWifi(serial: string): Promise<boolean> {
-    const newSerial = await sendCommand<AdbCommandName, AdbCommandInput, string | null>({
+  public async connectWifi(serial: string): Promise<boolean> {
+    return !!await sendCommand<AdbCommandName, AdbCommandInput, string | null>({
       type: 'adb',
       payload: { command: 'connectWifi', serial: serial },
     });
-    if (newSerial) {
-      return true;
-    }
-    return false;
   }
 
+  public async connectTcp(address: string): Promise<boolean> {
+    return !!await sendCommand<AdbCommandName, AdbCommandInput, string | null>({
+      type: 'adb',
+      payload: { command: 'connectTcp', address },
+    });
+  }
+
+  public async pair(address: string, code: string): Promise<boolean> {
+    return !!await sendCommand<AdbCommandName, AdbCommandInput, string | null>({
+      type: 'adb',
+      payload: { command: 'pair', address, code },
+    });
+  }
 }
 
 export default new DeviceManager();

@@ -1,5 +1,6 @@
 import { ipcMain, IpcMainInvokeEvent } from "electron";
 
+import log from "../log";
 import DevToolsCommand from "./devTools";
 import AdbCommand from "./adb";
 import GamesCommand from "./games";
@@ -19,9 +20,9 @@ const setupBridge = () => {
     if (command.length === 1) {
       return await command[0].receiver(comandEvent.payload);
     } if (command.length > 1) {
-      console.log(`Multiple commands with the same type: ${comandEvent.type}`, commands);
+      log.error(`Multiple commands with the same type: ${comandEvent.type}`, commands);
     } else {
-      console.log(`Unknown command type: ${comandEvent.type}`);
+      log.error(`Unknown command type: ${comandEvent.type}`);
     }
     return null;
   });

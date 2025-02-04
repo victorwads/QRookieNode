@@ -2,6 +2,8 @@ import * as fs from "fs";
 import * as path from "path";
 import * as https from "https";
 import * as child_process from "child_process";
+
+import log from "../../log";
 import { downloadDir, extractedDir } from "../dirs";
 
 export type GitHubRelease = {
@@ -93,7 +95,7 @@ export async function setupTools(force: boolean = false): Promise<void> {
     fs.rmdirSync(platformToolsDir, { recursive: true });
   }
   if (fs.existsSync(platformToolsDir)) {
-    console.log("Platform tools already exist. Skipping download.");
+    log.info("Platform tools already exist. Skipping download.");
     return;
   }
 
@@ -107,11 +109,11 @@ export async function setupTools(force: boolean = false): Promise<void> {
   const fileName = url.split('/').pop() + "";
   const zipPath = path.join(downloadDir, fileName);
 
-  console.log(`Downloading tools for ${platform}-${arch} from ${url}...`);
+  log.info(`Downloading tools for ${platform}-${arch} from ${url}...`);
   await downloadFile(url, zipPath);
 
-  console.log(`Extracting tools to ${extractedDir}...`);
+  log.info(`Extracting tools to ${extractedDir}...`);
   await unzipFile(zipPath, extractedDir);
 
-  console.log("Tools setup complete!");
+  log.info("Tools setup complete!");
 }

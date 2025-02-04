@@ -1,5 +1,6 @@
 import * as fs from "fs";
 
+import log from "../../log";
 import RunSystemCommand from "../runSystemCommand";
 import type { Device, User, AppInfo } from "./";
 
@@ -127,7 +128,7 @@ class AdbManager extends RunSystemCommand {
   public async connectWifi(serial: string): Promise<string|null> {
     const ip = await this.getIp(serial);
     if (!ip) {
-      console.log(new Error("Failed to get IP address"));
+      log.error(new Error("Failed to get IP address"));
       return null;
     }
     await this.runAdbCommand(["-s", serial, "tcpip", "5555"]);
@@ -139,7 +140,7 @@ class AdbManager extends RunSystemCommand {
     const serials = await this.getSerials();
     const newSerial = serials.find((s) => s.includes(address));
     if (!newSerial) {
-      console.log(new Error("Failed to connect to the device" + address));
+      log.error(new Error("Failed to connect to the device" + address));
       return null;
     }
     this.serial = newSerial;

@@ -4,6 +4,7 @@ import * as path from "path";
 import * as fs from "fs";
 import { WriteStream } from "fs";
 
+import log from "../../log";
 import { GameStatusInfo, DownloadProgress } from "../../shared";
 import { getMainWindow } from "../../main";
 import RunSystemCommand from "../runSystemCommand";
@@ -28,7 +29,7 @@ export const progress = async (info: GameStatusInfo) => {
 
 export default class HttpDownloader extends RunSystemCommand {
   public download(url: string): Promise<string> {
-    console.log(`Downloading with https: ${url}`);
+    log.info(`Downloading with https: ${url}`);
     return new Promise((resolve, reject) => {
       https.get(url, (response) => {
         let data = "";
@@ -61,7 +62,7 @@ export default class HttpDownloader extends RunSystemCommand {
     const tempPath = `${finalPath}`;
 
     if (fs.existsSync(finalPath)) {
-      console.log(`File already exists: ${finalPath}`);
+      log.warn(`File already exists: ${finalPath}`);
       return true;
     }
 
@@ -72,7 +73,7 @@ export default class HttpDownloader extends RunSystemCommand {
       "user-agent": "rclone/v1.65.2",
       accept: "*/*",
     };
-    console.log(`Downloading ${url} to ${finalPath}`);
+    log.info(`Downloading ${url} to ${finalPath}`);
     
     return new Promise((resolve, reject) => {
       const client = http2.connect(url.origin);
@@ -93,7 +94,7 @@ export default class HttpDownloader extends RunSystemCommand {
         req.on("end", () => {
           fileStream.close();
           fs.renameSync(tempPath, finalPath);
-          console.log(`Download completed: ${finalPath}`);
+          log.info(`Download completed: ${finalPath}`);
           resolve(true);
           client.close(); // Fecha a conexão HTTP/2
         });
@@ -111,7 +112,7 @@ export default class HttpDownloader extends RunSystemCommand {
   }
 
   private async getBodyWithHttp2(url: URL, stream?: WriteStream, progress?: (addSize: number) => void): Promise<string|boolean> {
-    console.log(`Downloading: ${url}`);
+    log.info(`Downloading: ${url}`);
     const client = http2.connect(url.origin);
     const headers: Record<string, string> = {
       ":method": "GET",
@@ -185,11 +186,11 @@ export default class HttpDownloader extends RunSystemCommand {
     }
 
     if (this.isFinishedDownloadFile(downloadDirectory)) {
-      console.log(`Download already finished: ${id}`);
+      log.info(`Download already finished: ${id}`);
       return true;
     }
     if (this.isLockedDownloadFile(downloadDirectory)) {
-      console.log(`Download already in progress: ${id}`);
+      log.info(`Download already in progress: ${id}`);
       return true;
     }
     this.initDownloadFileLock(downloadDirectory);
@@ -220,7 +221,7 @@ export default class HttpDownloader extends RunSystemCommand {
     progress(progressInfo);
     const {files, totalSize} = await this.getGameDownloadFiles(url);
     if (files.length === 0) {
-      console.log(`Downloading Error: No files found: ${url}`);
+      log.error(`Downloading Error: No files found: ${url}`);
       return null;
     }
     progressInfo.bytesTotal = totalSize;
@@ -245,7 +246,7 @@ export default class HttpDownloader extends RunSystemCommand {
     progress(progressInfo);
 
     fs.writeFileSync(path.join(downloadDirectory, "finished"), new Date().toISOString());
-    console.log(`Download complete: ${id}`);
+    log.info(`Download complete: ${id}`);
     return progressInfo;
   }
 
@@ -326,7 +327,7 @@ export default class HttpDownloader extends RunSystemCommand {
       }
 
       if (fs.existsSync(finishedPath)) {
-        console.log(`File already exists: ${name}`);
+        log.info(`File already exists: ${name}`);
         progressInfo.bytesReceived! += file.bytesTotal;
         progressInfo.percent = progressInfo.bytesReceived! / progressInfo.bytesTotal! * 100;
         finishProgress();
@@ -347,7 +348,7 @@ export default class HttpDownloader extends RunSystemCommand {
         finishProgress();
         resolve(true);
       }).catch((err) => {
-        console.log(`Download Error: ${name}`, err);
+        log.error(`Download Error: ${name}`, err);
         reject(err);
       });
     });
@@ -364,7 +365,7 @@ export default class HttpDownloader extends RunSystemCommand {
     const preTagMatch = listBody.match(/<pre>([\s\S]*?)<\/pre>/);
     let lines: string[] = [];
     if (!preTagMatch) {
-      console.log(`Downloading Error: No pre tag found: ${url}`);
+      log.error(`Downloading Error: No pre tag found: ${url}`);
     } else {
       const preText = preTagMatch[1];
       lines = preText.split('\n');  

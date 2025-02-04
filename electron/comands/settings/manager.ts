@@ -3,6 +3,7 @@ import * as path from "path";
 import { app, dialog } from "electron";
 
 import type { Settings, SystemHelth } from ".";
+import log from "../../log";
 import { gamesDir, gamesDirName, userDataDir } from "../dirs";
 
 import RunSystemCommand from "../runSystemCommand";
@@ -33,7 +34,7 @@ class SettingsManager extends RunSystemCommand {
       const selectedPath = result.filePaths[0];
       this.settings.downloadsDir = selectedPath;
       this.createDownloadsDir();
-      console.log("Selected downloads dir:", selectedPath);
+      log.debug("Selected downloads dir:", selectedPath);
     }
     this.save();
   }

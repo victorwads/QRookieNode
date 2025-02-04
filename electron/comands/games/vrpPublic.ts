@@ -1,3 +1,4 @@
+import log from '../../log';
 import HttpDownloader from "./httpDownloader";
 
 export interface VprPublicData {
@@ -12,13 +13,13 @@ export class VprPublic {
     const downloader = new HttpDownloader();
 
     try {
-      console.log(`Fetching VPR public data from: ${VprPublic.PUBLIC_URL}`);
+      log.info(`Fetching VPR public data from: ${VprPublic.PUBLIC_URL}`);
       const data = await downloader.download(VprPublic.PUBLIC_URL);
 
       const json = JSON.parse(data);
 
       if (!json.baseUri || !json.password) {
-        console.log("Invalid data format:", json);
+        log.error("Invalid data format:", json);
         return null;
       }
 
@@ -28,7 +29,7 @@ export class VprPublic {
 
       return { baseUri, password };
     } catch (error) {
-      console.log("Failed to fetch VPR public data:", error);
+      log.error("Failed to fetch VPR public data:", error);
       return null;
     }
   }

@@ -2,6 +2,7 @@ import * as crypto from 'crypto';
 import * as path from 'path';
 import * as fs from 'fs';
 
+import log from '../../log';
 import type { Game } from "./";
 import vrpManager from './vrpManager';
 import adbManager from '../adb/manager';
@@ -30,12 +31,12 @@ class GameManager {
       return true;
     }
     try {
-      console.log("Downloading games data from...", GameManager.GAMES_URL);
+      log.info("Downloading games data from...", GameManager.GAMES_URL);
       const data = await this.downloader.download(GameManager.GAMES_URL);
 
       const json = JSON.parse(data);
       if (!Array.isArray(json)) {
-        console.log("Invalid data format:", data);
+        log.error("Invalid data format:", data);
         return false;
       }
 
@@ -58,7 +59,7 @@ class GameManager {
       loadedGames = true;
       return true;
     } catch (err) {
-      console.log("Error updating games:", err);
+      log.error("Error updating games:", err);
       return false;
     }
   }

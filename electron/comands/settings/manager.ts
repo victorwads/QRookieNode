@@ -41,8 +41,11 @@ class SettingsManager extends RunSystemCommand {
 
   public get(): Settings {
     return {
-      downloadsDir: this.getDownloadsDir(),
-      ...this.settings
+      ...this.settings,
+      ...(process.env.ROOKIE_DOWNLOADS_DIR
+        ? {downloadsDir: this.getDownloadsDir()}
+        : {}
+      ),
     };
   }
 

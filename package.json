@@ -9,6 +9,8 @@
   },
   "homepage": "./",
   "scripts": {
+    "headless": "yarn react:build && yarn electron:build && yarn headless:no-build",
+    "headless:no-build": "electron ./dist/electron/main.js --headless --no-sandbox",
     "build": "bash ./script-build.sh",
     "dev": "bash ./script-dev.sh",
     "bundle": "yarn build && electron-builder",

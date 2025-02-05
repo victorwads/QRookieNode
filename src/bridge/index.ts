@@ -1,7 +1,14 @@
-import type { CommandEvent } from '../../electron/shared';
+import type { CommandSender, GameStatusInfo } from '../../electron/shared';
+import ElectronBridge from './ElectronBridge';
+import WebSocketBridge from './WebSocketbridge';
 
-async function sendCommand<Name extends string, Input = any, Output = any>(command: CommandEvent<Input, Name>): Promise<Output> {
-  return window.sendCommand(command);
+export interface BridgeInterface {
+  sendCommand: CommandSender;
+  registerGameStatusReceiver: (callback: (info: GameStatusInfo) => void) => void;
 }
 
-export default sendCommand;
+export const isElectron = !!(window as any).sendCommand;
+export const isWebsoket = !isElectron;
+export const bridge: BridgeInterface = isElectron ? new ElectronBridge() : new WebSocketBridge();
+
+export default bridge;

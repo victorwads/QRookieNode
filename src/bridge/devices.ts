@@ -1,4 +1,4 @@
-import sendCommand from '.';
+import bridge from '.';
 
 import type { AdbCommandInput, AdbCommandName, AdbCommandOutput } from '../../electron/shared';
 export type { Device, AdbCommandOutput } from '../../electron/shared';
@@ -23,7 +23,7 @@ class DeviceManager {
   }
 
   public async getDevices(): Promise<AdbCommandOutput['list']> {
-    const result = sendCommand<AdbCommandName, AdbCommandInput, AdbCommandOutput['list']>({
+    const result = bridge.sendCommand<AdbCommandName, AdbCommandInput, AdbCommandOutput['list']>({
       type: 'adb',
     });
     this.cache = await result;
@@ -31,28 +31,28 @@ class DeviceManager {
   }
 
   public async setDevice(serial: string) {
-    await sendCommand<AdbCommandName, AdbCommandInput, void>({
+    await bridge.sendCommand<AdbCommandName, AdbCommandInput, void>({
       type: 'adb',
       payload: { command: 'selectDevice', serial: serial },
     });
   }
 
   public async connectWifi(serial: string): Promise<boolean> {
-    return !!await sendCommand<AdbCommandName, AdbCommandInput, string | null>({
+    return !!await bridge.sendCommand<AdbCommandName, AdbCommandInput, string | null>({
       type: 'adb',
       payload: { command: 'connectWifi', serial: serial },
     });
   }
 
   public async connectTcp(address: string): Promise<boolean> {
-    return !!await sendCommand<AdbCommandName, AdbCommandInput, string | null>({
+    return !!await bridge.sendCommand<AdbCommandName, AdbCommandInput, string | null>({
       type: 'adb',
       payload: { command: 'connectTcp', address },
     });
   }
 
   public async pair(address: string, code: string): Promise<boolean> {
-    return !!await sendCommand<AdbCommandName, AdbCommandInput, string | null>({
+    return !!await bridge.sendCommand<AdbCommandName, AdbCommandInput, string | null>({
       type: 'adb',
       payload: { command: 'pair', address, code },
     });

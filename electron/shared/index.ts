@@ -1,4 +1,4 @@
-export type CommandSender = <Input, Output, Name extends string>(command: CommandEvent<Input, Name>) => Output;
+export type CommandSender = <Name extends string, Input = any, Output = any>(command: CommandEvent<Input, Name>) => Promise<Output>;
 export type CommandReceiver<Input, Output, Type> = (payload?: Input, name?: Type) => Promise<Output>;
 export type Command<Input, Output, Type extends string> = { type: Type; receiver: CommandReceiver<Input, Output, Type>;}
 export type CommandEvent<Input, Name extends string> = { type: Name; payload?: Input; }
@@ -14,9 +14,3 @@ export * from '../comands/settings';
 
 const All = {}
 export default All;
-
-declare global {
-    interface Window {
-        sendCommand: CommandSender;
-    }
-}

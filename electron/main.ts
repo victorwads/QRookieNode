@@ -1,10 +1,8 @@
-import { app, BrowserWindow, net, protocol } from "electron";
+import { app, BrowserWindow } from "electron";
 import path from "path";
-import fs from "fs";
 
 import "./comands";
 import { setupMenu } from "./features/menu";
-import { downloadDir } from "./comands/dirs";
 
 let mainWindow: BrowserWindow|null = null;
 
@@ -13,6 +11,10 @@ export function getMainWindow(): BrowserWindow|null {
 }
 
 const createMainWindow = () => {
+  const isHeadless = process.argv.includes("--headless");
+  if (isHeadless)
+    return
+
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 800,
@@ -32,17 +34,6 @@ const createMainWindow = () => {
 
   mainWindow.on('closed', () => { mainWindow = null;});
 };
-
-app.whenReady().then(() => {
-  protocol.handle('game-image', (request) => {
-    const packageName = decodeURIComponent(request.url.replace("game-image://", ""));
-    let filePath = path.join(downloadDir, ".meta", "thumbnails", packageName + ".jpg");
-    if (!fs.existsSync(filePath)) {
-      filePath = path.join(__dirname, '../../assets/images/matrix.png');
-    }
-    return net.fetch('file://' + path.normalize(filePath));
-  })
-});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

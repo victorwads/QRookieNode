@@ -1,4 +1,4 @@
-import sendCommand from '..';
+import bridge from '..';
 import { DevToolsCommandName, Settings, SettingsCommandName, SettingsCommandOutputs, SettingsCommandPayload, SystemHelth } from '../../../electron/shared';
 import { promisse, RepoDownloadsInfo, repoDownloadsInfo } from './repoInfo';
 export type { GitHubRelease, Settings, SystemHelth } from '../../../electron/shared';
@@ -7,7 +7,7 @@ export type { RepoDownloadsInfo }
 
 class SettingsManager {
   public async getHelthInfo(): Promise<SystemHelth> {
-    return sendCommand<SettingsCommandName, SettingsCommandPayload, SettingsCommandOutputs['systemHelth']>({
+    return bridge.sendCommand<SettingsCommandName, SettingsCommandPayload, SettingsCommandOutputs['systemHelth']>({
       type: 'settings',
       payload: {
         action: 'getSystemHelth'
@@ -16,13 +16,13 @@ class SettingsManager {
   }
 
   public openDevTools() {
-    sendCommand<DevToolsCommandName>({
+    bridge.sendCommand<DevToolsCommandName>({
       type: 'devTools',
     });
   }
 
   public async getSettings(): Promise<Settings> {
-    return await sendCommand<SettingsCommandName, SettingsCommandPayload, SettingsCommandOutputs['settings']>({
+    return await bridge.sendCommand<SettingsCommandName, SettingsCommandPayload, SettingsCommandOutputs['settings']>({
       type: 'settings',
       payload: {
         action: 'list',
@@ -31,7 +31,7 @@ class SettingsManager {
   }
 
   public async setDownloadPath(): Promise<Settings> {
-    return await sendCommand<SettingsCommandName, SettingsCommandPayload>({
+    return await bridge.sendCommand<SettingsCommandName, SettingsCommandPayload>({
       type: 'settings',
       payload: {
         action: 'setDownloadsDir',

@@ -1,4 +1,4 @@
-import sendCommand from '../bridge';
+import bridge from './';
 import type { GamesCommandName, GamesCommandPayload } from '../../electron/shared';
 import type { GameStatusInfo } from '../../electron/shared';
 
@@ -14,8 +14,7 @@ class GameDownloadManager {
   private downloadedCache: string[] = [];
 
   constructor() {
-    const { downloads } = (window as any);
-    downloads.receive((info: GameStatusInfo) => {
+    bridge.registerGameStatusReceiver((info: GameStatusInfo) => {
       this.emit(info.id, info);
     });
     this.getDownloadedGames();
@@ -80,7 +79,7 @@ class GameDownloadManager {
   }
 
   public async getDownloadedGames(): Promise<string[]> {
-    const downloadedIds = await sendCommand<GamesCommandName, GamesCommandPayload, string[]>({
+    const downloadedIds = await bridge.sendCommand<GamesCommandName, GamesCommandPayload, string[]>({
       type: 'games',
       payload: { action: 'listDownloaded' },
     })
@@ -93,14 +92,14 @@ class GameDownloadManager {
   }
 
   public downloadGame(id: string) {
-    sendCommand<GamesCommandName, GamesCommandPayload>({
+    bridge.sendCommand<GamesCommandName, GamesCommandPayload>({
       type: 'games',
       payload: { action: 'download', id},
     });
   }
 
   public async remove(id: string): Promise<void> {
-    await sendCommand<GamesCommandName, GamesCommandPayload>({
+    await bridge.sendCommand<GamesCommandName, GamesCommandPayload>({
       type: 'games',
       payload: { action: 'removeDownload', id},
     });
@@ -110,7 +109,7 @@ class GameDownloadManager {
   }
 
   public cancel(id: string) {
-    sendCommand<GamesCommandName, GamesCommandPayload>({
+    bridge.sendCommand<GamesCommandName, GamesCommandPayload>({
       type: 'games',
       payload: { action: 'cancel', id },
     });

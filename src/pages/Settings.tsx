@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import type { RepoDownloadsInfo, Settings as SettingsModel } from '../bridge/settings';
 import settingsManager, { SystemHelth } from '../bridge/settings';
+import { isElectron, isWebsoket } from '../bridge';
 
 import './Settings.css';
 import Icon, { Icons } from '../components/Icons';
@@ -13,6 +14,13 @@ settingsManager.getHelthInfo().then(info => {
   sysTemHelthCache = info;
 });
 
+export const changeDownloadsDir = async (): Promise<SettingsModel> => {
+  if (isWebsoket) {
+    alert('Use ROOKIE_DOWNLOADS_DIR environment variable with a valid full path to set the download dir on web server');
+  }
+  return await settingsManager.setDownloadPath();
+};
+
 const Settings: React.FC = () => {
   const [infos, set] = useState<RepoDownloadsInfo>(settingsManager.getReposInfo());
   const [systemHelth, setSystemHelth] = useState<SystemHelth|null>(sysTemHelthCache);
@@ -20,10 +28,6 @@ const Settings: React.FC = () => {
 
   const openDevTools = () => {
     settingsManager.openDevTools();
-  };
-
-  const changeDownloadsDir = async () => {
-    setSettings(await settingsManager.setDownloadPath());
   };
 
   useEffect(() => {
@@ -46,8 +50,8 @@ const Settings: React.FC = () => {
     <div className='horizontal-display'>
       <h1><Icon icon={Icons.solid.faGear} size="lg" />Settings Page</h1>
       <div className='spacer' />
-      <Button onClick={openDevTools} icon={Icons.solid.faTools}>DevTools</Button>
-      <Button onClick={changeDownloadsDir} icon={Icons.solid.faFolderOpen}>Change Downloads Dir</Button>
+      {isElectron && <Button onClick={openDevTools} icon={Icons.solid.faTools}>DevTools</Button>}
+      <Button onClick={() => changeDownloadsDir().then(setSettings)} icon={Icons.solid.faFolderOpen}>Change Downloads Dir</Button>
     </div>
     <div className='sections'>
       <section>
@@ -71,8 +75,8 @@ const Settings: React.FC = () => {
       <section>
         <h2>System Helth Check</h2>
         {systemHelth ? <ul>
-          <li><pre><strong>App Version:</strong> {systemHelth.appVersion}</pre></li>
-          <li><pre><strong>Electron Version:</strong> {systemHelth.electronVersion}</pre></li>
+          <li><pre><strong>App Version:</strong> {systemHelth.appVersion}{isWebsoket? ' (Web Version)' : ''}</pre></li>
+          {isElectron && <li><pre><strong>Electron Version:</strong> {systemHelth.electronVersion}</pre></li>}
           <li><pre><strong>Bundled Node Version:</strong> {systemHelth.bundledNodeVersion}</pre></li>
           <li><pre><strong>ADB:</strong> {systemHelth.adb}</pre></li>
           <li><pre><strong>7Zip:</strong> {systemHelth.sevenZip}</pre></li>

@@ -1,4 +1,4 @@
-import sendCommand from '../bridge';
+import bridge from '../bridge';
 import type { Game, GamesCommandName, GamesCommandPayload } from '../../electron/shared';
 export type { Game } from '../../electron/shared';
 
@@ -8,7 +8,12 @@ class GamesManager {
   private cache: Game[];
 
   constructor() {
-    this.cache = JSON.parse(localStorage.getItem(cacheKey) || '[]');
+    try {
+      this.cache = JSON.parse(localStorage.getItem(cacheKey) || '[]');
+    } catch (e) {
+      console.error('Failed to load games cache', e);
+      this.cache = [];
+    }
   }
 
   public getCache(): Game[] {
@@ -24,7 +29,7 @@ class GamesManager {
   }
 
   public async getGames(): Promise<Game[]> {
-    this.cache = await sendCommand<GamesCommandName, GamesCommandPayload, Game[]>({
+    this.cache = await bridge.sendCommand<GamesCommandName, GamesCommandPayload, Game[]>({
       type: 'games',
       payload: {
         action: 'list',
@@ -35,7 +40,7 @@ class GamesManager {
   }
 
   public async install(id: string): Promise<string|null> {
-    return await sendCommand<GamesCommandName, GamesCommandPayload, string|null>({
+    return await bridge.sendCommand<GamesCommandName, GamesCommandPayload, string|null>({
       type: 'games',
       payload: {
         action: 'install',

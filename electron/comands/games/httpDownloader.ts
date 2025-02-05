@@ -5,8 +5,8 @@ import * as fs from "fs";
 import { WriteStream } from "fs";
 
 import log from "../../log";
+import { downloadProgress } from "..";
 import { GameStatusInfo, DownloadProgress } from "../../shared";
-import { getMainWindow } from "../../main";
 import RunSystemCommand from "../runSystemCommand";
 import settingsManager from "../settings/manager";
 import vrpPublic from "./vrpPublic";
@@ -27,7 +27,7 @@ export const progress = async (info: GameStatusInfo) => {
   downloadingInfo[info.id] = info;
   if(shouldSend || info.status !==  'downloading') {
     shouldSend = false;
-    getMainWindow()?.webContents.send("downloadProgress", info);
+    downloadProgress(info);    
   }
 }
 

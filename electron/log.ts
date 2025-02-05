@@ -4,6 +4,7 @@ const log = {
   warn: (...args: any[]) => console.log("\x1b[33m", ...args, "\x1b[0m"),
   error: (...args: any[]) => console.log("\x1b[31m", ...args, "\x1b[0m"),
   info: (...args: any[]) => console.log(...args),
+  userInfo: (...args: any[]) => console.log("\x1b[33m", ...args, "\x1b[0m"),
   debug: (...args: any[]) => console.log("\x1b[35m", ...args, "\x1b[0m"),
   command: (command: string, args: string[], stdout: string, stderr: string) => {
     const stdoutLines = stdout.split("\n");

@@ -8,6 +8,7 @@ import type { Game } from "../bridge/games";
 
 import { Icons } from "./Icons";
 import Button from "./Button";
+import { isElectron } from "../bridge";
 
 export function formatSize(size: number = 0): string {
   if (size >= 1e9) return `${(size / 1e9).toFixed(2)} GB`;
@@ -93,7 +94,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
     <div className="game-card">
       <div className="game-card-image" onClick={() => onSelect && onSelect(game)}>
         {/* Add Eye Icon */}
-        <img src={'game-image://' + game.packageName} alt={game.name} loading='lazy' />
+        <img src={(isElectron ? 'game-image://' : '/game-image/') + game.packageName} alt={game.name} loading='lazy' />
       </div>
       <div className="game-card-content">
         <h3 className="game-card-title" onClick={() => onSelect && onSelect(game)}>{game.normalName}</h3>

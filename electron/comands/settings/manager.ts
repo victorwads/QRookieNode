@@ -40,10 +40,16 @@ class SettingsManager extends RunSystemCommand {
   }
 
   public get(): Settings {
-    return this.settings;
+    return {
+      downloadsDir: this.getDownloadsDir(),
+      ...this.settings
+    };
   }
 
   public getDownloadsDir(): string {
+    if(process.env.ROOKIE_DOWNLOADS_DIR && fs.existsSync(process.env.ROOKIE_DOWNLOADS_DIR)) {
+      return process.env.ROOKIE_DOWNLOADS_DIR;
+    }
     if (this.settings.downloadsDir && fs.existsSync(this.settings.downloadsDir)) {
       return path.join(this.settings.downloadsDir, gamesDirName);
     }

@@ -165,7 +165,7 @@ jobs:
         env:
           CERTIFICATE_PASSWORD: ${{ secrets.DECP }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: yarn bundle --linux
+        run: yarn bundle --linux && yarn bundle:android-termux
 
       - name: Upload Linux Artifacts to Release
         uses: ncipollo/release-action@v1

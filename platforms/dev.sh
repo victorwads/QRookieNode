@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Use Repo directory
+cd "$(dirname "$0")/.."
+
 # Função para matar os processos filhos quando o script principal terminar
 cleanup() {
     echo "Encerrando todos os processos..."

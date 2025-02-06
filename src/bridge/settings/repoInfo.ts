@@ -50,7 +50,16 @@ export const promisse = Promise.all(Object.entries(repos).map(([repoName, alias]
     releases.forEach(release => {
       release.assets.forEach(asset => {
         downloads.total += asset.download_count;
-        const ext = asset.name.split('.').pop() || 'unknown';
+        let ext = asset.name.split('.').pop() || 'unknown';
+        if(asset.name.includes('Windows')) {
+          ext = 'Windows.'+ext; 
+        } else if(asset.name.includes('Linux')) {
+          ext = 'Linux.'+ext; 
+        } else if(asset.name.includes('Mac')) {
+          ext = 'Mac.'+ext; 
+        } else if(asset.name.includes('Android')) {
+          ext = 'Android.'+ext; 
+        }
         downloads.byExt[ext] = (downloads.byExt[ext] || 0) + asset.download_count;
       });
     });

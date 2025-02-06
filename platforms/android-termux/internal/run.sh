@@ -1,2 +1,4 @@
 #!/bin/bash
-/app/qrookie-node --no-sandbox --headless
+cd "$(dirname "$0")/.."
+
+./electron --no-sandbox --headless

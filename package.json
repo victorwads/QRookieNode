@@ -11,9 +11,10 @@
   "scripts": {
     "headless": "yarn react:build && yarn electron:build && yarn headless:no-build",
     "headless:no-build": "electron ./dist/electron/main.js --headless --no-sandbox",
-    "build": "bash ./script-build.sh",
-    "dev": "bash ./script-dev.sh",
+    "build": "bash ./platforms/build.sh",
+    "dev": "bash ./platforms/dev.sh",
     "bundle": "yarn build && electron-builder",
+    "bundle:android-termux": "bash ./platforms/bundle-android-termux.sh",
     "bundle:mac-dev": "yarn bundle --mac --dir -c.mac.identity=null",
     "bundle:no-build": "electron-builder",
     "react:dev": "cross-env BROWSER=none react-app-rewired start",

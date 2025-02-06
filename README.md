@@ -1,32 +1,28 @@
-# QRookie-Node
+# Rookie Node (Electron Version)
 
-**Under development**
-```
-This project is in alpha releases not tested on all supported operational systems.
-You can already download the latest release and test it, but be aware that it may contain bugs.
-```
-
-QRookie-Node is an application for downloading and installing games for Quest devices, inspired by the [QRookie](https://github.com/glaumar/QRookie) project by **@glaumar**. This project adapts the original implementation to a modern development environment, leveraging **Node.js** and **React** for greater flexibility and ease of use across multiple platforms.
+QRookie-Node is an application for downloading and installing games for Quest devices, inspired by the [QRookie by **@glaumar*](https://github.com/glaumar/QRookie). This project adapts the original implementation to a modern development environment, leveraging **Node.js** and **React** for greater flexibility and ease of use across multiple platforms.
 
 ## ⚡ Key Features
 
 - **Game Downloads**: Facilitates downloading games for Quest devices from public mirrors.
 - **Modern Interface**: Built with React and a tab-based navigation system.
 - **Device Management**: Handles connected devices via ADB.
-- **Node.js Backend**: Complete restructuring for cross-platform execution using Node.js.
-- **FontAwesome Icons**: Enhanced visual interface with FontAwesome Icons.
+- **Really Mutiplatform**: Works on Windows, Linux MacO, Android, and more. Try run it on your microwave!
+    - **Server Mode**: Run as a server and access it from any device on your network using a web browser.
+    - **Easy Development**: Built with Node.js and React for easy customization and contribution.
 
 ## 📦 Installation
 
-Download on [releases page](./releases) for your platform.
+Download on [releases page](./releases) for Mac, Linux and Windows.
 
-## 📚 Dependencies
+### Runing on Android Termux
 
-### Frontend
-- **React** and **React Router Dom** for navigation.
-- **FontAwesome** for custom icons.
+You can run Rookie Node on your Android device using Termux. You can run it inside your vr headset, or on your phone, tablet, or any other Android device.
+Just download the Android termux version from the [releases page](./releases) run `./qrookie-node-headless` and access it from your browser at `http://localhost:3001`
+or using your device IP address on your local network.
 
-### Development
+## 📚 Dependencies For Developers
+
 - **Node.js** for logic and process management.
 - **Yarn** for package management.
 - **Inkscape** for icon generation.
@@ -34,12 +30,21 @@ Download on [releases page](./releases) for your platform.
 ## 🚀 Development With Eletron
 
 - [Windows instructions](./docs/windowsDevelopment.md)
-`TODO`
+
 
 ## 🛠️ Project Structure
-- src/pages: Contains the main pages such as Games, Downloads, Devices, Users, and Settings.
-- src/components: Reusable components like TabBar and configured icons.
-- src/models: TypeScript models representing system entities like GameInfo and DeviceManager.
+- public/: Contains the public assets like icons and the index.html for react.
+- assets/: Contains the SVG icons used in the project and script to generate PNGs.
+- src/: Contains the React front-end code.
+    - bridge/: Contains the code to communicate with main process using Electron or WebSocket.
+    - pages/: Contains the main pages such as Games, Library, Devices, Settings, etc.
+    - components/: Reusable components like TabBar and configured icons.
+- electron/: Contains the Electron main process/server code.
+- platforms/: Contains platform-specific scripts and configurations.
+- dist/: Contains the built code (.gitignored).
+    - react/: Contains the built React code.
+    - electron/: Contains the built Electron code.
+
 
 ## 🎨 User Interface
 
@@ -49,6 +54,4 @@ Using react also allows for easy customization and extension of the interface, m
 
 ## 🔗 References
 
-This project was heavily inspired and based on the work of glaumar in [QRookie](https://github.com/glaumar/QRookie). The structure, ideas, and features were adapted to better suit the requirements of JavaScript-based platforms. 
-
-The interface is inspired by the tab-based navigation system of the original [QRookie](https://github.com/glaumar/QRookie) QML project but restructured in React. Each tab is styled flexibly to adapt to different screen sizes.
+This project was heavily inspired and based on the work of @glaumar in [QRookie](https://github.com/glaumar/QRookie). The structure, ideas, and features were adapted to better suit the requirements of JavaScript-based platforms. 

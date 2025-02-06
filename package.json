@@ -15,6 +15,7 @@
     "dev": "bash ./script-dev.sh",
     "bundle": "yarn build && electron-builder",
     "bundle:mac-dev": "yarn bundle --mac --dir -c.mac.identity=null",
+    "bundle:no-build": "electron-builder",
     "react:dev": "cross-env BROWSER=none react-app-rewired start",
     "react:build": "cross-env BUILD_PATH=dist/react react-app-rewired build",
     "electron:build": "tsc --project tsconfig.electron.json",
@@ -96,13 +97,6 @@
             "arm64",
             "x64"
           ]
-        },
-        {
-          "target": "nsis",
-          "arch": [
-            "arm64",
-            "x64"
-          ]
         }
       ]
     },
@@ -131,18 +125,6 @@
             "x64"
           ]
         }
-      ]
-    },
-    "deb": {
-      "depends": [
-        "adb",
-        "unzip"
-      ]
-    },
-    "rpm": {
-      "depends": [
-        "adb",
-        "unzip"
       ]
     }
   },

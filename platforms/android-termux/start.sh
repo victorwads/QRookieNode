@@ -6,7 +6,8 @@ if ! command -v node &> /dev/null; then
     exit 1
   fi
   echo "Node.js is not installed, installing"
-  pkg install nodejs-lts -y
+  pkg update -y
+  pkg install nodejs-lts yarn -y
 fi
 
 if ! command -v yarn &> /dev/null; then

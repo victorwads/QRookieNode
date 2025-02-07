@@ -6,7 +6,7 @@ import { downloadDir } from "./dirs";
 import log from "../log";
 
 import { sendInfoWithElectron } from "./CommandsWithElectron";
-import { sendInfoWithWebSocket } from "./CommandsWithWebSocket";
+import { sendInfoWithWebSocket } from "../main/node/CommandsWithWebSocket";
 import GamesCommand, { GameStatusInfo } from "./games";
 import SettingsCommand from "./settings";
 import DevToolsCommand from "./devTools";

@@ -1,8 +1,8 @@
 import { app, BrowserWindow } from "electron";
 import path from "path";
 
-import "./comands";
-import { setupMenu } from "./features/menu";
+import "../comands";
+import { setupMenu } from "./electron/menu";
 
 let mainWindow: BrowserWindow|null = null;
 
@@ -19,7 +19,7 @@ const createMainWindow = () => {
     width: 1000,
     height: 800,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'electron', 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
     }

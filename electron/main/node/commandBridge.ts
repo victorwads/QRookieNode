@@ -3,9 +3,9 @@ import { createServer } from "http";
 import { readFile } from "fs";
 import { join } from "path";
 
-import { CommandEvent, GameStatusInfo } from "../shared";
-import { executeCommand, getImagePath } from ".";
-import log from "../log";
+import { CommandEvent, GameStatusInfo } from "../../shared";
+import { executeCommand, getImagePath } from "../../comands";
+import log from "../../log";
 
 const reactBuildPath = join(__dirname, "../../react");
 log.debug(`Serving static files from ${reactBuildPath}`);

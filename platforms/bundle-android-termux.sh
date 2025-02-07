@@ -1,22 +1,36 @@
 #!/bin/bash
-
-# Use Repo directory
 cd "$(dirname "$0")/.."
+fulldir="$(pwd)"
 
-chmod -R +x platforms/android-termux
 version="$(node -p -e "require('./package.json').version")"
-dir="dist/QRookieAndroidTermux-$version.arm64"
-zip="$dir.zip"
+dir="QRookieHeadless-$version.arm64"
+zip="QRookieAndroidTermux-$version.arm64.zip"
 
-rm -rf "$dir"
-if [ ! -d "dist/linux-arm64-unpacked" ]; then
-    yarn bundle --linux
+rm -rf "dist/$dir"
+if [ ! -d "dist/electron" ]; then
+    yarn electron:build
+fi
+if [ ! -d "dist/react" ]; then
+    yarn react:build
 fi
 
-cp -r dist/linux-arm64-unpacked "$dir"
-cp -r platforms/android-termux/internal "$dir"
-cp platforms/android-termux/start.sh "$dir/qrookie-node-headless"
-mv "$dir/qrookie-node" "$dir/electron"
+mkdir -p "dist/$dir/dist"
+cp -r dist/electron "dist/$dir/dist/"
+cp -r dist/react "dist/$dir/dist/"
 
+mkdir -p "dist/$dir/assets/images"
+cp -r assets/images "dist/$dir/assets/"
+
+cp platforms/android-termux/start.sh "dist/$dir"
+
+echo "{\"version\":\"$version\",\"dependencies\":{\"7zip-bin\":\"^5.2.0\",\"node-7z\":\"^3.0.0\",\"ws\":\"^8.18.0\"}}" > "dist/$dir/package.json"
+cd "dist/$dir"
+yarn install --production
+
+rm yarn.lock
+chmod +x start.sh
+chmod -R +x node_modules/7zip-bin/
+
+cd "$fulldir/dist"
 rm -f "$zip"
-zip -r "$zip" dist/QRookieAndroidTermux-${version}.arm64
+zip -r "$zip" "$dir"

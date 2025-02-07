@@ -14,7 +14,7 @@ const server = createServer((req, res) => {
       if (err) {
         res.writeHead(404);
         res.end("Image not found");
-        log.error(`Image not found for package: ${packageName}`);
+        log.error(`Image not found for package: ${packageName}`, err);
       } else {
         res.writeHead(200, { "Content-Type": "image/jpeg" });
         res.end(data);

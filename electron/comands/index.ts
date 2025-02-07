@@ -1,15 +1,10 @@
-import path from "path";
-import fs from "fs";
-
-import { Command, CommandEvent } from "../shared";
-import { downloadDir } from "./dirs";
+import { Command, CommandEvent } from "./types";
 import log from "../log";
 
-import { sendInfoWithElectron } from "./CommandsWithElectron";
-import { sendInfoWithWebSocket } from "../main/node/CommandsWithWebSocket";
+import { sendInfo } from "..";
 import GamesCommand, { GameStatusInfo } from "./games";
 import SettingsCommand from "./settings";
-import DevToolsCommand from "./devTools";
+import DevToolsCommand from "./settings/devTools";
 import AdbCommand from "./adb";
 
 const commands: Command<any, any, any>[] = [
@@ -18,14 +13,6 @@ const commands: Command<any, any, any>[] = [
   GamesCommand,
   SettingsCommand,
 ];
-
-export const getImagePath = (packageName: string) => {
-  let filePath = path.join(downloadDir, ".meta", "thumbnails", packageName + ".jpg");
-  if (!fs.existsSync(filePath)) {
-    filePath = path.join(__dirname, '../../../assets/images/matrix.png');
-  }
-  return filePath;
-}
 
 export const executeCommand = async (comandEvent: CommandEvent<any, any>) => {
   const command = commands.filter((command) => command.type === comandEvent.type)
@@ -40,6 +27,5 @@ export const executeCommand = async (comandEvent: CommandEvent<any, any>) => {
 }
 
 export const downloadProgress = async (info: GameStatusInfo) => {
-  sendInfoWithElectron(info);
-  sendInfoWithWebSocket(info);
+  sendInfo(info);
 }

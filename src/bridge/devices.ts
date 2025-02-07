@@ -1,7 +1,7 @@
 import bridge from '.';
 
-import type { AdbCommandInput, AdbCommandName, AdbCommandOutput } from '../../electron/shared';
-export type { Device, AdbCommandOutput } from '../../electron/shared';
+import type { AdbCommandInput, AdbCommandName, AdbCommandOutput } from '../../electron/comands/types';
+export type { Device, AdbCommandOutput } from '../../electron/comands/types';
 
 class DeviceManager {
   private cache: AdbCommandOutput['list'] = {
@@ -59,4 +59,5 @@ class DeviceManager {
   }
 }
 
-export default new DeviceManager();
+const deviceManager = new DeviceManager();
+export default deviceManager;

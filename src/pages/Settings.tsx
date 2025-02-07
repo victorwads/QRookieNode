@@ -10,9 +10,11 @@ import Button from '../components/Button';
 import { BasicLoading } from './Loading';
 
 let sysTemHelthCache: SystemHelth|null = null;
-settingsManager.getHelthInfo().then(info => {
+const loadSystemHelth = async () => settingsManager.getHelthInfo().then(info => {
   sysTemHelthCache = info;
+  return info;
 });
+loadSystemHelth();
 
 export const changeDownloadsDir = async (): Promise<SettingsModel> => {
   if (isWebsoket) {
@@ -33,13 +35,10 @@ const Settings: React.FC = () => {
   useEffect(() => {
     settingsManager.fetchReposInfo().then(info => {set({...info})});
     if(!systemHelth) {
-      settingsManager.getHelthInfo().then(info => {
-        sysTemHelthCache = info;
-        setSystemHelth(info);
-      });
+      loadSystemHelth().then(setSystemHelth);
     }
     settingsManager.getSettings().then(setSettings);
-  }, []);
+  }, [systemHelth]);
 
   const reposInfos = Object.values(infos);
 

@@ -3,23 +3,23 @@ import { promisify } from "util";
 import { execFile } from "child_process";
 import sevenBin from "7zip-bin"
 
-import log from "../log";
-import { platformToolsDir, binExt, setupTools } from "./adb/androidToolsSetup";
+import log from "./log";
+import { platformToolsDir, binExt, setupTools } from "./comands/adb/androidToolsSetup";
 
 const execFileAsync = promisify(execFile);
 
-export default abstract class RunSystemCommand {
+export default abstract class SystemProcess {
 
   private static adbPath?: string;
 
   constructor() {
-    if (RunSystemCommand.adbPath) {
+    if (SystemProcess.adbPath) {
       return;
     }
-    RunSystemCommand.adbPath = path.join(platformToolsDir, "adb" + binExt);
+    SystemProcess.adbPath = path.join(platformToolsDir, "adb" + binExt);
     this.getCommanPath('adb').then((path) => {
       if (path) {
-        RunSystemCommand.adbPath = path;
+        SystemProcess.adbPath = path;
         log.info("ADB found at:", path);
         return;
       }
@@ -63,7 +63,7 @@ export default abstract class RunSystemCommand {
   }
 
   public getAdbPath(): string {
-    return RunSystemCommand.adbPath || "error";
+    return SystemProcess.adbPath || "error";
   }
 
 }

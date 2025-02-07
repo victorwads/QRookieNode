@@ -1,10 +1,10 @@
 import * as fs from "fs";
 
 import log from "../../log";
-import RunSystemCommand from "../runSystemCommand";
-import type { Device, User, AppInfo } from "./";
+import SystemProcess from "../../systemProcess";
+import type { Device, User, AppInfo } from ".";
 
-class AdbManager extends RunSystemCommand {
+class AdbManager extends SystemProcess {
   private devices: Device[] = [];
   private users: User[] = [];
   private apps: AppInfo[] = [];

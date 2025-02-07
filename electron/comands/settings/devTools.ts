@@ -1,5 +1,5 @@
 import { BrowserWindow } from "electron";
-import { Command, CommandEvent } from "../shared";
+import { Command, CommandEvent } from "../types";
 
 export type DevToolsCommandName = 'devTools'
 export type DevToolsCommand = Command<void, void, DevToolsCommandName>

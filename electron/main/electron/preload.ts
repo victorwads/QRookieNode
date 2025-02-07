@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { BridgeSendCommandEventType, CommandSender } from "../../shared";
+import { BridgeSendCommandEventType, CommandSender } from "../../comands/types";
 
 export const BridgeSendCommandEvent: BridgeSendCommandEventType = 'sendCommand';
 

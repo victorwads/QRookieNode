@@ -1,16 +1,23 @@
 import * as fs from "fs";
 import * as path from "path";
-import { app, dialog } from "electron";
 
 import type { Settings, SystemHelth } from ".";
+import { gamesDir, gamesDirName, appDataDir, buildRoot } from "../dirs";
+
 import log from "../../log";
-import { gamesDir, gamesDirName, userDataDir } from "../dirs";
+import SystemProcess from "../../systemProcess";
 
-import RunSystemCommand from "../runSystemCommand";
+const settingsPath = path.join(appDataDir, "settings.json");
+const appVersion = JSON.parse(fs.readFileSync(path.join(buildRoot, "package.json"), "utf-8")).version;
+const { showOpenDialog } = (function() {
+  if (process.versions.electron) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return { showOpenDialog: require("electron").dialog.showOpenDialog};
+  }
+  return { showOpenDialog: async () => ({canceled: true, filePaths: []})};
+})();
 
-const settingsPath = path.join(userDataDir, "settings.json");
-
-class SettingsManager extends RunSystemCommand {
+class SettingsManager extends SystemProcess {
   private settings: Settings = {};
 
   constructor() {
@@ -25,7 +32,7 @@ class SettingsManager extends RunSystemCommand {
   }
 
   public async setDownloadsDir() {
-    const result = await dialog.showOpenDialog({
+    const result = await showOpenDialog({
       title: "Select downloads dir",
       properties: ["openDirectory"],
     });
@@ -75,8 +82,9 @@ class SettingsManager extends RunSystemCommand {
       sevenZip: this.getCommandInfo(this.getSevenZipPath(), "7zip", 2),
       java: this.getCommanPath('java').then(path => this.getCommandInfo(path, "java", 3, "--version")),
     }
+
     return {
-      appVersion: app.getVersion(),
+      appVersion,
       electronVersion: process.versions.electron,
       bundledNodeVersion: process.versions.node,
       adb: await asyncResults.adb,

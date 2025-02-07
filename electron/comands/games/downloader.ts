@@ -6,8 +6,8 @@ import { WriteStream } from "fs";
 
 import log from "../../log";
 import { downloadProgress } from "..";
-import { GameStatusInfo, DownloadProgress } from "../../shared";
-import RunSystemCommand from "../runSystemCommand";
+import { GameStatusInfo, DownloadProgress } from "../types";
+import RunSystemCommand from "../../systemProcess";
 import settingsManager from "../settings/manager";
 import vrpPublic from "./vrpPublic";
 
@@ -33,7 +33,7 @@ export const progress = async (info: GameStatusInfo) => {
 
 const cancelRequests: { [id: string]: () => void } = {};
 
-export default class HttpDownloader extends RunSystemCommand {
+export default class Downloader extends RunSystemCommand {
   public download(url: string): Promise<string> {
     log.info(`Downloading with https: ${url}`);
     return new Promise((resolve, reject) => {

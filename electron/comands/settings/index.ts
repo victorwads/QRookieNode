@@ -1,4 +1,4 @@
-import { Command, CommandEvent } from "../../shared";
+import { Command, CommandEvent } from "../types";
 import settingsManager from "./manager";
 
 export type SettingsCommandPayload = SettinsActions;

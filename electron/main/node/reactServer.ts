@@ -3,7 +3,7 @@ import { readFile } from "fs";
 import { join } from "path";
 
 import { getImagePath } from "../../comands/games/images";
-import { buildRoot } from "../../comands/dirs";
+import { buildRoot } from "../../dirs";
 import log from "../../log";
 
 const reactBuildPath = join(buildRoot, "../react");

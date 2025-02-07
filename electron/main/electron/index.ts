@@ -3,6 +3,7 @@ import path from "path";
 
 import './bridge';
 import { setupMenu } from "./menu";
+import { resourcesDir } from "../../dirs";
 
 export function getMainWindow(): BrowserWindow|null {
   return mainWindow;
@@ -28,7 +29,7 @@ const createMainWindow = () => {
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:3000');
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../../../dist/react/index.html'));
+    mainWindow.loadFile(path.join(resourcesDir, 'dist/react/index.html'));
     setupMenu();
   }
 

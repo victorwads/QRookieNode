@@ -4,7 +4,7 @@ import * as https from "https";
 import * as child_process from "child_process";
 
 import log from "../../log";
-import { downloadDir, extractedDir } from "../dirs";
+import { downloadDir, extractedDir } from "../../dirs";
 
 export type GitHubRelease = {
   assets: { download_count: number, name: string, browser_download_url: string }[]

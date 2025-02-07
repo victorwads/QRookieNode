@@ -7,7 +7,7 @@ import settingsManager from "../settings/manager";
 import HttpDownloader from "./downloader";
 
 import log from "../../log";
-import { downloadDir } from "../dirs";
+import { downloadDir } from "../../dirs";
 import RunSystemCommand from "../../systemProcess";
 
 export interface GameInfo {

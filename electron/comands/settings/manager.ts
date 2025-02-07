@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 import type { Settings, SystemHelth } from ".";
-import { gamesDir, gamesDirName, appDataDir, buildRoot } from "../dirs";
+import { gamesDir, gamesDirName, appDataDir, buildRoot } from "../../dirs";
 
 import log from "../../log";
 import SystemProcess from "../../systemProcess";

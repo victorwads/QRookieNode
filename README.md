@@ -11,15 +11,11 @@ QRookie-Node is an application for downloading and installing games for Quest de
     - **Server Mode**: Run as a server and access it from any device on your network using a web browser.
     - **Easy Development**: Built with Node.js and React for easy customization and contribution.
 
-## 📦 Installation
+## 📦 Installation And 🚀 Running
 
-Download on [releases page](./releases) for Mac, Linux and Windows.
+Download on [releases page](./releases) for Mac, Linux, Android Termux and Windows.
 
-### Runing on Android Termux
-
-You can run Rookie Node on your Android device using Termux. You can run it inside your vr headset, or on your phone, tablet, or any other Android device.
-Just download the Android termux version from the [releases page](./releases) run `./qrookie-node-headless` and access it from your browser at `http://localhost:3001`
-or using your device IP address on your local network.
+See more details on how to run it on [Running](docs/InstallationAndRunning.md)
 
 ## 📚 Dependencies For Developers
 
@@ -29,8 +25,8 @@ or using your device IP address on your local network.
 
 ## 🚀 Development With Eletron
 
+- [MacOs/Linux instructions](./docs/unixDevelopment.md)
 - [Windows instructions](./docs/windowsDevelopment.md)
-
 
 ## 🛠️ Project Structure
 - public/: Contains the public assets like icons and the index.html for react.
@@ -40,6 +36,8 @@ or using your device IP address on your local network.
     - pages/: Contains the main pages such as Games, Library, Devices, Settings, etc.
     - components/: Reusable components like TabBar and configured icons.
 - electron/: Contains the Electron main process/server code.
+    - comands/: Contains the commands to be executed by the main process and acessed by the front-end.
+    - main/: The folder that contains the start Electron code or Headless server using only Node.js.
 - platforms/: Contains platform-specific scripts and configurations.
 - dist/: Contains the built code (.gitignored).
     - react/: Contains the built React code.

@@ -1,6 +1,6 @@
 # Windows Development
 
-## Windows Basic Setup
+## 📚 Windows Basic Setup
 
 Run on PowerShell as Administrator:
 

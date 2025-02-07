@@ -1,5 +1,5 @@
 import log from '../../log';
-import HttpDownloader from "./httpDownloader";
+import HttpDownloader from "./downloader";
 
 export interface VprPublicData {
     baseUri: string;

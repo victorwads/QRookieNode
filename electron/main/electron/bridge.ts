@@ -1,9 +1,10 @@
 import { ipcMain, IpcMainInvokeEvent, app, net, protocol } from "electron";
 import path from "path";
 
-import { executeCommand, getImagePath } from ".";
-import { BridgeSendCommandEvent, CommandEvent, GameStatusInfo } from "../shared";
-import { getMainWindow } from "../main";
+import { BridgeSendCommandEvent, CommandEvent, GameStatusInfo } from "../../comands/types";
+import { getImagePath } from "../../comands/games/images";
+import { executeCommand } from "../../comands";
+import { getMainWindow } from ".";
 
 app.whenReady().then(() => {
   protocol.handle('game-image', (request) => {
@@ -12,10 +13,11 @@ app.whenReady().then(() => {
   })
 });
 
+console.log("Bridge is ready");
 ipcMain.handle(BridgeSendCommandEvent, async (event: IpcMainInvokeEvent, comandEvent: CommandEvent<any, any>) => {
   return executeCommand(comandEvent);
 });
 
-export const sendInfoWithElectron = async (info: GameStatusInfo) => {
+export const sendInfo = async (info: GameStatusInfo) => {
   getMainWindow()?.webContents.send("downloadProgress", info);
 }

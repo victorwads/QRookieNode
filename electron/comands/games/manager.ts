@@ -3,10 +3,10 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import log from '../../log';
-import type { Game } from "./";
+import type { Game } from ".";
 import vrpManager from './vrpManager';
 import adbManager from '../adb/manager';
-import HttpDownloader, { extractDirName, progress } from "./httpDownloader";
+import HttpDownloader, { extractDirName, progress } from "./downloader";
 import settingsManager from '../settings/manager';
 import vrpPublic from './vrpPublic';
 

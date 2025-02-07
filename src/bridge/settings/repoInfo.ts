@@ -1,4 +1,4 @@
-import { GitHubRelease } from '../../../electron/shared';
+import { GitHubRelease } from '../../../electron/comands/types';
 
 // https://api.github.com/rate_limit
 const storageKey = 'repoDownloadsInfo';

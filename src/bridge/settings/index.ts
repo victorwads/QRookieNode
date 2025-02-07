@@ -1,7 +1,7 @@
 import bridge from '..';
-import { DevToolsCommandName, Settings, SettingsCommandName, SettingsCommandOutputs, SettingsCommandPayload, SystemHelth } from '../../../electron/shared';
+import { DevToolsCommandName, Settings, SettingsCommandName, SettingsCommandOutputs, SettingsCommandPayload, SystemHelth } from '../../../electron/comands/types';
 import { promisse, RepoDownloadsInfo, repoDownloadsInfo } from './repoInfo';
-export type { GitHubRelease, Settings, SystemHelth } from '../../../electron/shared';
+export type { GitHubRelease, Settings, SystemHelth } from '../../../electron/comands/types';
 
 export type { RepoDownloadsInfo }
 
@@ -49,4 +49,5 @@ class SettingsManager {
   }
 }
 
-export default new SettingsManager();
+const settingsManager = new SettingsManager();
+export default settingsManager;

@@ -1,12 +1,14 @@
 const MAX_LOG_COMMAND_OUTPUT_LINES = 20;
 
 const log = {
-  warn: (...args: any[]) => console.log("\x1b[33m", ...args, "\x1b[0m"),
+  warn: (...args: any[]) => shouldWarn && console.log("\x1b[33m", ...args, "\x1b[0m"),
   error: (...args: any[]) => console.log("\x1b[31m", ...args, "\x1b[0m"),
-  info: (...args: any[]) => console.log(...args),
+  info: (...args: any[]) => shouldInfo && console.log(...args),
   userInfo: (...args: any[]) => console.log("\x1b[33m", ...args, "\x1b[0m"),
-  debug: (...args: any[]) => console.log("\x1b[35m", ...args, "\x1b[0m"),
+  debug: (...args: any[]) => shouldDebug && console.log("\x1b[35m", ...args, "\x1b[0m"),
   command: (command: string, args: string[], stdout: string, stderr: string) => {
+    if(!shouldDebug)
+      return;
     const stdoutLines = stdout.split("\n");
     console.log(
       "\n\x1b[32m<----------------------------------------",
@@ -26,5 +28,20 @@ const log = {
     );
   }
 };
+
+let shouldDebug = false;
+let shouldWarn = false;
+let shouldInfo = false;
+
+const isVerbose = process.argv.includes("--verbose");
+if(isVerbose || process.argv.includes("--debug")) {
+  shouldDebug = true;
+}
+if(isVerbose || process.argv.includes("--warn")) {
+  shouldWarn = true;
+}
+if(isVerbose || process.argv.includes("--info")) {
+  shouldInfo = true;
+}
 
 export default log;

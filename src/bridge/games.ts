@@ -1,6 +1,6 @@
 import bridge from '../bridge';
-import type { Game, GamesCommandName, GamesCommandPayload } from '../../electron/shared';
-export type { Game } from '../../electron/shared';
+import type { Game, GamesCommandName, GamesCommandPayload } from '../../electron/comands/types';
+export type { Game } from '../../electron/comands/types';
 
 const cacheKey = 'games';
 
@@ -51,4 +51,5 @@ class GamesManager {
 
 }
 
-export default new GamesManager();
+const gamesManager = new GamesManager();
+export default gamesManager;

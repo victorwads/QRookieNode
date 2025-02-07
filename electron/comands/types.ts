@@ -6,11 +6,11 @@ export type CommandEvent<Input, Name extends string> = { type: Name; payload?: I
 export const BridgeSendCommandEvent = 'sendCommand';
 export type BridgeSendCommandEventType = 'sendCommand';
 
-export * from '../comands/adb';
-export * from '../comands/adb/androidToolsSetup';
-export * from '../comands/devTools';
-export * from '../comands/games';
-export * from '../comands/settings';
+export * from './adb';
+export * from './adb/androidToolsSetup';
+export * from './settings/devTools';
+export * from './games';
+export * from './settings';
 
 const All = {}
 export default All;

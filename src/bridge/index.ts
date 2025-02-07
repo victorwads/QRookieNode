@@ -1,4 +1,4 @@
-import type { CommandSender, GameStatusInfo } from '../../electron/shared';
+import type { CommandSender, GameStatusInfo } from '../../electron/comands/types';
 import ElectronBridge from './ElectronBridge';
 import WebSocketBridge from './WebSocketbridge';
 

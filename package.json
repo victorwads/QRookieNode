@@ -1,6 +1,6 @@
 {
   "name": "qrookie-node",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "QRookieNode is a cross-platform tool to manage Quest devices and games.",
   "author": {
@@ -10,7 +10,7 @@
   "homepage": "./",
   "scripts": {
     "headless": "yarn react:build && yarn electron:build && yarn headless:no-build",
-    "headless:no-build": "electron ./dist/electron/main.js --headless --no-sandbox",
+    "headless:no-build": "node dist/electron/index.js",
     "build": "bash ./platforms/build.sh",
     "dev": "bash ./platforms/dev.sh",
     "bundle": "yarn build && electron-builder",
@@ -19,8 +19,8 @@
     "bundle:no-build": "electron-builder",
     "react:dev": "cross-env BROWSER=none react-app-rewired start",
     "react:build": "cross-env BUILD_PATH=dist/react react-app-rewired build",
-    "electron:build": "tsc --project tsconfig.electron.json",
-    "electron:dev": "nodemon --watch electron --ext ts --exec \"tsc --project tsconfig.electron.json && cross-env NODE_ENV=development electron ./dist/electron/main.js\"",
+    "electron:build": "tsc --project tsconfig.electron.json && cp package.json dist/electron/package.json",
+    "electron:dev": "nodemon --watch electron --ext ts --exec \"yarn electron:build && cross-env NODE_ENV=development electron ./dist/electron/index.js\"",
     "lint": "clear && eslint --config ./eslint.config.mjs electron src",
     "test": "react-scripts test"
   },

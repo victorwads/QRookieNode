@@ -1,8 +1,8 @@
 import bridge from './';
-import type { GamesCommandName, GamesCommandPayload } from '../../electron/shared';
-import type { GameStatusInfo } from '../../electron/shared';
+import type { GamesCommandName, GamesCommandPayload } from '../../electron/comands/types';
+import type { GameStatusInfo } from '../../electron/comands/types';
 
-export type { GameStatusInfo, GameStatusType } from '../../electron/shared';
+export type { GameStatusInfo, GameStatusType } from '../../electron/comands/types';
 
 type ListenerCallback = (info: GameStatusInfo) => void;
 type DownloadingListener = (info: GameStatusInfo[]) => void;
@@ -117,4 +117,5 @@ class GameDownloadManager {
 
 }
 
-export default new GameDownloadManager();
+const gameDownloadManager = new GameDownloadManager();
+export default gameDownloadManager;

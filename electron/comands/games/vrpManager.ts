@@ -1,14 +1,14 @@
 import * as fs from "fs";
-import * as path from "path";
+import { join } from "path";
 import { extractFull } from 'node-7z'
 
 import vrpPublic from "./vrpPublic";
 import settingsManager from "../settings/manager";
-import HttpDownloader from "./httpDownloader";
+import HttpDownloader from "./downloader";
 
 import log from "../../log";
 import { downloadDir } from "../dirs";
-import RunSystemCommand from "../runSystemCommand";
+import RunSystemCommand from "../../systemProcess";
 
 export interface GameInfo {
   name: string;
@@ -17,11 +17,10 @@ export interface GameInfo {
   version: string;
   lastUpdated: string;
   size: string;
-  //status: "local" | "queued" | "downloading" | "downloadable";
 }
 
 const metaFileName = "meta.7z";
-const metaFilePath = path.join(downloadDir, metaFileName);
+const metaFilePath = join(downloadDir, metaFileName);
 
 export class VprManager extends RunSystemCommand {
   private games: Map<string, GameInfo> = new Map();
@@ -32,7 +31,7 @@ export class VprManager extends RunSystemCommand {
   }
 
   private get gamesFilePath(): string {
-    return path.join(downloadDir, "games_info.json");
+    return join(downloadDir, "games_info.json");
   }
 
   public async loadGamesInfo(): Promise<boolean> {
@@ -94,10 +93,11 @@ export class VprManager extends RunSystemCommand {
         return false;
       }
 
+      const SevenZipPath = await this.getSevenZipPath();
       await (new Promise((resolve, reject) => {
-        log.info("Extracting metadata...", this.getSevenZipPath());
+        log.info("Extracting metadata...", SevenZipPath);
         const seven = extractFull(metaFilePath, downloadDir, {
-          $bin: this.getSevenZipPath(),
+          $bin: SevenZipPath,
           password: vrpInfo.password
         })
         seven.on('end', function () {
@@ -117,7 +117,7 @@ export class VprManager extends RunSystemCommand {
   }
 
   public parseMetadata(): boolean {
-    const filePath = path.join(downloadDir, "VRP-GameList.txt");
+    const filePath = join(downloadDir, "VRP-GameList.txt");
 
     // Verifica se o arquivo existe
     if (!fs.existsSync(filePath)) {
@@ -168,7 +168,7 @@ export class VprManager extends RunSystemCommand {
 
   public getDownloadedGames(): string[] {
     return fs.readdirSync(settingsManager.getDownloadsDir()).filter((file) => 
-      fs.existsSync(path.join(settingsManager.getDownloadsDir(), file, "finished"))
+      fs.existsSync(join(settingsManager.getDownloadsDir(), file, "finished"))
     );
   }
 }

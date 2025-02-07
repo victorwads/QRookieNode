@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { BridgeSendCommandEventType, CommandSender } from "./shared";
+import { BridgeSendCommandEventType, CommandSender } from "../../comands/types";
 
 export const BridgeSendCommandEvent: BridgeSendCommandEventType = 'sendCommand';
 
@@ -13,4 +13,4 @@ if (contextBridge) {
     receive: (func: any) => ipcRenderer.on("downloadProgress", (event, ...args) => func(...args)),
     remove: (callback: any) => ipcRenderer.removeListener("downloadProgress", callback),
   });
-}
+} 

@@ -302,7 +302,7 @@ export default class Downloader extends RunSystemCommand {
   }
 
   private async unZipDownloadedFiles(id: string, downloadDirectory: string) {
-    await this.runCommand(this.getSevenZipPath(), [
+    await this.runCommand(await this.getSevenZipPath(), [
       "x",
       "-y",
       "-o" + downloadDirectory,

@@ -93,10 +93,11 @@ export class VprManager extends RunSystemCommand {
         return false;
       }
 
+      const SevenZipPath = await this.getSevenZipPath();
       await (new Promise((resolve, reject) => {
-        log.info("Extracting metadata...", this.getSevenZipPath());
+        log.info("Extracting metadata...", SevenZipPath);
         const seven = extractFull(metaFilePath, downloadDir, {
-          $bin: this.getSevenZipPath(),
+          $bin: SevenZipPath,
           password: vrpInfo.password
         })
         seven.on('end', function () {

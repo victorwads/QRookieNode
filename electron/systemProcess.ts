@@ -58,8 +58,8 @@ export default abstract class SystemProcess {
     }
   }
 
-  public getSevenZipPath(): string {
-    return sevenBin.path7za.replace("app.asar", "app.asar.unpacked");
+  public async getSevenZipPath(): Promise<string> {
+    return await this.getCommanPath('7za') ?? sevenBin.path7za.replace("app.asar", "app.asar.unpacked");
   }
 
   public getAdbPath(): string {

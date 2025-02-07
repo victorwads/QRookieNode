@@ -79,7 +79,7 @@ class SettingsManager extends SystemProcess {
     const asyncResults = {
       adb: this.getCommandInfo(this.getAdbPath(), "adb", 2, "version"),
       unzip: this.getCommanPath('unzip').then(path => this.getCommandInfo(path, "unzip", 1)),
-      sevenZip: this.getCommandInfo(this.getSevenZipPath(), "7zip", 2),
+      sevenZip: this.getSevenZipPath().then(path => this.getCommandInfo(path, "7zip", 2)),
       java: this.getCommanPath('java').then(path => this.getCommandInfo(path, "java", 3, "--version")),
     }
 

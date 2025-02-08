@@ -37,7 +37,7 @@ export default abstract class SystemProcess {
       const path = (stdout||'').trim();
       return path !== "" ? path : null;
     } catch (error: any) {
-      log.error("Command error: ", error.message);
+      log.warn("Command error: ", error.message);
       return null;
     }
   }

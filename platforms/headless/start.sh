@@ -1,4 +1,6 @@
 #!/bin/bash
+cd "$(dirname "$0")"
+
 check_command() {
   command -v "$1" >/dev/null 2>&1
 }

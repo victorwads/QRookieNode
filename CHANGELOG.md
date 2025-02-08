@@ -50,6 +50,8 @@
 - Rename AndroidTermux to Headless (works on system with node/warn/7zip installed)
 - Android Termux Install Script
     - Fix auto resolving pkg dependencies
+    - Fix Start script
+    - Supress getCommandPath errors
 - Headless Mode
     - Show System Network IP
     - Add start --help and arguments

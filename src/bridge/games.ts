@@ -31,9 +31,7 @@ class GamesManager {
   public async getGames(): Promise<Game[]> {
     this.cache = await bridge.sendCommand<GamesCommandName, GamesCommandPayload, Game[]>({
       type: 'games',
-      payload: {
-        action: 'list',
-      },
+      payload: { action: 'list' }
     });
     localStorage.setItem(cacheKey, JSON.stringify(this.cache));
     return this.cache;
@@ -42,13 +40,16 @@ class GamesManager {
   public async install(id: string): Promise<string|null> {
     return await bridge.sendCommand<GamesCommandName, GamesCommandPayload, string|null>({
       type: 'games',
-      payload: {
-        action: 'install',
-        id,
-      },
+      payload: { action: 'install', id },
     });
   }
 
+  public async uninstall(id: string) {
+    return await bridge.sendCommand<GamesCommandName, GamesCommandPayload, string|null>({
+      type: 'games',
+      payload: { action: 'uninstall', id },
+    });
+  }
 }
 
 const gamesManager = new GamesManager();

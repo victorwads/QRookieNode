@@ -44,9 +44,15 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
     setGameStatus(null);
   }
 
-  const cancel = async (id: string) => {
+  const cancel = async () => {
     if(!window.confirm('Are you sure you want to cancel this download?')) return;
-    downloadManager.cancel(id);
+    downloadManager.cancel(game.id);
+  }
+
+  const uninstall = async () => {
+    if(!window.confirm('Are you sure you want to uninstall this game? You will lose all your progress.')) return;
+    await gameManager.uninstall(game.id);
+    setGameStatus(null);
   }
 
   useEffect(() => {
@@ -65,7 +71,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
         return <div key={index} style={{width: totalPercentage+'%'}}></div>
       })}
     </div>)
-    status.push(<Button onClick={() => cancel(game.id)} icon={Icons.solid.faTrash}>Cancel</Button>)
+    status.push(<Button onClick={cancel} icon={Icons.solid.faTrash}>Cancel</Button>)
   } else if (gameStatus?.status === 'unzipping') {
     status.push(<div className="game-card-task">Unzipping</div>)
   } else if (gameStatus?.status === 'pushing app data') {
@@ -75,7 +81,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
   } else {
     const isInstalled = gameStatus?.status === 'installed' || deviceManager.isGameInstalled(game.packageName);
     if (isInstalled) {
-      status.push(<Button wide onClick={() => {alert('not implemented yet')}} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
+      status.push(<Button wide onClick={uninstall} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
     }
     const isDownloaded = downloaded || downloadManager.isGameDownloaded(game.id);
     if (isDownloaded) {

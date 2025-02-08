@@ -16,7 +16,6 @@
     - Feature install only game data
     - Add Game Eye Icon when click is available
     - Manage Storage
-    - Uninstall Games
     - Split Device Library and Local Library
 - **Game Details**
     - Fix Game Details Page on Mobile (Responsive Wrap)
@@ -55,6 +54,8 @@
 - Headless Mode
     - Show System Network IP
     - Add start --help and arguments
+- Library
+    - Uninstall Games
 
 ### Changes Release 0.1.1
 - Update Readme

@@ -1,4 +1,4 @@
-import { createServer, get } from "http";
+import { createServer } from "http";
 import { readFile } from "fs";
 import { join } from "path";
 

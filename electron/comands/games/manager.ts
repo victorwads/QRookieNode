@@ -89,9 +89,19 @@ class GameManager {
     this.downloader.downloadDir(vrpInfo.baseUri, id)    
   }
 
-  public async remove(id: string) {
-    await this.downloader.removeDownload(id);
+  public async removeDownload(id: string) {
+    await this.downloader.remove(id);
     this.getDownloadedGames();
+  }
+
+  public async uninstall(id: string): Promise<string|null> {
+    const game = this.games.find((g) => g.id === id);
+    if (!game || !game.packageName) {
+      return "Game not found:" + id;
+    }
+
+    await adbManager.uninstall(game.packageName);
+    return null;
   }
 
   public async install(id: string): Promise<string|null> {

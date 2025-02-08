@@ -59,7 +59,7 @@ export default class Downloader extends RunSystemCommand {
     });
   }
 
-  public removeDownload(id: string) {
+  public remove(id: string) {
     const downloadDirectory = path.join(settingsManager.getDownloadsDir(), id);
     fs.rmSync(downloadDirectory, { recursive: true });
   }

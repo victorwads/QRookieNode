@@ -152,6 +152,18 @@ class AdbManager extends SystemProcess {
     return output.includes("connected to") || output.includes("successfully");
   }
 
+  public async uninstall(packageName: string) {
+    const serial = this.getDeviceSerial()
+    if (!serial)
+      throw new Error("No device selected");
+
+    await this.runAdbCommand([
+      "-s", serial,
+      "uninstall", packageName
+    ]);
+  }
+  
+
   public async install(apkPath: string): Promise<boolean> {
     const serial = this.getDeviceSerial()
     if (!serial)

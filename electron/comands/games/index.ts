@@ -24,7 +24,7 @@ export type GamesActionList = {
 }
 
 export type GamesActionWithId = {
-  action: 'download' | 'install' | 'removeDownload' | 'cancel';
+  action: 'download' | 'install' | 'uninstall' | 'removeDownload' | 'cancel';
   id: string;
 }
 
@@ -66,15 +66,10 @@ export default {
       return GamesManager.listGames();
     } else if (payload.action === 'listDownloaded') {
       return GamesManager.getDownloadedGames();
-    } else if (payload.action === 'download') {
-      GamesManager.download(payload.id);
-    } else if (payload.action === 'removeDownload') {
-      return GamesManager.remove(payload.id);
-    } else if (payload.action === 'install') {
-      return GamesManager.install(payload.id);
-    } else if (payload.action === 'cancel') {
-      GamesManager.cancel(payload.id);
     }
+    payload = payload as GamesActionWithId;
+    GamesManager[payload.action](payload.id);
+
     return [];
   }
 } as GamesCommand;

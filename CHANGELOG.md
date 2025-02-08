@@ -47,9 +47,12 @@
 ## Changes Log
 
 ### Changes Release 0.1.2
-- Android Termux Install
-    - Fix 7zip install
+- Rename AndroidTermux to Headless (works on system with node/warn/7zip installed)
+- Android Termux Install Script
     - Fix auto resolving pkg dependencies
+- Headless Mode
+    - Show System Network IP
+    - Add start --help and arguments
 
 ### Changes Release 0.1.1
 - Update Readme

@@ -3,8 +3,8 @@ cd "$(dirname "$0")/.."
 fulldir="$(pwd)"
 
 version="$(node -p -e "require('./package.json').version")"
-dir="QRookieHeadless-$version.arm64"
-zip="QRookieAndroidTermux-$version.arm64.zip"
+dir="QRookieHeadless-$version"
+zip="QRookieHeadless-$version.zip"
 
 rm -rf "dist/$dir"
 if [ ! -d "dist/electron" ]; then
@@ -21,7 +21,7 @@ cp -r dist/react "dist/$dir/dist/"
 mkdir -p "dist/$dir/assets/images"
 cp -r assets/images "dist/$dir/assets/"
 
-cp platforms/android-termux/start.sh "dist/$dir"
+cp platforms/headless/start.sh "dist/$dir"
 
 echo "{\"version\":\"$version\",\"dependencies\":{\"7zip-bin\":\"^5.2.0\",\"node-7z\":\"^3.0.0\",\"ws\":\"^8.18.0\"}}" > "dist/$dir/package.json"
 cd "dist/$dir"

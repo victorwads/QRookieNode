@@ -1,10 +1,11 @@
-import { createServer } from "http";
+import { createServer, get } from "http";
 import { readFile } from "fs";
 import { join } from "path";
 
 import { getImagePath } from "../../comands/games/images";
 import { buildRoot } from "../../dirs";
 import log from "../../log";
+import { networkInterfaces } from "os";
 
 const reactBuildPath = join(buildRoot, "../react");
 const server = createServer((req, res) => {
@@ -36,13 +37,27 @@ const server = createServer((req, res) => {
   });
 });
 
-const PORT = process.env.ROOKIE_WEB_PORT || 3001;
+function getLanIps() {
+  const interfaces = networkInterfaces();
+  const ips: string[] = [];
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]!) {
+      if (iface.family === "IPv4" && !iface.internal) {
+        ips.push(iface.address);
+      }
+    }
+  }
+  return ips;
+}
+
+const PORT: number = Number.parseInt(process.env.ROOKIE_WEB_PORT || "3010");
+
 server.listen(PORT, () => {
   log.userInfo(`Server mode running on http://localhost:${PORT}`);
-  log.userInfo(`Use ROOKIE_WEB_PORT environment variable to change the port`);
-  log.userInfo(`Use ROOKIE_DOWNLOADS_DIR environment variable to change the downloads directory`);
+  getLanIps().forEach(ip => {
+    log.userInfo(`Server mode running on http://${ip}:${PORT}`);
+  });
 });
-
 log.debug(`Serving static files from ${reactBuildPath}`);
 
 export default server;

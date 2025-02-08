@@ -7,8 +7,9 @@ import { gamesDir, gamesDirName, appDataDir, buildRoot } from "../../dirs";
 import log from "../../log";
 import SystemProcess from "../../systemProcess";
 
+export const appVersion = JSON.parse(fs.readFileSync(path.join(buildRoot, "package.json"), "utf-8")).version;
+
 const settingsPath = path.join(appDataDir, "settings.json");
-const appVersion = JSON.parse(fs.readFileSync(path.join(buildRoot, "package.json"), "utf-8")).version;
 const { showOpenDialog } = (function() {
   if (process.versions.electron) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports

@@ -24,17 +24,21 @@ Just download the `QRookieLinux-x.x.x.arch.rpm` version from the [releases page]
 
 Just download the `QRookieLinux-x.x.x.arch.AppImage` version from the [releases page](./releases), make it executable with `chmod +x QRookieLinux-x.x.x.arch.AppImage` and run it with `./QRookieLinux-x.x.x.arch.AppImage`.
 
-## Android / Linux Headless
+## Android Termux / Linux Headless
 
-Just download the QRookieAndroidTermux-x.x.x.arm64.zip version from the [releases page](./releases) inside termux, unzip it and run `./start` inside unziped folder.
+Just run the script below to download the latest version:
+```bash
+curl -fsSL https://raw.githubusercontent.com/victorwads/QRookieNode/main/platforms/headless-install.sh | bash
+```
+
+then just run `./start`
 After that, access it from your browser at `http://localhost:3001` or using your device IP address on your local network.
 
-You can run the command below to download and run the latest version:
-`change VERSION for the version you want`
-```bash
-curl -fsSL https://raw.githubusercontent.com/victorwads/QRookieNode/main/platforms/android-termux/install.sh | bash
-```
-then just run `./start`
+On termux, the script will install all dependencies and download the latest version of QRookieNode. But on linux you need to install manually the dependencies.
+Dependencies:
+- `nodejs`
+- `yarn`
+- `7zip`
 
 ### Help
 

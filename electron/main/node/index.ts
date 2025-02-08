@@ -4,39 +4,44 @@ import { CommandEvent, GameStatusInfo } from "../../comands/types";
 import { executeCommand } from "../../comands";
 import log from "../../log";
 import server from './reactServer'
+import { appVersion } from "../../comands/settings/manager";
 
 type BridgeMessage = 
     { id: string; event: 'command'; data: CommandEvent<any, any>;} |
     { id: string; event: 'command-response'; error: boolean; data: unknown;} |
     { event: 'download-progress'; data: GameStatusInfo; }
 
-
-new WebSocketServer({ server }).on("connection", (ws) => {
-  connections.push(ws);
-  log.debug("Client connected via WebSocket");
-
-  ws.on("message", (message) => {
-    try {
-      const parsedMessage = JSON.parse(message.toString()) as BridgeMessage;
-      log.debug(`Received message: ${message.toString()}`);
-
-      if (parsedMessage.event === 'command') {
-        executeCommand(parsedMessage.data).then((data) => {
-          ws.send(JSON.stringify({ event: "command-response", id: parsedMessage.id, error: false, data }));
-        }).catch((error) => {
-          ws.send(JSON.stringify({ event: "command-response", id: parsedMessage.id, error: true, data: error }));
-        });
+if(server.listening) {
+  log.info("WebSocket server is listening");
+  new WebSocketServer({ server }).on("connection", (ws) => {
+    connections.push(ws);
+    log.debug("Client connected via WebSocket");
+  
+    ws.on("message", (message) => {
+      try {
+        const parsedMessage = JSON.parse(message.toString()) as BridgeMessage;
+        log.debug(`Received message: ${message.toString()}`);
+  
+        if (parsedMessage.event === 'command') {
+          executeCommand(parsedMessage.data).then((data) => {
+            ws.send(JSON.stringify({ event: "command-response", id: parsedMessage.id, error: false, data }));
+          }).catch((error) => {
+            ws.send(JSON.stringify({ event: "command-response", id: parsedMessage.id, error: true, data: error }));
+          });
+        }
+      } catch (err) {
+        log.error("Error parsing message", err);
       }
-    } catch (err) {
-      log.error("Error parsing message", err);
-    }
+    });
+  
+    ws.on("close", () => {
+      log.debug("Client disconnected");
+      connections.splice(connections.indexOf(ws), 1);
+    });
   });
-
-  ws.on("close", () => {
-    log.debug("Client disconnected");
-    connections.splice(connections.indexOf(ws), 1);
-  });
-});
+} else {
+  log.error("WebSocket server is not listening");
+}
 
 export const sendInfo = async (info: GameStatusInfo) => {
   connections.forEach((ws) => {
@@ -45,3 +50,14 @@ export const sendInfo = async (info: GameStatusInfo) => {
 }
 
 const connections: WebSocket[] = [];
+
+if(process.argv.includes("--help") || process.argv.includes("-h")) {
+  log.userInfo("Version:", appVersion);
+  log.userInfo("Usage: ./start [options]");
+  log.userInfo();
+  log.userInfo(`Use --help -h to see this message`);
+  log.userInfo(`Use --verbose to see more logs`);
+  log.userInfo(`Use ROOKIE_WEB_PORT environment variable to change the port`);
+  log.userInfo(`Use ROOKIE_DOWNLOADS_DIR environment variable to change the downloads directory`);
+  process.exit(0);
+}

@@ -20,7 +20,7 @@
     "react:dev": "cross-env BROWSER=none react-app-rewired start",
     "react:build": "cross-env BUILD_PATH=dist/react react-app-rewired build",
     "electron:build": "tsc --project tsconfig.electron.json && cp package.json dist/electron/package.json",
-    "electron:dev": "nodemon --watch electron --ext ts --exec \"yarn electron:build && cross-env NODE_ENV=development electron ./dist/electron/index.js\"",
+    "electron:dev": "nodemon --watch electron --ext ts --exec \"yarn electron:build && cross-env NODE_ENV=development electron ./dist/electron/index.js --verbose\"",
     "lint": "clear && eslint --config ./eslint.config.mjs electron src",
     "test": "react-scripts test"
   },

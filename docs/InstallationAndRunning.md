@@ -32,7 +32,7 @@ After that, access it from your browser at `http://localhost:3001` or using your
 You can run the command below to download and run the latest version:
 `change VERSION for the version you want`
 ```bash
-export VERSION=0.1.0
+export VERSION=0.1.1
 curl -L https://github.com/victorwads/QRookieNode/releases/download/$VERSION/QRookieAndroidTermux-$VERSION.arm64.zip -o QRookieAndroidTermux-$VERSION.alpha.arm64.zip
 unzip QRookieAndroidTermux-$VERSION.alpha.arm64.zip
 cd QRookieHeadless-$VERSION.arm64

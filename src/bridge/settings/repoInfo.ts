@@ -4,7 +4,7 @@ import { GitHubRelease } from '../../../electron/comands/types';
 const storageKey = 'repoDownloadsInfo';
 const storageValidTime = 1000 * 60 * 60 * 2; // 2 hours
 const repos = {
-  "glaumar/QRookie": "Qml Rookie by Glaumar",
+  // "glaumar/QRookie": "Qml Rookie by Glaumar",
   "victorwads/QRookieNode": "Rookie Node by Victor Wads",
   "VRPirates/rookie": "Original Rookie",
 };
@@ -51,17 +51,17 @@ export const promisse = Promise.all(Object.entries(repos).map(([repoName, alias]
       release.assets.forEach(asset => {
         downloads.total += asset.download_count;
         let ext = asset.name.split('.').pop() || 'unknown';
-        if(asset.name.includes('Windows')) {
+        if(asset.name.includes('.exe')) {
           ext = 'Windows.'+ext; 
         } else if(asset.name.includes('Linux')) {
           ext = 'Linux.'+ext; 
         } else if(asset.name.includes('Mac')) {
           ext = 'Mac.'+ext; 
-        } else if(asset.name.includes('Android')) {
-          ext = 'Android.'+ext; 
+        } else if(asset.name.includes('Headless')) {
+          ext = 'Android/Headless.'+ext; 
         }
         downloads.byExt[ext] = (downloads.byExt[ext] || 0) + asset.download_count;
-      });
+      })
     });
     repoDownloadsInfo[repoName] = downloads;
   })

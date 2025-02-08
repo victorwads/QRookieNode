@@ -63,9 +63,13 @@ const Settings: React.FC = () => {
           return <>
             <strong>{name} ({total})</strong>
             <div className='tags'>
-              {Object.entries(byExt).map(([ext, count]) => (
-                <span key={ext}>{ext} ({count})</span>
-              ))}
+              {Object.entries(byExt)
+                .filter(([,count]) => count > 0)
+                .sort(([ext], [ext2]) => ext.localeCompare(ext2))
+                .map(([ext, count]) => (
+                  <span key={ext}>{ext} ({count})</span>
+                ))
+              }
             </div>
           </>;
         })}

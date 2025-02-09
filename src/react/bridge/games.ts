@@ -1,6 +1,6 @@
-import bridge from '../bridge';
-import type { Game, GamesCommandName, GamesCommandPayload } from '../../electron/comands/types';
-export type { Game } from '../../electron/comands/types';
+import bridge from '.';
+import type { Game, GamesCommandName, GamesCommandPayload } from '../../server/comands/types';
+export type { Game } from '../../server/comands/types';
 
 const cacheKey = 'games';
 

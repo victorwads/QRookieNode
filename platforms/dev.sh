@@ -39,7 +39,7 @@ wait_for_port 3000
 
 # Iniciar o Electron no modo de desenvolvimento
 echo "Iniciando Electron..."
-yarn electron:dev &
+yarn server:dev &
 ELECTRON_PID=$!
 
 # Aguardar os processos (impede que o script termine imediatamente)

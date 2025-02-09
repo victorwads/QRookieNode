@@ -24,4 +24,4 @@ if ! check_command yarn; then
   npm install -g npm yarn
 fi
 
-node dist/electron/index.js "$@"
+node dist/server/index.js "$@"

@@ -1,7 +1,7 @@
 import bridge from '..';
-import { DevToolsCommandName, Settings, SettingsCommandName, SettingsCommandOutputs, SettingsCommandPayload, SystemHelth } from '../../../electron/comands/types';
+import { DevToolsCommandName, Settings, SettingsCommandName, SettingsCommandOutputs, SettingsCommandPayload, SystemHelth } from '../../../server/comands/types';
 import { promisse, RepoDownloadsInfo, repoDownloadsInfo } from './repoInfo';
-export type { GitHubRelease, Settings, SystemHelth } from '../../../electron/comands/types';
+export type { GitHubRelease, Settings, SystemHelth } from '../../../server/comands/types';
 
 export type { RepoDownloadsInfo }
 

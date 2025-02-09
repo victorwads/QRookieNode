@@ -1,5 +1,5 @@
 import { BridgeInterface } from ".";
-import { CommandEvent } from "../../electron/comands/types";
+import { CommandEvent } from "../../server/comands/types";
 import { GameStatusInfo } from "./download";
 
 type BridgeMessage = {

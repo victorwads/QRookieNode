@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
-    "outDir": "./dist/electron",
+    "baseUrl": "src/",
+    "outDir": "./dist/server",
     "target": "ES2020",
     "module": "commonjs",
     "strict": true,
@@ -9,6 +9,7 @@
     "skipLibCheck": true
   },
   "include": [
-    "electron/**/*",
+    "src/server/**/*",
+    "src/shared/**/*",
   ]
 }

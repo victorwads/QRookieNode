@@ -7,15 +7,15 @@ dir="QRookieHeadless-$version"
 zip="QRookieHeadless-$version.zip"
 
 rm -rf "dist/$dir"
-if [ ! -d "dist/electron" ]; then
-    yarn electron:build
+if [ ! -d "dist/server" ]; then
+    yarn server:build
 fi
 if [ ! -d "dist/react" ]; then
     yarn react:build
 fi
 
 mkdir -p "dist/$dir/dist"
-cp -r dist/electron "dist/$dir/dist/"
+cp -r dist/server "dist/$dir/dist/"
 cp -r dist/react "dist/$dir/dist/"
 
 mkdir -p "dist/$dir/assets/images"

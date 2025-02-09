@@ -9,19 +9,19 @@
   },
   "homepage": "./",
   "scripts": {
-    "headless": "yarn react:build && yarn electron:build && yarn headless:no-build",
-    "headless:no-build": "node dist/electron/index.js",
+    "headless": "yarn react:build && yarn server:build && yarn headless:no-build",
+    "headless:no-build": "node dist/server/index.js",
     "build": "bash ./platforms/build.sh",
     "dev": "bash ./platforms/dev.sh",
     "bundle": "yarn build && electron-builder",
     "bundle:headless": "bash ./platforms/headless-bundle.sh",
     "bundle:mac-dev": "yarn bundle --mac --dir -c.mac.identity=null",
     "bundle:no-build": "electron-builder",
-    "react:dev": "cross-env BROWSER=none react-app-rewired start",
-    "react:build": "cross-env BUILD_PATH=dist/react react-app-rewired build",
-    "electron:build": "tsc --project tsconfig.electron.json && cp package.json dist/electron/package.json",
-    "electron:dev": "nodemon --watch electron --ext ts --exec \"yarn electron:build && cross-env NODE_ENV=development electron ./dist/electron/index.js --verbose\"",
-    "lint": "clear && eslint --config ./eslint.config.mjs electron src",
+    "react:dev": "cross-env BROWSER=none react-scripts start",
+    "react:build": "cross-env BUILD_PATH=dist/react react-scripts build",
+    "server:build": "tsc --project tsconfig.electron.json && cp package.json dist/server/package.json",
+    "server:dev": "nodemon --watch electron --ext ts --exec \"yarn server:build && cross-env NODE_ENV=development electron ./dist/server/index.js --verbose\"",
+    "lint": "clear && eslint --config ./eslint.config.mjs src",
     "test": "react-scripts test"
   },
   "dependencies": {
@@ -49,14 +49,12 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "cross-env": "^7.0.3",
-    "customize-cra": "^1.0.0",
     "electron": "^34.0.2",
     "electron-builder": "^25.1.8",
     "eslint": "^9.17.0",
     "eslint-config-react-app": "^7.0.1",
     "globals": "^15.14.0",
     "nodemon": "^3.1.9",
-    "react-app-rewired": "^2.2.1",
     "tsconfig-paths": "^4.2.0",
     "typescript-eslint": "^8.19.0"
   },
@@ -65,11 +63,11 @@
     "productName": "QRookie",
     "files": [
       "dist/react/**/*",
-      "dist/electron/**/*",
+      "dist/server/**/*",
       "assets/images/**/*"
     ],
     "extraMetadata": {
-      "main": "dist/electron/index.js"
+      "main": "dist/server/index.js"
     },
     "directories": {
       "buildResources": "assets"

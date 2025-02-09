@@ -18,4 +18,4 @@ export ELETCRON_BUILDER_CACHE=".cache/electron-builder"
 
 yarn install
 yarn react:build
-yarn electron:build
+yarn server:build

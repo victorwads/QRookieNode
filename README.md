@@ -38,7 +38,7 @@ See more details on how to run it on [Running](docs/InstallationAndRunning.md)
     - bridge/: Contains the code to communicate with main process using Electron or WebSocket.
     - pages/: Contains the main pages such as Games, Library, Devices, Settings, etc.
     - components/: Reusable components like TabBar and configured icons.
-- electron/: Contains the Electron main process/server code.
+- server/: Contains the Electron main process/server code.
     - comands/: Contains the commands to be executed by the main process and acessed by the front-end.
     - main/: The folder that contains the start Electron code or Headless server using only Node.js.
 - platforms/: Contains platform-specific scripts and configurations.

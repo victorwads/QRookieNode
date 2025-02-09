@@ -45,6 +45,10 @@
 
 ## Changes Log
 
+### Changes Release 0.1.3
+- Project
+    - Rename electron folders and scripts to server
+
 ### Changes Release 0.1.2
 - Rename AndroidTermux to Headless (works on system with node/warn/7zip installed)
 - Android Termux Install Script

@@ -1,6 +1,6 @@
 {
   "name": "qrookie-node",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "description": "QRookieNode is a cross-platform tool to manage Quest devices and games.",
   "author": {
@@ -11,6 +11,7 @@
   "scripts": {
     "headless": "yarn react:build && yarn server:build && yarn headless:no-build",
     "headless:no-build": "node dist/server/index.js",
+    "headless:dev": "nodemon --watch src/ --ext ts --exec \"yarn headless\"",
     "build": "bash ./platforms/build.sh",
     "dev": "bash ./platforms/dev.sh",
     "bundle": "yarn build && electron-builder",
@@ -20,8 +21,8 @@
     "install:mac": "yarn bundle:mac-dev && cp -R dist/mac-arm64/QRookie.app /Applications",
     "react:dev": "cross-env BROWSER=none craco start",
     "react:build": "cross-env BUILD_PATH=dist/react craco build",
-    "server:build": "tsc --project tsconfig.server.json && tsc-alias --project tsconfig.server.json && cp package.json dist/server/package.json",
-    "electron:dev": "nodemon --watch electron --ext ts --exec \"yarn server:build && cross-env NODE_ENV=development electron ./dist/server/index.js --verbose\"",
+    "server:build": "tsc --project tsconfig.server.json && cp package.json dist/server/",
+    "electron:dev": "nodemon --watch src/server --ext ts --exec \"yarn server:build && cross-env NODE_ENV=development electron ./dist/server/index.js --verbose\"",
     "lint": "clear && eslint --config ./eslint.config.mjs src",
     "test": "craco test"
   },

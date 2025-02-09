@@ -1,8 +1,5 @@
 import { resolve } from 'path';
 
-console.log('Inited config-overrides.js');
-console.log('dirname', __dirname);
-
 export default {
   webpack: {
     alias: {

@@ -86,7 +86,7 @@ class GameManager {
       return;
     }
 
-    this.downloader.downloadDir(vrpInfo.baseUri, id)    
+    this.downloader.downloadDir(vrpInfo.baseUri, id, await vrpPublic)
   }
 
   public async removeDownload(id: string) {

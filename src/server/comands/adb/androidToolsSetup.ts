@@ -24,7 +24,7 @@ const TOOL_URLS: ToolURLs = {
 
     const getLastReleaseUrl = "https://api.github.com/repos/lzhiyong/android-sdk-tools/releases";
     const response = await fetch(getLastReleaseUrl);
-    const releases = await response.json();
+    const releases = await response.json() as GitHubRelease[];
     const release: GitHubRelease = releases[0];
     const asset = release.assets.find(asset => asset.name.includes("aarch64"));
     if (!asset) {

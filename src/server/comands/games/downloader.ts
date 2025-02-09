@@ -9,7 +9,8 @@ import settingsManager from "@comands/settings/manager";
 import { DownloadProgress, GameStatusInfo } from "@comands/types";
 import log from "@server/log";
 import RunSystemCommand from "@server/systemProcess";
-import vrpPublic from "./vrpPublic";
+
+import type { VprPublicData } from "./vrpPublic";
 
 export const extractDirName = "extracted";
 
@@ -34,6 +35,7 @@ export const progress = async (info: GameStatusInfo) => {
 const cancelRequests: { [id: string]: () => void } = {};
 
 export default class Downloader extends RunSystemCommand {
+
   public download(url: string): Promise<string> {
     log.info(`Downloading with https: ${url}`);
     return new Promise((resolve, reject) => {
@@ -234,7 +236,7 @@ export default class Downloader extends RunSystemCommand {
     return false;
   }
 
-  public async downloadDir(baseUrl: string, id: string): Promise<GameStatusInfo|null> {
+  public async downloadDir(baseUrl: string, id: string, vrpPublicData: VprPublicData|null): Promise<GameStatusInfo|null> {
     const prepareResult = this.prepareDownloadIfNeeded(id);
     const url = new URL(id + '/', baseUrl);
     let progressInfo: GameStatusInfo = {
@@ -291,7 +293,7 @@ export default class Downloader extends RunSystemCommand {
 
     progressInfo = { id, status: 'unzipping' };
     progress(progressInfo);
-    await this.unZipDownloadedFiles(id, downloadDirectory);
+    await this.unZipDownloadedFiles(id, downloadDirectory, vrpPublicData?.password);
 
     progressInfo = { id, status: 'downloaded' };
     progress(progressInfo);
@@ -301,12 +303,12 @@ export default class Downloader extends RunSystemCommand {
     return progressInfo;
   }
 
-  private async unZipDownloadedFiles(id: string, downloadDirectory: string) {
+  private async unZipDownloadedFiles(id: string, downloadDirectory: string, password?: string) {
     await this.runCommand(await this.getSevenZipPath(), [
       "x",
       "-y",
       "-o" + downloadDirectory,
-      "-p" + (await vrpPublic)?.password,
+      password ? "-p" + password : "",
       path.join(downloadDirectory, id + ".7z.001"),
     ])
     fs.readdirSync(downloadDirectory)

@@ -11,7 +11,7 @@
   "scripts": {
     "headless": "yarn react:build && yarn server:build && yarn headless:no-build",
     "headless:no-build": "node dist/server/index.js",
-    "headless:dev": "nodemon --watch src/ --ext ts --exec \"yarn headless\"",
+    "headless:dev": "nodemon --watch src/ --ext ts --exec \"yarn server:build && yarn headless:no-build\"",
     "build": "bash ./platforms/build.sh",
     "dev": "bash ./platforms/dev.sh",
     "bundle": "yarn build && electron-builder",

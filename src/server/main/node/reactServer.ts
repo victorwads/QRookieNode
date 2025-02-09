@@ -50,7 +50,7 @@ function getLanIps() {
   return ips;
 }
 
-const PORT: number = Number.parseInt(process.env.ROOKIE_WEB_PORT || "3010");
+const PORT: number = Number.parseInt(process.env.ROOKIE_WEB_PORT || "3001");
 
 server.listen(PORT, () => {
   log.userInfo(`Server mode running on http://localhost:${PORT}`);

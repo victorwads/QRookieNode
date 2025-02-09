@@ -14,7 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
           <TabBar />
-          <div style={{ display: 'flex', flex: 1, overflow: 'auto', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', overflow: 'auto', flexDirection: 'column' }}>
             <Outlet />
           </div>
         </div>

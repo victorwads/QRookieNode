@@ -2,11 +2,9 @@
 
 ## Planned Fixes and Features
 - **App Layout**
-    - Iprove Mobile Layout
     - Add Device Status on TabBar
     - Add Back Button on Desktop Version
 - **Games Page**
-    - Add List View
     - Sort by Name, Size, Date
     - Filter by Installed, Not Installed
 - **Library**
@@ -19,11 +17,9 @@
     - Split Device Library and Local Library
     - Show Total Download Speed
 - **Game Details**
-    - Fix Game Details Page on Mobile (Responsive Wrap)
-    - Show Downloaded Files
-    - Show Game Storage Usage
-    - Show Game Version
-    - Show 
+    - Show Game Download Storage Usage
+    - Show Game Downloaded Files
+    - Show Installed Game Version
 - **Devices**
     - Filter not VR android devices
     - Improve Layout
@@ -48,6 +44,16 @@
 ## Changes Log
 
 ### Changes Release 0.1.3
+- Headless
+    - Fix Page Title and Icons
+    - Add Dev Mode Scripts With hot reload
+    - Fix Images on Dev Mode
+- Games / Library
+    - Add List View
+    - Fix Game Details Page on Mobile (Responsive Wrap)
+    - Improve Mobile and Desktop Responsivity
+- Core
+    - Fix VrpPublic and HttpDownloader cyclic dependencie
 - Project
     - Rename electron folders and scripts to server
     - Finally solving project aliases - it was hard

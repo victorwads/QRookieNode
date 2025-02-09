@@ -1,0 +1,41 @@
+.toggle-container {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: white;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    height: 40px;
+}
+
+.toggle-container:hover {
+    background-color: #f0f0f0;
+}
+
+.toggle-icon {
+    color: #555;
+    font-size: 1.2rem;
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.toggle-icon.selected {
+    color: #007bff;
+    font-weight: bold;
+}
+
+.divider {
+    width: 1px;
+    height: 16px;
+    background-color: #ccc;
+    margin: 0 8px;
+}
+
+@media screen and (max-width: 830px) {
+    .toggle-container {
+        display: none;
+    }
+}

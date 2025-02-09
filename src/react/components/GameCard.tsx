@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import type { GameStatusInfo } from "@bridge/download";
 import type { Game } from "@bridge/games";
 
-import { isElectron } from "@bridge";
 import deviceManager from "@bridge/devices";
 import downloadManager from "@bridge/download";
 import gameManager from "@bridge/games";
+import getImagePath from "@react/bridge/image";
 import Button from "./Button";
 import GameVerboseInfo from "./GameVerboseInfo";
 import { Icons } from "./Icons";
@@ -99,20 +99,27 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
 
   return <>
     <div className={"game-card" + (verbose ? ' verbose' : '')}>
-      <div className="game-card-image" onClick={() => onSelect && onSelect(game)}>
+      <div className="game-card-image" onClick={() => onSelect && onSelect(game)} style={{backgroundImage: `url(${getImagePath(game.packageName)})`}}>
         {/* Add Eye Icon */}
-        <img src={(isElectron ? 'game-image://' : '/game-image/') + game.packageName} alt={game.name} loading='lazy' />
       </div>
       <div className="game-card-content">
         <h3 className="game-card-title" onClick={() => onSelect && onSelect(game)}>{game.normalName}</h3>
         {game.name !== game.normalName && <p className="game-card-subtitle">{game.name}</p>}
-        <p className="game-card-category">{game.category}</p>
-        {verbose && <div style={{ flex: 1 }}>
-          <div><strong>Category:</strong> {game.category}</div>
-          <div><strong>ID:</strong> {game.id}</div>
-          <div><strong>Package Name:</strong> {game.packageName}</div>
-          <div><strong>Version:</strong> {game.version}</div>
-          <div><strong>Last Updated:</strong> {game.lastUpdated}</div>
+        {verbose && <div style={{ display: 'flex', flexDirection: 'row',  flex: 1, textAlign: 'left', margin: '15px' }}>
+          <div style={{ marginRight: 10 }}>
+            <div><strong>ID:</strong></div>
+            <div><strong>Version:</strong></div>
+            <div><strong>Category:</strong></div>
+            <div><strong>Package Name:</strong></div>
+            <div><strong>Last Updated:</strong></div>
+          </div>
+          <div style={{ flex: 1 }}>
+            <div>{game.id}</div>
+            <div>{game.version}</div>
+            <div>{game.category}</div>
+            <div>{game.packageName}</div>
+            <div>{game.lastUpdated}</div>
+          </div>
         </div>}
         <p className="game-card-size">{formatSize(game.size)}</p>
         <div  style={{display: 'flex', gap: 5, padding: 10, alignItems: 'center'}}>

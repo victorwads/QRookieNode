@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import "./Games.css";
 
@@ -6,16 +6,18 @@ import downloadManager from '@bridge/download';
 import gamesManager from '@bridge/games';
 import GameCard from '@components/GameCard';
 import Icon, { Icons } from '@components/Icons';
+import ToggleView from '@components/ToggleView';
 import GameDetailsPage from './GameDetailsPage';
 import { CenteredLoading } from './Loading';
 
 import type { Game } from '@bridge/games';
 
 const Games: React.FC = () => {
-  const [result, setResult] = React.useState<Game[]>(gamesManager.getCache());
-  const [search, setSearch] = React.useState<string>("");
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [limit, setLimit] = React.useState<number>(50);
+  const [result, setResult] = useState<Game[]>(gamesManager.getCache());
+  const [loading, setLoading] = useState<boolean>(true);
+  const [search, setSearch] = useState<string>("");
+  const [limit, setLimit] = useState<number>(50);
+  const [isGrid, setIsGrid] = useState(true);
 
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -40,6 +42,7 @@ const Games: React.FC = () => {
       <Icon icon={Icons.solid.faSearch} size='xl' />
       <input type="text" value={search} onChange={e => setSearch(e.target.value)} style={{ flex: 1 }} placeholder='Search' />
       <CenteredLoading visible={result.length === 0 || loading} />
+      <ToggleView onToggle={setIsGrid} />
       <strong>Limit:</strong><select onChange={e => setLimit(Number.parseInt(e.target.value))} value={`${limit}`}>
         <option value="10">10</option>
         <option value="50">50</option>
@@ -50,7 +53,7 @@ const Games: React.FC = () => {
         <option value="10000">All (Not Recomended)</option>
       </select>
     </div>
-    <div className="game-list">
+    <div className={'game-list' + (isGrid ? '' : ' list')}>
       {result
         .map((game) => searchItemIsIncluded(search, game))
         .sort((a, b) => b.relevance - a.relevance)

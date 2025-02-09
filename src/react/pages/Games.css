@@ -19,14 +19,15 @@
 }
 
 input, select {
+    box-sizing: border-box;
     border-radius: 8px;
     border: 1px solid #ccc;
-    padding: 0 1em;
-    height: 30px;
+    padding: 4px 8px;
+    height: 40px;
 }
 .game-list-header > select {
     text-align: center;
-    max-width: 80px;
+    max-width: 70px;
 }
 
 .game-list {
@@ -70,10 +71,6 @@ input, select {
     overflow: hidden;
 }
 
-.game-card-image > img {
-    width: 100%;
-}
-
 .game-card.verbose {
     width: auto;
     max-width: 600px;
@@ -88,8 +85,8 @@ input, select {
     display: flex;
     flex-direction: column;
     padding: 8px;
-    text-align: center;
     flex: 1;
+    text-align: center;
 }
 
 .game-card-title {
@@ -180,4 +177,24 @@ input, select {
 
 .game-card-download-progress > div:nth-child(5n + 5) {
     background-color: coral;
+}
+
+@media screen and (min-width: 830px) {
+    .game-list.list {
+        row-gap: 10px;
+    }
+    
+    .game-list.list .game-card {
+        flex: auto;
+        flex-direction: row;
+        /* width: 100%; */
+        min-width: 800px;
+        max-width: none;
+    }
+    
+    .game-list.list .game-card-image {
+        width: 250px;
+        height: auto;
+        aspect-ratio: 16/9;
+    }
 }

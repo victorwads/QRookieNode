@@ -21,7 +21,7 @@
     "install:mac": "yarn bundle:mac-dev && cp -R dist/mac-arm64/QRookie.app /Applications",
     "react:dev": "cross-env BROWSER=none craco start",
     "react:build": "cross-env BUILD_PATH=dist/react craco build",
-    "server:build": "tsc --project tsconfig.server.json && cp package.json dist/server/",
+    "server:build": "tsc --project tsconfig.server.json && tsc-alias -p tsconfig.server.json && cp package.json dist/server/",
     "electron:dev": "nodemon --watch src/server --ext ts --exec \"yarn server:build && cross-env NODE_ENV=development electron ./dist/server/index.js --verbose\"",
     "lint": "clear && eslint --config ./eslint.config.mjs src",
     "test": "craco test"

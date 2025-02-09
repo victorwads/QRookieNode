@@ -8,6 +8,7 @@ import deviceManager from "@bridge/devices";
 import downloadManager from "@bridge/download";
 import gameManager from "@bridge/games";
 import Button from "./Button";
+import GameVerboseInfo from "./GameVerboseInfo";
 import { Icons } from "./Icons";
 
 export function formatSize(size: number = 0): string {
@@ -63,41 +64,41 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
 
   const status: React.ReactNode[] = [];
   if(gameStatus?.status === 'installing') {
-    status.push(<div className="game-card-task">Installing</div>)
+    status.push(<div key={status.length} className="game-card-task">Installing</div>)
   } else if (gameStatus?.status === 'downloading') {
-    status.push(<div className="game-card-download-progress">
+    status.push(<div key={status.length} className="game-card-download-progress">
       {gameStatus.files.map((file, index) => {
         const totalPercentage = file.bytesReceived / gameStatus.bytesTotal * 100;
         return <div key={index} style={{width: totalPercentage+'%'}}></div>
       })}
     </div>)
-    status.push(<Button onClick={cancel} icon={Icons.solid.faTrash}>Cancel</Button>)
+    status.push(<Button key={status.length} onClick={cancel} icon={Icons.solid.faTrash}>Cancel</Button>)
   } else if (gameStatus?.status === 'unzipping') {
-    status.push(<div className="game-card-task">Unzipping</div>)
+    status.push(<div key={status.length} className="game-card-task">Unzipping</div>)
   } else if (gameStatus?.status === 'pushing app data') {
-    status.push(<div className="game-card-task">Pushing App data</div>)
+    status.push(<div key={status.length} className="game-card-task">Pushing App data</div>)
   } else if (gameStatus?.status === 'cancelling') {
-    status.push(<div className="game-card-task">Cancelling Download</div>)
+    status.push(<div key={status.length} className="game-card-task">Cancelling Download</div>)
   } else {
     const isInstalled = gameStatus?.status === 'installed' || deviceManager.isGameInstalled(game.packageName);
     if (isInstalled) {
-      status.push(<Button wide onClick={uninstall} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
+      status.push(<Button key={status.length} wide onClick={uninstall} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
     }
     const isDownloaded = downloaded || downloadManager.isGameDownloaded(game.id);
     if (isDownloaded) {
       if (isInstalled) {
-        status.push(<Button wide onClick={install} icon={Icons.solid.faBoxOpen}>Reinstall</Button>)    
+        status.push(<Button key={status.length} wide onClick={install} icon={Icons.solid.faBoxOpen}>Reinstall</Button>)    
       } else {
-        status.push(<Button wide onClick={install} icon={Icons.solid.faDownload}>Install</Button>)
+        status.push(<Button key={status.length} wide onClick={install} icon={Icons.solid.faDownload}>Install</Button>)
       }
-      status.push(<Button onClick={remove} icon={Icons.solid.faTrash}>Remove</Button>)
+      status.push(<Button key={status.length} onClick={remove} icon={Icons.solid.faTrash}>Remove</Button>)
     } else if (onDownload) {
-      status.push(<Button wide onClick={() => onDownload(game)} icon={Icons.solid.faDownload}>Download</Button>)
+      status.push(<Button key={status.length} wide onClick={() => onDownload(game)} icon={Icons.solid.faDownload}>Download</Button>)
     }
   }
 
   return <>
-    <div className="game-card">
+    <div className={"game-card" + (verbose ? ' verbose' : '')}>
       <div className="game-card-image" onClick={() => onSelect && onSelect(game)}>
         {/* Add Eye Icon */}
         <img src={(isElectron ? 'game-image://' : '/game-image/') + game.packageName} alt={game.name} loading='lazy' />
@@ -106,45 +107,20 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
         <h3 className="game-card-title" onClick={() => onSelect && onSelect(game)}>{game.normalName}</h3>
         {game.name !== game.normalName && <p className="game-card-subtitle">{game.name}</p>}
         <p className="game-card-category">{game.category}</p>
+        {verbose && <div style={{ flex: 1 }}>
+          <div><strong>Category:</strong> {game.category}</div>
+          <div><strong>ID:</strong> {game.id}</div>
+          <div><strong>Package Name:</strong> {game.packageName}</div>
+          <div><strong>Version:</strong> {game.version}</div>
+          <div><strong>Last Updated:</strong> {game.lastUpdated}</div>
+        </div>}
         <p className="game-card-size">{formatSize(game.size)}</p>
-      </div>
-      <div  style={{display: 'flex', gap: 5, padding: 10, alignItems: 'center'}}>
-        {status}
+        <div  style={{display: 'flex', gap: 5, padding: 10, alignItems: 'center'}}>
+          {status}
+        </div>
       </div>
     </div>
-    {verbose && gameStatus?.status === 'downloading' && <>
-      <div className="game-card-download-info">
-        <strong>Downloading</strong>
-        <div><strong>Download URL: </strong>{gameStatus.url}</div>
-        <div><strong>Bytes Received: </strong>{gameStatus.bytesReceived}</div>
-        <div><strong>Bytes Total: </strong>{gameStatus.bytesTotal}</div>
-        <div><strong>Speed: </strong>{gameStatus.speed}</div>
-        <div><strong>Percent: </strong>{gameStatus.percent.toFixed(2)}%</div>
-        <ul>
-          {gameStatus.files
-            .filter(info => info.percent !== 100 && info.percent !== 0)
-            .map((file, index) => <li key={index}>
-              <div><strong>File: </strong>{file.url}</div>
-              <div><strong>Bytes Received: </strong>{file.bytesReceived}</div>
-              <div><strong>Bytes Total: </strong>{file.bytesTotal}</div>
-              <div><strong>Percent: </strong>{file.percent.toFixed(2)}%</div>
-            </li>)}
-        </ul>
-      </div>
-    </>}
-    {verbose && gameStatus?.status === 'installing' && <>
-      <div className="game-card-download-info">
-        <strong>Installing</strong>
-        <div><strong>Filename:</strong> {gameStatus.installingFile}</div>
-      </div>
-    </>}
-    {verbose && gameStatus?.status === 'pushing app data' && <>
-      <div className="game-card-download-info">
-        <strong>Pusing App Data</strong>
-        <div><strong>Files:</strong>{gameStatus.file.index + 1}/{gameStatus.totalFiles}</div>
-        <div><strong>File Name: </strong>{gameStatus.file.name}</div>
-      </div>
-    </>}
+    {verbose && gameStatus && <GameVerboseInfo gameStatus={gameStatus} />}
   </>;
 };
 

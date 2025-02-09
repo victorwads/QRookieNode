@@ -336,7 +336,7 @@ export default class Downloader extends RunSystemCommand {
       resolvePromise = resolve; 
     });
 
-    const queeeMaxSimultaneous = 3;
+    const queeeMaxSimultaneous = 5;
     let downloadSpeed = 0; 
     let downloadingNow = 0;
     let currentIndex = 0;

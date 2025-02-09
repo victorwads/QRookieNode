@@ -60,7 +60,7 @@ const Settings: React.FC = () => {
       <section>
         <h2>Total Downloads: {totalDownloads}</h2>
         {reposInfos.map(({byExt, name, total}) => {
-          return <>
+          return <div key={name}>
             <strong>{name} ({total})</strong>
             <div className='tags'>
               {Object.entries(byExt)
@@ -71,7 +71,7 @@ const Settings: React.FC = () => {
                 ))
               }
             </div>
-          </>;
+          </div>;
         })}
         <span>Last Update: {lastUpdate.toLocaleString()}</span>
       </section>

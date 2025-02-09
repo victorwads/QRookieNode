@@ -6,6 +6,7 @@ import downloadManager from '@bridge/download';
 import gamesManager from '@bridge/games';
 import GameCard from '@components/GameCard';
 import Icon, { Icons } from '@components/Icons';
+import GameDetailsPage from './GameDetailsPage';
 import { CenteredLoading } from './Loading';
 
 import type { Game } from '@bridge/games';
@@ -30,23 +31,8 @@ const Games: React.FC = () => {
     getAdbDevices();
   }, []);
 
-  const startDownloading = async (game: Game) => {
-    downloadManager.downloadGame(game.id);
-  }
-
   if (result.length > 0 && id) {
-    const game = result.find(game => game.id === id)!;
-    return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
-      <h1>{game.name}</h1>
-      <span><strong>ID:</strong> {game.id}</span>
-      <span><strong>Category:</strong> {game.category}</span>
-      <span><strong>Version:</strong> {game.version}</span>
-      <span><strong>Last Updated:</strong> {game.lastUpdated}</span>
-      <span><strong>Package Name:</strong> {game.packageName}</span>
-      <div className='horizontal-display' style={{ justifyContent: 'center', flex: 1 }}>
-        <GameCard game={game} onDownload={startDownloading} verbose />
-      </div>
-    </div>
+    return <GameDetailsPage game={result.find(game => game.id === id)!} />
   }
 
   return <>
@@ -72,7 +58,9 @@ const Games: React.FC = () => {
         .filter((_, i) => i < limit)
         .map((item) => item.game)
         .map((game) =>
-          <GameCard key={game.id} game={game} onSelect={game => navigate(game.id ?? "")} onDownload={startDownloading} />
+          <GameCard
+            key={game.id} game={game} onSelect={game => navigate(game.id ?? "")}
+            onDownload={() => downloadManager.downloadGame(game.id)} />
         )}
     </div>
   </>
@@ -89,6 +77,7 @@ const fieldToSearch: (keyof Game)[] = [
   "id",
   "category",
   "name",
+  
   "normalName",
   "packageName",
   "version",

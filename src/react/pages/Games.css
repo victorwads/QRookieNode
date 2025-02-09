@@ -39,10 +39,6 @@ input, select {
     overflow: auto;
 }
 
-/* .games-page > .game-list{
-    overflow: auto;
-} */
-
 .game-card {
     display: flex;
     flex-direction: column;
@@ -72,6 +68,20 @@ input, select {
     background-position: center;
     background-color: #ddd;
     overflow: hidden;
+}
+
+.game-card-image > img {
+    width: 100%;
+}
+
+.game-card.verbose {
+    width: auto;
+    max-width: 600px;
+}
+
+.game-card.verbose .game-card-image {
+    aspect-ratio: 16/9;
+    height: auto;
 }
 
 .game-card-content {

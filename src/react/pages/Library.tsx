@@ -55,7 +55,7 @@ const Library: React.FC = () => {
     {downloading.length === 0 && downloads.length === 0 && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
       <h2>No Games Found</h2>
     </div>}
-    <div style={{ display: 'flex', flexDirection: 'row', padding: '1em' }}>
+    <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', padding: '1em' }}>
       {downloading.length !== 0 && <div style={{flex: 1}}>
         <h2>Downloading Games</h2>
         <div className="game-list">

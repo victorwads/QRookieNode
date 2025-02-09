@@ -17,6 +17,7 @@
     - Add Game Eye Icon when click is available
     - Manage Storage
     - Split Device Library and Local Library
+    - Show Total Download Speed
 - **Game Details**
     - Fix Game Details Page on Mobile (Responsive Wrap)
     - Show Downloaded Files
@@ -42,6 +43,7 @@
     - Improve Layout
     - Turn on/off Web Server (Only Desktop Version)
     - Split Settings in Sections
+    - Choose Max Files Simultaneos Downloads
 
 ## Changes Log
 
@@ -49,6 +51,7 @@
 - Project
     - Rename electron folders and scripts to server
     - Finally solving project aliases - it was hard
+    - change project structure
 
 ### Changes Release 0.1.2
 - Rename AndroidTermux to Headless (works on system with node/warn/7zip installed)

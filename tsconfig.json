@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "./dist/react",
-    "target": "es5",
+    "target": "esnext",
     "lib": [
       "dom",
       "dom.iterable",
@@ -20,9 +20,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
   },
   "include": ["src"]
 }

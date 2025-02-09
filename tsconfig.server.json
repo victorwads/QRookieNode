@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src/server",
+    "outDir": "./dist/server",
+    "target": "esnext",
+    "module": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"]
+}

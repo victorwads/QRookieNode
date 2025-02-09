@@ -19,8 +19,8 @@
     "bundle:no-build": "electron-builder",
     "react:dev": "cross-env BROWSER=none react-scripts start",
     "react:build": "cross-env BUILD_PATH=dist/react react-scripts build",
-    "server:build": "tsc --project tsconfig.electron.json && cp package.json dist/server/package.json",
-    "server:dev": "nodemon --watch electron --ext ts --exec \"yarn server:build && cross-env NODE_ENV=development electron ./dist/server/index.js --verbose\"",
+    "server:build": "tsc --project tsconfig.server.json && cp package.json dist/server/package.json",
+    "electron:dev": "nodemon --watch electron --ext ts --exec \"yarn server:build && cross-env NODE_ENV=development electron ./dist/server/index.js --verbose\"",
     "lint": "clear && eslint --config ./eslint.config.mjs src",
     "test": "react-scripts test"
   },
@@ -55,7 +55,6 @@
     "eslint-config-react-app": "^7.0.1",
     "globals": "^15.14.0",
     "nodemon": "^3.1.9",
-    "tsconfig-paths": "^4.2.0",
     "typescript-eslint": "^8.19.0"
   },
   "build": {

@@ -1,7 +1,6 @@
 import React from "react";
 
-import { Device } from "../bridge/devices";
-
+import { Device } from "@bridge/devices";
 import Button from "./Button";
 import { Icons } from "./Icons";
 

@@ -17,12 +17,12 @@
     "bundle:headless": "bash ./platforms/headless-bundle.sh",
     "bundle:mac-dev": "yarn bundle --mac --dir -c.mac.identity=null",
     "bundle:no-build": "electron-builder",
-    "react:dev": "cross-env BROWSER=none react-scripts start",
-    "react:build": "cross-env BUILD_PATH=dist/react react-scripts build",
-    "server:build": "tsc --project tsconfig.server.json && cp package.json dist/server/package.json",
+    "react:dev": "cross-env BROWSER=none craco start",
+    "react:build": "cross-env BUILD_PATH=dist/react craco build",
+    "server:build": "tsc --project tsconfig.server.json && tsc-alias --project tsconfig.server.json && cp package.json dist/server/package.json",
     "electron:dev": "nodemon --watch electron --ext ts --exec \"yarn server:build && cross-env NODE_ENV=development electron ./dist/server/index.js --verbose\"",
     "lint": "clear && eslint --config ./eslint.config.mjs src",
-    "test": "react-scripts test"
+    "test": "craco test"
   },
   "dependencies": {
     "7zip-bin": "^5.2.0",
@@ -38,6 +38,7 @@
     "web-vitals": "^2.1.0"
   },
   "devDependencies": {
+    "@craco/craco": "^7.1.0",
     "@eslint/js": "^9.17.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
@@ -55,6 +56,7 @@
     "eslint-config-react-app": "^7.0.1",
     "globals": "^15.14.0",
     "nodemon": "^3.1.9",
+    "tsc-alias": "^1.8.10",
     "typescript-eslint": "^8.19.0"
   },
   "build": {

@@ -1,4 +1,4 @@
-import { GameStatusInfo } from "./comands/games";
+import { GameStatusInfo } from "@comands/games";
 import log from "./log";
 import { sendInfo as sendInfoNode } from "./main/node";
 

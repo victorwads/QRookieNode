@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 
-import gameManager from "../bridge/games";
-import deviceManager from "../bridge/devices";
-import downloadManager from "../bridge/download";
-import type { GameStatusInfo } from "../bridge/download";
-import type { Game } from "../bridge/games";
+import type { GameStatusInfo } from "@bridge/download";
+import type { Game } from "@bridge/games";
 
-import { Icons } from "./Icons";
+import { isElectron } from "@bridge";
+import deviceManager from "@bridge/devices";
+import downloadManager from "@bridge/download";
+import gameManager from "@bridge/games";
 import Button from "./Button";
-import { isElectron } from "../bridge";
+import { Icons } from "./Icons";
 
 export function formatSize(size: number = 0): string {
   if (size >= 1e9) return `${(size / 1e9).toFixed(2)} GB`;

@@ -1,4 +1,4 @@
-import log from '../../log';
+import log from '@server/log';
 import HttpDownloader from "./downloader";
 
 export interface VprPublicData {

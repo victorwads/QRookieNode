@@ -1,4 +1,4 @@
-import { Command, CommandEvent } from "../types";
+import { Command, CommandEvent } from "@comands/types";
 import AdbManager from "./manager";
 
 export type AdbCommandName = 'adb';

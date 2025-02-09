@@ -1,13 +1,19 @@
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import * as solid from '@fortawesome/free-solid-svg-icons'
+import * as solid from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 
-export type { IconDefinition }
+export const Icons = { solid };
+export type { IconDefinition };
 export default Icon
 
 type IconList = typeof solid;
 type IconKey = keyof IconList;
-export const Icons = { solid };
+
+interface IconSearchName {
+  icon: IconDefinition;
+  lowerCaseName: string;
+}
+
 
 export function getIconByCaseInsensitiveName(name: string): IconDefinition {
   const normalizedName = ICON_NAME_PREFIX + name.toLowerCase().replace('-', '');
@@ -16,11 +22,6 @@ export function getIconByCaseInsensitiveName(name: string): IconDefinition {
   )?.icon;
   
   return foundIcon ? foundIcon : Icons.solid.faQuestion;
-}
-
-interface IconSearchName {
-  icon: IconDefinition;
-  lowerCaseName: string;
 }
 
 const iconNames: IconSearchName[] = [

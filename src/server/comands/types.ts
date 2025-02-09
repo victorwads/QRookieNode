@@ -8,9 +8,9 @@ export type BridgeSendCommandEventType = 'sendCommand';
 
 export * from './adb';
 export * from './adb/androidToolsSetup';
-export * from './settings/devTools';
 export * from './games';
 export * from './settings';
+export * from './settings/devTools';
 
 const All = {}
 export default All;

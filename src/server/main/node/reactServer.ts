@@ -1,11 +1,11 @@
-import { createServer } from "http";
 import { readFile } from "fs";
+import { createServer } from "http";
+import { networkInterfaces } from "os";
 import { join } from "path";
 
-import { getImagePath } from "../../comands/games/images";
-import { buildRoot } from "../../dirs";
-import log from "../../log";
-import { networkInterfaces } from "os";
+import { getImagePath } from "@comands/games/images";
+import { buildRoot } from "@server/dirs";
+import log from "@server/log";
 
 const reactBuildPath = join(buildRoot, "../react");
 const server = createServer((req, res) => {

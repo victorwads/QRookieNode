@@ -1,10 +1,10 @@
-import * as fs from "fs";
-import * as path from "path";
-import * as https from "https";
 import * as child_process from "child_process";
+import * as fs from "fs";
+import * as https from "https";
+import * as path from "path";
 
-import log from "../../log";
-import { downloadDir, extractedDir } from "../../dirs";
+import { downloadDir, extractedDir } from "@server/dirs";
+import log from "@server/log";
 
 export type GitHubRelease = {
   assets: { download_count: number, name: string, browser_download_url: string }[]

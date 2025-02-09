@@ -1,10 +1,10 @@
+import sevenBin from "7zip-bin";
+import { execFile } from "child_process";
 import * as path from "path";
 import { promisify } from "util";
-import { execFile } from "child_process";
-import sevenBin from "7zip-bin"
 
+import { binExt, platformToolsDir, setupTools } from "@comands/adb/androidToolsSetup";
 import log from "./log";
-import { platformToolsDir, binExt, setupTools } from "./comands/adb/androidToolsSetup";
 
 const execFileAsync = promisify(execFile);
 

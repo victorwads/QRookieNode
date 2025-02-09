@@ -1,13 +1,13 @@
 import * as crypto from 'crypto';
-import * as path from 'path';
 import * as fs from 'fs';
-
-import log from '../../log';
+import * as path from 'path';
 import type { Game } from ".";
-import vrpManager from './vrpManager';
-import adbManager from '../adb/manager';
+
+import adbManager from '@comands/adb/manager';
+import settingsManager from '@comands/settings/manager';
+import log from '@server/log';
 import HttpDownloader, { extractDirName, progress } from "./downloader";
-import settingsManager from '../settings/manager';
+import vrpManager from './vrpManager';
 import vrpPublic from './vrpPublic';
 
 interface WebGame {

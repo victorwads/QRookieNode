@@ -1,14 +1,13 @@
 import * as fs from "fs";
+import { extractFull } from 'node-7z';
 import { join } from "path";
-import { extractFull } from 'node-7z'
 
-import vrpPublic from "./vrpPublic";
-import settingsManager from "../settings/manager";
+import settingsManager from "@comands/settings/manager";
+import { downloadDir } from "@server/dirs";
+import log from "@server/log";
+import RunSystemCommand from "@server/systemProcess";
 import HttpDownloader from "./downloader";
-
-import log from "../../log";
-import { downloadDir } from "../../dirs";
-import RunSystemCommand from "../../systemProcess";
+import vrpPublic from "./vrpPublic";
 
 export interface GameInfo {
   name: string;

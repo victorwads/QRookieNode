@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@react/*": ["./src/react/*"],
+      "@pages/*": ["./src/react/pages/*"],
+      "@bridge": ["./src/react/bridge"],
+      "@bridge/*": ["./src/react/bridge/*"],
+      "@components/*": ["./src/react/components/*"],
+      "@server": ["./src/server"],
+      "@server/*": ["./src/server/*"],
+      "@comands": ["./src/server/comands"],
+      "@comands/*": ["./src/server/comands/*"],
+      "@main/*": ["./src/server/main/*"],
+    }
+  }
+}

@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import downloadManager from '../bridge/download';
-import gamesManager from '../bridge/games';
-import type { Game } from '../bridge/games';
-
 import "./Games.css";
+
+import downloadManager from '@bridge/download';
+import gamesManager from '@bridge/games';
+import GameCard from '@components/GameCard';
+import Icon, { Icons } from '@components/Icons';
 import { CenteredLoading } from './Loading';
-import Icon, { Icons } from '../components/Icons';
-import GameCard from '../components/GameCard';
+
+import type { Game } from '@bridge/games';
 
 const Games: React.FC = () => {
   const [result, setResult] = React.useState<Game[]>(gamesManager.getCache());

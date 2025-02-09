@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import type { Game } from '../bridge/games';
-import gamesManager from '../bridge/games';
-import downloadManager, { GameStatusType } from "../bridge/download";
-import settingsManager from '../bridge/settings';
+import downloadManager, { GameStatusType } from "@bridge/download";
+import gamesManager from '@bridge/games';
+import settingsManager from '@bridge/settings';
+import Button from '@components/Button';
+import GameCard from '@components/GameCard';
+import Icon, { Icons } from '@components/Icons';
 
-import Icon, { Icons } from '../components/Icons';
-import GameCard from '../components/GameCard';
-import Button from '../components/Button';
+import type { Game } from '@bridge/games';
 
 let hasPedingDownloadFolderSearch = false;
 

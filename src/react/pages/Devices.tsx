@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
 
+import deviceManager from '@bridge/devices';
+import gamesManager from '@bridge/games';
+import Button from '@components/Button';
+import DeviceInfoCard from '@components/DeviceInfoCard';
+import DevicesList from '@components/DeviceList';
+import GameCard from '@components/GameCard';
+import Icon, { Icons } from '@components/Icons';
+import UsersList from '@components/UsersList';
 import { CenteredLoading } from './Loading';
-import Icon, { Icons } from '../components/Icons';
-import UsersList from '../components/UsersList';
-import DevicesList from '../components/DeviceList';
-import DeviceInfoCard from '../components/DeviceInfoCard';
-import GameCard from '../components/GameCard';
-import Button from '../components/Button';
 
-import gamesManager from '../bridge/games';
-import type { Game } from '../bridge/games';
-import deviceManager from '../bridge/devices';
-import type { AdbCommandOutput } from '../bridge/devices';
+import type { AdbCommandOutput } from '@bridge/devices';
+import type { Game } from '@bridge/games';
 
 const LAST_IP_KEY = 'device.lastIp';
 

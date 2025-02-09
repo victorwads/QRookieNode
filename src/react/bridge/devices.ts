@@ -1,7 +1,7 @@
 import bridge from '.';
 
-import type { AdbCommandInput, AdbCommandName, AdbCommandOutput } from '../../server/comands/types';
-export type { Device, AdbCommandOutput } from '../../server/comands/types';
+import type { AdbCommandInput, AdbCommandName, AdbCommandOutput } from '@server/comands/types';
+export type { AdbCommandOutput, Device } from '@server/comands/types';
 
 class DeviceManager {
   private cache: AdbCommandOutput['list'] = {

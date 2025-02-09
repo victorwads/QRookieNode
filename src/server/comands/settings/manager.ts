@@ -1,11 +1,10 @@
 import * as fs from "fs";
 import * as path from "path";
 
+import { appDataDir, buildRoot, gamesDir, gamesDirName } from "@server/dirs";
+import log from "@server/log";
+import SystemProcess from "@server/systemProcess";
 import type { Settings, SystemHelth } from ".";
-import { gamesDir, gamesDirName, appDataDir, buildRoot } from "../../dirs";
-
-import log from "../../log";
-import SystemProcess from "../../systemProcess";
 
 export const appVersion = JSON.parse(fs.readFileSync(path.join(buildRoot, "package.json"), "utf-8")).version;
 

@@ -1,11 +1,11 @@
-import { Command, CommandEvent } from "./types";
-import log from "../log";
+import { Command, CommandEvent } from "@comands/types";
+import { sendInfo } from "@server";
+import log from "@server/log";
 
-import { sendInfo } from "..";
+import AdbCommand from "./adb";
 import GamesCommand, { GameStatusInfo } from "./games";
 import SettingsCommand from "./settings";
 import DevToolsCommand from "./settings/devTools";
-import AdbCommand from "./adb";
 
 const commands: Command<any, any, any>[] = [
   DevToolsCommand,

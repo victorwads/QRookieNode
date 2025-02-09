@@ -1,8 +1,8 @@
 import * as fs from "fs";
 
-import log from "../../log";
-import SystemProcess from "../../systemProcess";
-import type { Device, User, AppInfo } from ".";
+import log from "@server/log";
+import SystemProcess from "@server/systemProcess";
+import type { AppInfo, Device, User } from ".";
 
 class AdbManager extends SystemProcess {
   private devices: Device[] = [];

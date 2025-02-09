@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { Device } from "../bridge/devices";
+import type { Device } from "@bridge/devices";
 import { formatSize } from "./GameCard";
 
 function calculateColor(value: number, max: number, isReversed: boolean = false): string {

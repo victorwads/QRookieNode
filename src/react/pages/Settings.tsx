@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-
-import type { RepoDownloadsInfo, Settings as SettingsModel } from '../bridge/settings';
-import settingsManager, { SystemHelth } from '../bridge/settings';
-import { isElectron, isWebsoket } from '../bridge';
-
-import './Settings.css';
-import Icon, { Icons } from '../components/Icons';
-import Button from '../components/Button';
 import { BasicLoading } from './Loading';
+import './Settings.css';
+
+import { isElectron, isWebsoket } from '@bridge';
+import settingsManager, { SystemHelth } from '@bridge/settings';
+import Button from '@components/Button';
+import Icon, { Icons } from '@components/Icons';
+
+import type { RepoDownloadsInfo, Settings as SettingsModel } from '@bridge/settings';
 
 let sysTemHelthCache: SystemHelth|null = null;
 const loadSystemHelth = async () => settingsManager.getHelthInfo().then(info => {

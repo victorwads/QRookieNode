@@ -1,14 +1,14 @@
-import * as https from "https";
-import * as http2 from "http2";
-import * as path from "path";
 import * as fs from "fs";
 import { WriteStream } from "fs";
+import * as http2 from "http2";
+import * as https from "https";
+import * as path from "path";
 
-import log from "../../log";
-import { downloadProgress } from "..";
-import { GameStatusInfo, DownloadProgress } from "../types";
-import RunSystemCommand from "../../systemProcess";
-import settingsManager from "../settings/manager";
+import { downloadProgress } from "@comands";
+import settingsManager from "@comands/settings/manager";
+import { DownloadProgress, GameStatusInfo } from "@comands/types";
+import log from "@server/log";
+import RunSystemCommand from "@server/systemProcess";
 import vrpPublic from "./vrpPublic";
 
 export const extractDirName = "extracted";

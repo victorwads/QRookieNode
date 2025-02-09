@@ -1,11 +1,11 @@
-import { HashRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { Navigate, Outlet, Route, HashRouter as Router, Routes } from 'react-router-dom';
 
-import TabBar from './components/TabBar';
-import Games from './pages/Games';
-import Library from './pages/Library';
-import Devices from './pages/Devices';
-import Users from './pages/Users';
-import Settings from './pages/Settings';
+import TabBar from '@components/TabBar';
+import Devices from '@pages/Devices';
+import Games from '@pages/Games';
+import Library from '@pages/Library';
+import Settings from '@pages/Settings';
+import Users from '@pages/Users';
 
 function App() {
   return (

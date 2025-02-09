@@ -1,10 +1,10 @@
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocket, WebSocketServer } from "ws";
 
-import { CommandEvent, GameStatusInfo } from "../../comands/types";
-import { executeCommand } from "../../comands";
-import log from "../../log";
-import server from './reactServer'
-import { appVersion } from "../../comands/settings/manager";
+import { executeCommand } from "@server/comands";
+import { appVersion } from "@server/comands/settings/manager";
+import { CommandEvent, GameStatusInfo } from "@server/comands/types";
+import log from "@server/log";
+import server from './reactServer';
 
 type BridgeMessage = 
     { id: string; event: 'command'; data: CommandEvent<any, any>;} |

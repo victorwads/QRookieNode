@@ -1,6 +1,7 @@
 import { BridgeInterface } from ".";
-import { CommandEvent } from "../../server/comands/types";
 import { GameStatusInfo } from "./download";
+
+import { CommandEvent } from "@server/comands/types";
 
 type BridgeMessage = {
   id: string;

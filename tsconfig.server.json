@@ -1,6 +1,6 @@
 {
+  "extends": "./tsconfig.paths.json",
   "compilerOptions": {
-    "baseUrl": "src/server",
     "outDir": "./dist/server",
     "target": "esnext",
     "module": "NodeNext",
@@ -8,5 +8,5 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": ["src/server"]
 }

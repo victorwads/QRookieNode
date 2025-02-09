@@ -3,7 +3,8 @@ import path from "path";
 
 import './bridge';
 import { setupMenu } from "./menu";
-import { resourcesDir } from "../../dirs";
+
+import { resourcesDir } from "@server/dirs";
 
 export function getMainWindow(): BrowserWindow|null {
   return mainWindow;

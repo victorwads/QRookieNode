@@ -1,4 +1,5 @@
 import { Navigate, Outlet, Route, HashRouter as Router, Routes } from 'react-router-dom';
+import './App.css';
 
 import TabBar from '@components/TabBar';
 import Devices from '@pages/Devices';

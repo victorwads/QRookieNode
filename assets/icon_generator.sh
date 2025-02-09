@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+cd "$(dirname "$0")"
 
 generateicon() {
   folder="${2}"
@@ -16,7 +17,7 @@ generate_one_icon() {
 }
 
 generate_icons_linux() {
-  sizes=(16 32 48 64 128 256 512)
+  sizes=(16 32 48 64 128 256)
   for size in "${sizes[@]}"; do
     generate_one_icon "$size"
   done
@@ -29,10 +30,9 @@ generate_icons_macos() {
 
   cp "$png_filename" "$iconset_dir/icon_256x256.png"
 
+  sizes=(16 32 48 64 128 256)
   for size in "${sizes[@]}"; do
-    if [ "$size" -ne 256 ]; then
-      sips -z "$size" "$size" "$png_filename" --out "${iconset_dir}/icon_${size}x${size}.png"
-    fi
+    sips -z "$size" "$size" "$png_filename" --out "${iconset_dir}/icon_${size}x${size}.png"
     retina_size=$((size * 2))
     sips -z "$retina_size" "$retina_size" "$png_filename" --out "${iconset_dir}/icon_${size}x${size}@2x.png"
   done
@@ -41,14 +41,15 @@ generate_icons_macos() {
 }
 
 # if running on CI and Icons alvery exists, skip generating icons
-if [[ 
+if [[
   "$1" != "--force"
-  && -d "16x16" 
-  && -d "32x32" 
-  && -d "48x48" 
-  && -d "64x64" 
-  && -d "128x128" 
-  && -d "256x256" 
+  && -d "16x16"
+  && -d "32x32"
+  && -d "48x48"
+  && -d "64x64"
+  && -d "128x128"
+  && -d "192x192"
+  && -d "256x256"
   && -d "512x512"
 ]]; then
   echo "Icons already exists. Skipping generating icons."
@@ -64,7 +65,11 @@ if ! command -v inkscape &> /dev/null; then
   fi
 fi
 
-generateicon 512 "."
+generate_one_icon 192
+generate_one_icon 512
+
+cp "192x192/icon.png" "../public/logo192.png"
+cp "512x512/icon.png" "../public/logo512.png"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   generate_icons_macos

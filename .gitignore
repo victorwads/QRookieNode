@@ -17,6 +17,7 @@
 /assets/*.ico
 /assets/*.png
 /assets/*.iconset
+/public/*.png
 
 # misc
 .DS_Store

@@ -5,7 +5,7 @@ const storageKey = 'repoDownloadsInfoV2';
 const storageValidTime = 1000 * 60 * 60 * 2; // 2 hours
 const repos = {
   // "glaumar/QRookie": "Qml Rookie by Glaumar",
-  "victorwads/QRookieNode": "Rookie Node by Victor Wads",
+  "victorwads/QRookieNode": "Rookie Node",
   "VRPirates/rookie": "Original Rookie",
 };
 

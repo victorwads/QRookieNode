@@ -57,26 +57,12 @@ const Settings: React.FC = () => {
     <div className='sections'>
       <section>
         <h2>Settings</h2>
-        <pre>{JSON.stringify(settings, null, 2)}</pre>
-      </section>
-      <section>
-        <h2>Total Downloads: {totalDownloads}</h2>
-        {reposInfos.map(({byExt, name, total, lastAppVersion}) => {
-          return <div key={name}>
-            <strong>{name} ({total})</strong>
-            <div><strong>Last Version:</strong> {lastAppVersion}</div>
-            <div className='tags'>
-              {Object.entries(byExt)
-                .filter(([,count]) => count > 0)
-                .sort(([ext], [ext2]) => ext.localeCompare(ext2))
-                .map(([ext, count]) => (
-                  <span key={ext}>{ext} ({count})</span>
-                ))
-              }
-            </div>
+        {Object.keys(settings).map(key => {
+          const value = (settings as any)[key];
+          return <div key={key}>
+            <strong>{key}</strong>: {value}
           </div>;
         })}
-        <span>Last Version: {lastUpdate.toLocaleString()}</span>
       </section>
       <section>
         <h2>System Helth Check</h2>
@@ -94,6 +80,24 @@ const Settings: React.FC = () => {
         <h2>Update Available</h2>
         <a href={update} target='_blank' rel='noreferrer'>{update}</a>
       </section>}
+      <section>
+        <h2>Rookie Total Downloads: {totalDownloads}</h2>
+        {reposInfos.map(({byExt, name, total, lastAppVersion}) => {
+          return <div key={name}>
+            <strong>{name} ({total})</strong> Last Version: {lastAppVersion}
+            <div className='tags'>
+              {Object.entries(byExt)
+                .filter(([,count]) => count > 0)
+                .sort(([ext], [ext2]) => ext.localeCompare(ext2))
+                .map(([ext, count]) => (
+                  <span key={ext}>{ext} ({count})</span>
+                ))
+              }
+            </div>
+          </div>;
+        })}
+        <p>Info Updated at: {lastUpdate.toLocaleString()}</p>
+      </section>
     </div>
   </div>;
 };

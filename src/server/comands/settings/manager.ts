@@ -75,7 +75,16 @@ class SettingsManager extends SystemProcess {
       stdout.split("\n").slice(0, lines).join("\n");
   }
 
+  private static systemHelthCache: Promise<SystemHelth>|null = null;
+
   public async getSystemHelth(): Promise<SystemHelth> {
+    if (!SettingsManager.systemHelthCache) {
+      SettingsManager.systemHelthCache = this.getSystemHelthInternal();
+    }
+    return SettingsManager.systemHelthCache;
+  }
+
+  private async getSystemHelthInternal(): Promise<SystemHelth> {
     const asyncResults = {
       adb: this.getCommandInfo(this.getAdbPath(), "adb", 2, "version"),
       unzip: this.getCommanPath('unzip').then(path => this.getCommandInfo(path, "unzip", 1)),

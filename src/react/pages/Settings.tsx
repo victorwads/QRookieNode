@@ -25,6 +25,7 @@ export const changeDownloadsDir = async (): Promise<SettingsModel> => {
 
 const Settings: React.FC = () => {
   const [infos, set] = useState<RepoDownloadsInfo>(settingsManager.getReposInfo());
+  const [update, setUpdate] = useState<string|null>(null);
   const [systemHelth, setSystemHelth] = useState<SystemHelth|null>(sysTemHelthCache);
   const [settings, setSettings] = useState<SettingsModel>({});
 
@@ -38,6 +39,7 @@ const Settings: React.FC = () => {
       loadSystemHelth().then(setSystemHelth);
     }
     settingsManager.getSettings().then(setSettings);
+    settingsManager.hasUpdate().then(setUpdate);
   }, [systemHelth]);
 
   const reposInfos = Object.values(infos);
@@ -59,9 +61,10 @@ const Settings: React.FC = () => {
       </section>
       <section>
         <h2>Total Downloads: {totalDownloads}</h2>
-        {reposInfos.map(({byExt, name, total}) => {
+        {reposInfos.map(({byExt, name, total, lastAppVersion}) => {
           return <div key={name}>
             <strong>{name} ({total})</strong>
+            <div><strong>Last Version:</strong> {lastAppVersion}</div>
             <div className='tags'>
               {Object.entries(byExt)
                 .filter(([,count]) => count > 0)
@@ -73,7 +76,7 @@ const Settings: React.FC = () => {
             </div>
           </div>;
         })}
-        <span>Last Update: {lastUpdate.toLocaleString()}</span>
+        <span>Last Version: {lastUpdate.toLocaleString()}</span>
       </section>
       <section>
         <h2>System Helth Check</h2>
@@ -87,6 +90,10 @@ const Settings: React.FC = () => {
           <li><pre><strong>Java:</strong> {systemHelth.java}</pre></li>
         </ul> : <BasicLoading visible={!systemHelth} />}
       </section>
+      {update && <section>
+        <h2>Update Available</h2>
+        <a href={update} target='_blank' rel='noreferrer'>{update}</a>
+      </section>}
     </div>
   </div>;
 };

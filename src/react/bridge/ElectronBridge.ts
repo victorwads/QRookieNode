@@ -1,4 +1,4 @@
-import { BridgeInterface } from ".";
+import type { BridgeInterface } from ".";
 
 export default class ElectronBridge implements BridgeInterface {
   private global = window as any;

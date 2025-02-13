@@ -1,3 +1,5 @@
+import semver from "semver";
+
 import { promisse, RepoDownloadsInfo, repoDownloadsInfo } from './repoInfo';
 
 import bridge from '@bridge';
@@ -46,6 +48,16 @@ class SettingsManager {
   public async fetchReposInfo(): Promise<RepoDownloadsInfo> {
     await promisse;
     return repoDownloadsInfo;
+  }
+
+  public async hasUpdate(): Promise<string|null> {
+    const info = (await this.fetchReposInfo())['victorwads/QRookieNode'];
+    const appVersion = (await this.getHelthInfo()).appVersion;
+    
+    if (semver.gt(info.lastAppVersion, appVersion)) {
+      return `https://github.com/victorwads/QRookieNode/releases/tag/${info.lastAppVersion}`;
+    }
+    return null;
   }
 }
 

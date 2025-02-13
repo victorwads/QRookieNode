@@ -58,6 +58,8 @@
     - Rename electron folders and scripts to server
     - Finally solving project aliases - it was hard
     - change project structure
+- Settings
+    - Show last app version to download
 
 ### Changes Release 0.1.2
 - Rename AndroidTermux to Headless (works on system with node/warn/7zip installed)

@@ -1,7 +1,7 @@
-import { GitHubRelease } from '@server/comands/types';
+import type { GitHubRelease } from '@server/comands/types';
 
 // https://api.github.com/rate_limit
-const storageKey = 'repoDownloadsInfo';
+const storageKey = 'repoDownloadsInfoV2';
 const storageValidTime = 1000 * 60 * 60 * 2; // 2 hours
 const repos = {
   // "glaumar/QRookie": "Qml Rookie by Glaumar",
@@ -14,15 +14,17 @@ type Downloads = {
   repo: string,
   byExt: { [ext: string]: number },
   total: number,
+  lastAppVersion: string,
   lastUpdate: number
 };
 
 export type RepoDownloadsInfo = {
-  [repoName: string]: Downloads
+  [repoName in keyof typeof repos]: Downloads;
 };
 
 export const repoDownloadsInfo: RepoDownloadsInfo = JSON.parse(localStorage.getItem(storageKey) || '{}');
-export const promisse = Promise.all(Object.entries(repos).map(([repoName, alias]) => {
+export const promisse = Promise.all(Object.entries(repos).map(([name, alias]) => {
+  const repoName = name as keyof typeof repos;
   const cache = repoDownloadsInfo[repoName];
   if (cache) {
     const cacheUntil = cache.lastUpdate + storageValidTime;
@@ -40,12 +42,18 @@ export const promisse = Promise.all(Object.entries(repos).map(([repoName, alias]
       throw new Error('Failed to fetch repository information');
     }
   }).then((releases: GitHubRelease[]) => {
+    let lastAppVersion = '';
+    if(releases.length > 0) {
+      lastAppVersion = releases[0].tag_name
+    }
+
     const downloads: Downloads = {
       name: alias,
       repo: repoName,
       byExt: {},
       total: 0,
-      lastUpdate: Date.now()
+      lastAppVersion,
+      lastUpdate: Date.now(),
     };
     releases.forEach(release => {
       release.assets.forEach(asset => {

@@ -7,6 +7,7 @@ import { downloadDir, extractedDir } from "@server/dirs";
 import log from "@server/log";
 
 export type GitHubRelease = {
+  tag_name: string,
   assets: { download_count: number, name: string, browser_download_url: string }[]
 };
 

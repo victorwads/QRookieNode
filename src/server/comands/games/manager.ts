@@ -60,7 +60,7 @@ class GameManager {
 
       const json = JSON.parse(data);
       if (!Array.isArray(json)) {
-        log.error("Invalid data format:", data);
+        log.error("Invalid data format:");
         return false;
       }
 
@@ -129,7 +129,6 @@ class GameManager {
 
   private async getDownloadedGameInfo(id: string): Promise<DownloadedGameFilesInfo|null> {
     const game = this.games.find((g) => g.id === id);
-    console.log("Game info:", game, id, this.games);
     if (!game || !game.packageName) {
       return null;
     }
@@ -166,7 +165,9 @@ class GameManager {
 
     try {
       progress({ id , status: 'installing', installingFile: apkFile });
-      await adbManager.install(path.join(gameDir, apkFile));
+      if(!justMissing) {
+        await adbManager.install(path.join(gameDir, apkFile));
+      }
 
       if (obbFiles && dataDir) {
         await adbManager.createObbDir(packageName || "");

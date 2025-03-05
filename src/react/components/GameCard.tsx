@@ -41,6 +41,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
     } else {
       alert('Game installed successfully');
     }
+    loadComparation();
   };
 
   const remove = async () => {
@@ -201,7 +202,6 @@ const compareFiles = async (id: string): Promise<GameFileComparison[]> => {
     ...localFiles.filter(file => file.trim() !== ""),
     ...deviceFiles.filter(file => file.trim() !== "")
   ];
-  console.log(localFiles, deviceFiles);
 
   return Array.from(allFiles).map(file => ({
     fileName: file,

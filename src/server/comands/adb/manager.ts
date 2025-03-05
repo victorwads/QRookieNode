@@ -71,7 +71,6 @@ class AdbManager extends SystemProcess {
     if (!serial) return null
 
     const cachedDevice: Device = this.devices.find((device) => device.serial === serial) || {serial: serial};
-    console.debug("Cached device", cachedDevice);
 
     const ip = cachedDevice.ip || this.getIp(serial);
     const model = cachedDevice?.model || this.runAdbCommand(["-s", serial, "shell", "getprop", "ro.product.model"]);

@@ -96,7 +96,6 @@ class WebSocketBridge implements BridgeInterface {
   }
 
   public async sendCommand<Name extends string, Input, Output>(command: CommandEvent<Input, Name>): Promise<Output> {
-    console.log("Sending command to WebSocket:", command);
     await this.connectionPromise;
     const uniqueId = Math.random().toString(36);
     return new Promise((resolve, reject) => {

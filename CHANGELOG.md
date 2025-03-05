@@ -43,6 +43,14 @@
 
 ## Changes Log
 
+### Changes Release 0.2.1
+
+- Games
+    - Fix Just Missing should not reinstall apk
+    - Add compare reload after game install
+- Development
+    - Remove some irrelevant logs
+
 ### Changes Release 0.2.0
 
 - Games

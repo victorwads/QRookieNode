@@ -10,6 +10,6 @@ export interface BridgeInterface {
 
 export const isElectron = !!(window as any).sendCommand;
 export const isWebsoket = !isElectron;
-export const bridge: BridgeInterface = isElectron ? new ElectronBridge() : new WebSocketBridge();
+export const bridge: BridgeInterface = isElectron ? new ElectronBridge() : WebSocketBridge();
 
 export default bridge;

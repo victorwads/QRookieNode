@@ -17,30 +17,57 @@ type BridgeMessage = {
   data: GameStatusInfo;
 }
 
-export default class WebSocketBridge implements BridgeInterface {
+class WebSocketBridge implements BridgeInterface {
   private socket: WebSocket;
   private connectionPromise: Promise<void>;
+  private reconnectDelay = 2000;
+  private isReconnecting = false;
 
   private eventHandlers: { [event: string]: {resolve: (data: any) => void, reject: (err: any) => void} } = {};
   private gameStatusReceiver: ((info: GameStatusInfo) => void) |  null = null;
 
   constructor() {
-    console.log("Connecting to WebSocket", process.env.NODE_ENV);
+    this.connectionPromise = Promise.resolve();
+    this.socket = this.connect();
+  }
+
+  private reconnect() {
+    if (this.isReconnecting) return;
+    this.isReconnecting = true;
+
+    setTimeout(() => {
+      this.socket.close();
+      console.log("Reconnecting to WebSocket...");
+      this.socket = this.connect();
+    }, this.reconnectDelay);
+  }
+
+  private connect(): WebSocket {
     const port = process.env.NODE_ENV === "development" ? ":3001"
       : (window.location.port ? ":" + window.location.port : "");
-    this.socket = new WebSocket("ws://" + window.location.hostname + port);
+    const socketUrl = "ws://" + window.location.hostname + port;
+
+    console.log("Connecting to WebSocket", socketUrl);
+    const socket = new WebSocket(socketUrl);
+
     this.connectionPromise = new Promise((resolve) => {
-      this.socket.onopen = () => {
+      socket.onopen = () => {
         console.log("WebSocket connected");
+        this.isReconnecting = false;
         resolve();
       };
     });
 
-    this.socket.onclose = () => {
+    socket.onerror = () => {
+      this.isReconnecting = false;
+    }
+
+    socket.onclose = () => {
       console.log("WebSocket disconnected");
+      this.reconnect();
     };
 
-    this.socket.onmessage = (message) => {
+    socket.onmessage = (message) => {
       try {
         const parsedMessage = JSON.parse(message.data) as BridgeMessage;
         
@@ -64,9 +91,12 @@ export default class WebSocketBridge implements BridgeInterface {
         console.error("Error processing WebSocket message:", err);
       }
     };
+
+    return socket;
   }
 
   public async sendCommand<Name extends string, Input, Output>(command: CommandEvent<Input, Name>): Promise<Output> {
+    console.log("Sending command to WebSocket:", command);
     await this.connectionPromise;
     const uniqueId = Math.random().toString(36);
     return new Promise((resolve, reject) => {
@@ -86,4 +116,14 @@ export default class WebSocketBridge implements BridgeInterface {
   public registerGameStatusReceiver(callback: (info: GameStatusInfo) => void) {
     this.gameStatusReceiver = callback;
   }
+}
+
+let instance: WebSocketBridge | null = null;
+
+export default function getBridge() {
+  if (!instance) {
+    instance = new WebSocketBridge();
+  }
+
+  return instance;
 }

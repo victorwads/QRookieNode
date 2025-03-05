@@ -1,6 +1,6 @@
 {
   "name": "qrookie-node",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "private": true,
   "description": "QRookieNode is a cross-platform tool to manage Quest devices and games.",
   "author": {
@@ -11,7 +11,7 @@
   "scripts": {
     "headless": "yarn react:build && yarn server:build && yarn headless:no-build",
     "headless:no-build": "node dist/server/index.js",
-    "headless:dev": "nodemon --watch src/ --ext ts --exec \"yarn server:build && yarn headless:no-build\"",
+    "headless:dev": "nodemon --watch src/ --ext ts --exec \"yarn server:build && yarn headless:no-build --verbose\"",
     "build": "bash ./platforms/build.sh",
     "dev": "bash ./platforms/dev.sh",
     "bundle": "yarn build && electron-builder",

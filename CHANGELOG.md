@@ -43,6 +43,11 @@
 
 ## Changes Log
 
+### Changes Release 0.2.0
+
+- Headless
+    - Add WebSocket Auto Reconection
+
 ### Changes Release 0.1.3
 - Headless
     - Fix Page Title and Icons

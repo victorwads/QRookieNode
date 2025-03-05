@@ -21,7 +21,7 @@ export type AdbCommandInput = {
 
 export type Device = {
   serial: string;
-  model: string;
+  model?: string;
   ip?: string | null;
   batteryLevel?: number;
   androidVersion?: string;
@@ -36,7 +36,6 @@ export type User = {
   id: number;
   name: string;
   running: boolean;
-  installedApps?: number;
 }
 
 export type AppInfo = {

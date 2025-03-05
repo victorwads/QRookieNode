@@ -64,7 +64,7 @@ const Devices: React.FC = () => {
     getDevices()
     const interval = setInterval(() => {
       getDevices()
-    }, 10000);
+    }, 30000);
     return () => {
       clearInterval(interval);
     }

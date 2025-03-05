@@ -45,6 +45,10 @@
 
 ### Changes Release 0.2.0
 
+- Devices Manager
+    - optimize device listing with caches,
+      Reducing 60% of adb calls
+    - optimize device apps listing with caches
 - Headless
     - Add WebSocket Auto Reconection
 - Development

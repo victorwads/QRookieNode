@@ -12,7 +12,7 @@ const log = {
     const stdoutLines = stdout.split("\n");
     console.log(
       "\n\x1b[32m<----------------------------------------",
-      `\nCommand \x1b[33m'${command} ${args.join("")}'\x1b[32m executed\nstdout:\x1b[0m`,
+      `\nCommand \x1b[33m'${command} ${args.join(" ")}'\x1b[32m executed\nstdout:\x1b[0m`,
       "\n\x1b[34m" + stdoutLines.slice(0, MAX_LOG_COMMAND_OUTPUT_LINES).join("\n") + "\x1b[0m",
       stdoutLines.length > 20 ? `\n...and ${stdoutLines.length - MAX_LOG_COMMAND_OUTPUT_LINES} more lines` : "",
       stderr ? "\n\x1b[31mWith stderr: \n" + stderr + "\x1b[0m" : "",
@@ -22,7 +22,7 @@ const log = {
   commandError: (command: string, args: string[], error: string) => {
     console.log(
       "\n\x1b[31m<----------------------------------------",
-      `\nCommand '${command} ${args.join("")}' executed with error:`,
+      `\nCommand '${command} ${args.join(" ")}' executed with error:`,
       "\n" + error,
       "\n---------------------------------------->\x1b[0m"
     );
@@ -33,7 +33,7 @@ let shouldDebug = false;
 let shouldWarn = false;
 let shouldInfo = false;
 
-const isVerbose = process.argv.includes("--verbose");
+const isVerbose = process.argv.includes("--verbose")
 if(isVerbose || process.argv.includes("--debug")) {
   shouldDebug = true;
 }

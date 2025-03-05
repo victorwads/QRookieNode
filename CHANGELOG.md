@@ -47,6 +47,8 @@
 
 - Headless
     - Add WebSocket Auto Reconection
+- Development
+    - Fix command log on verbose mode
 
 ### Changes Release 0.1.3
 - Headless

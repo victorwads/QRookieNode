@@ -123,7 +123,7 @@ class AdbManager extends SystemProcess {
     serial = this.getDeviceSerial();
     if (!serial) return []
 
-    if (!this.apps.length) {
+    if (this.apps.length > 0) {
       return this.apps;
     }
 
@@ -141,7 +141,7 @@ class AdbManager extends SystemProcess {
       const match = line.match(/package:(\S+)\s+versionCode:(\d+)/);
       return {
         packageName: match?.[1] || "",
-        versionCode: parseInt(match?.[2] || "0", 10),
+        versionCode: parseInt(match?.[2] || "0"),
       };
     });
     return this.apps;
@@ -226,6 +226,19 @@ class AdbManager extends SystemProcess {
       "-s", serial,
       "push", "-p", filePath, `/sdcard/Android/obb/${packageName}/`
     ]);
+  }
+
+  public async listObbFiles(packageName: string): Promise<string[]> {
+    const serial = this.getDeviceSerial()
+    if (!serial)
+      throw new Error("No device selected");
+
+    const output = await this.runAdbCommand([
+      "-s", serial,
+      "shell", "ls", `/sdcard/Android/obb/${packageName}/`
+    ]);
+
+    return output.split("\n");
   }
 }
 

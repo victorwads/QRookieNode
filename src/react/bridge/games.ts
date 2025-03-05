@@ -38,10 +38,10 @@ class GamesManager {
     return this.cache;
   }
 
-  public async install(id: string): Promise<string|null> {
+  public async install(id: string, justMissing: boolean = false): Promise<string|null> {
     return await bridge.sendCommand<GamesCommandName, GamesCommandPayload, string|null>({
       type: 'games',
-      payload: { action: 'install', id },
+      payload: { action: 'install', justMissing, id },
     });
   }
 
@@ -49,6 +49,13 @@ class GamesManager {
     return await bridge.sendCommand<GamesCommandName, GamesCommandPayload, string|null>({
       type: 'games',
       payload: { action: 'uninstall', id },
+    });
+  }
+
+  public async getObbFileList(id: string): Promise<string[]> {
+    return await bridge.sendCommand<GamesCommandName, GamesCommandPayload, string[]>({
+      type: 'games',
+      payload: { action: 'listObbFiles', id },
     });
   }
 }

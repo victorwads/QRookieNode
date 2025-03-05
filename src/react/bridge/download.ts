@@ -114,6 +114,13 @@ class GameDownloadManager {
     });
   }
 
+  public async getLocalFiles(id: string) {
+    return await bridge.sendCommand<GamesCommandName, GamesCommandPayload, string[]>({
+      type: 'games',
+      payload: { action: 'getLocalFiles', id },
+    });
+  }
+
 }
 
 const gameDownloadManager = new GameDownloadManager();

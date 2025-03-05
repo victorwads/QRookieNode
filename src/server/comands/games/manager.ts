@@ -19,6 +19,15 @@ interface WebGame {
   category?: string;
 }
 
+interface DownloadedGameFilesInfo {
+  id: string;
+  packageName: string;
+  gameDir: string;
+  dataDir?: string;
+  obbFiles?: string[];
+  apkFile?: string;
+}
+
 let loadedGames: boolean = false;
 
 class GameManager {
@@ -118,38 +127,58 @@ class GameManager {
     return null;
   }
 
-  public async install(id: string): Promise<string|null> {
+  private async getDownloadedGameInfo(id: string): Promise<DownloadedGameFilesInfo|null> {
     const game = this.games.find((g) => g.id === id);
-    if (!game) {
-      return "Game not found:" + id;
+    console.log("Game info:", game, id, this.games);
+    if (!game || !game.packageName) {
+      return null;
     }
 
     const gameDir = path.join(settingsManager.getDownloadsDir(), id, extractDirName);
-    const dataPath = path.join(gameDir, game.packageName || "");
+    const dataDir = path.join(gameDir, game.packageName || "");
 
-    if (fs.existsSync(dataPath) && !game.packageName) {
-      return "Game has custom app data but no game has no package name";;
+    return {
+      id,
+      gameDir,
+      dataDir: fs.existsSync(dataDir) ? dataDir : undefined,
+      packageName: game.packageName,
+      obbFiles: fs.existsSync(dataDir) ? fs.readdirSync(dataDir) : undefined,
+      apkFile: fs.existsSync(gameDir) ? fs.readdirSync(gameDir).find((file) => file.endsWith(".apk")) || undefined : undefined
+    }
+  }
+
+  public async install(id: string, justMissing: boolean = false): Promise<string|null> {
+    const gameInfo = await this.getDownloadedGameInfo(id);
+    if (!gameInfo) {
+      return "Game or package name not found:" + id;
     }
 
-    const apkPath = fs.readdirSync(gameDir).find((file) => file.endsWith(".apk"));
-    if (!apkPath) {
+    const { gameDir, dataDir, packageName, apkFile, obbFiles } = gameInfo;
+
+    if (!apkFile) {
       return "No apk file found on the downloaded game folder " + gameDir;
     }
 
+    let installedObbFiles: string[] = [];
+    if(justMissing) {
+      installedObbFiles = await adbManager.listObbFiles(packageName);
+    }
+
     try {
-      progress({ id , status: 'installing', installingFile: apkPath });
-      await adbManager.install(path.join(gameDir, apkPath));
+      progress({ id , status: 'installing', installingFile: apkFile });
+      await adbManager.install(path.join(gameDir, apkFile));
 
-      if (fs.existsSync(dataPath)) {
-        await adbManager.createObbDir(game.packageName || "");
-        const files = fs.readdirSync(dataPath);
+      if (obbFiles && dataDir) {
+        await adbManager.createObbDir(packageName || "");
 
-        for(let index = 0; index < files.length; index++) {
-          const name = files[index];
-          if(name.endsWith(".obb"))
+        for(let index = 0; index < obbFiles.length; index++) {
+          const name = obbFiles[index];
+          progress({ id , status: 'pushing app data', file: { index, name }, totalFiles: obbFiles.length });
+
+          if(justMissing && installedObbFiles.includes(name)) {
             continue;
-          progress({ id , status: 'pushing app data', file: { index, name }, totalFiles: files.length });
-          await adbManager.pushObbFile(path.join(dataPath, name), game.packageName || "");
+          }
+          await adbManager.pushObbFile(path.join(dataDir, name), packageName || "");
         }
       }
     } catch (err: any) {
@@ -162,6 +191,25 @@ class GameManager {
 
   public cancel(id: string): void {
     this.downloader.cancel(id);
+  }
+
+  public async listObbFiles(id: string): Promise<string[]> {
+    const game = this.games.find((g) => g.id === id);
+    if (!game || !game.packageName) {
+      return [];
+    }
+
+    return adbManager.listObbFiles(game.packageName);
+  }
+
+  public async getLocalFiles(id: string): Promise<string[]> {
+    const gameInfo = await this.getDownloadedGameInfo(id);
+
+    if (!gameInfo) {
+      return [];
+    }
+
+    return gameInfo.obbFiles || [];
   }
 }
 

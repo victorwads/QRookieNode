@@ -1,7 +1,7 @@
 import { Command, CommandEvent } from "@comands/types";
 import GamesManager from "./manager";
 
-export type GamesCommandPayload = GamesActionList | GamesActionWithId;
+export type GamesCommandPayload = GamesActionList | GamesActionWithId | GameActionInstall;
 export type GamesCommandOutput = Game[] | string[] | string | null | void;
 export type GamesCommandName = 'games';
 export type GamesCommand = Command<GamesCommandPayload, Game[], GamesCommandName>;
@@ -14,7 +14,7 @@ export type Game = {
   magnetUri: string;
   size: number;
   packageName?: string;
-  version?: string;
+  version?: number;
   lastUpdated?: string;
   completionOn: number;
 }
@@ -24,8 +24,14 @@ export type GamesActionList = {
 }
 
 export type GamesActionWithId = {
-  action: 'download' | 'install' | 'uninstall' | 'removeDownload' | 'cancel';
+  action: 'download' | 'uninstall' | 'removeDownload' | 'cancel' | 'listObbFiles' | 'getLocalFiles';
   id: string;
+}
+
+export type GameActionInstall = {
+  action: 'install';
+  id: string;
+  justMissing?: boolean;
 }
 
 export type DownloadProgress = {
@@ -66,10 +72,11 @@ export default {
       return GamesManager.listGames();
     } else if (payload.action === 'listDownloaded') {
       return GamesManager.getDownloadedGames();
+    } else if (payload.action === 'install') {
+      return GamesManager.install(payload.id, payload.justMissing);
     }
-    payload = payload as GamesActionWithId;
-    GamesManager[payload.action](payload.id);
 
-    return [];
+    payload = payload as GamesActionWithId;
+    return GamesManager[payload.action](payload.id);
   }
 } as GamesCommand;

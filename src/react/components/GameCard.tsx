@@ -7,6 +7,7 @@ import deviceManager from "@bridge/devices";
 import downloadManager from "@bridge/download";
 import gameManager from "@bridge/games";
 import getImagePath from "@react/bridge/image";
+import BooleanView from "./BooleanView";
 import Button from "./Button";
 import GameVerboseInfo from "./GameVerboseInfo";
 import { Icons } from "./Icons";
@@ -28,10 +29,13 @@ export interface GameCardProps {
 
 const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose, downloaded }: GameCardProps) => {
   const [gameStatus, setGameStatus] = useState<GameStatusInfo|null>(downloadManager.getGameStatusInfo(game.id));
+  const [comparation, setComparation] = useState<GameFileComparison[]>([]);
+  const [deviceVersion, setDeviceVersion] = useState<number|null>(null);
   
-  const install = async () => {
+  const install = async (justMissing: boolean = false) => {
     if (gameStatus?.status === 'installing' || gameStatus?.status === 'unzipping' || gameStatus?.status === 'pushing app data') return;
-    const result = await gameManager.install(game.id);
+    
+    const result = await gameManager.install(game.id, justMissing === true);
     if (result) {
       alert(result);
     } else {
@@ -53,15 +57,42 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
   const uninstall = async () => {
     if(!window.confirm('Are you sure you want to uninstall this game? You will lose all your progress.')) return;
     await gameManager.uninstall(game.id);
+    loadComparation();
+    setDeviceVersion(null);
     setGameStatus(null);
   }
 
+  const loadComparation = async () => {
+    if(verbose && game.packageName) {
+      compareFiles(game.id).then(setComparation);
+      setDeviceVersion(deviceManager.getPackageVersion(game.packageName));
+    }
+  }
+
   useEffect(() => {
+    loadComparation();
+
+    let lastFile = "";
     return downloadManager.addListener(game.id, (info) => {
       setGameStatus(info ? {...info} : null);
-    });
-  }, [game]);
+      if (info?.status === 'pushing app data' && comparation.length > 0) {
+        comparation.forEach(file => {
+          if (file.fileName === lastFile) {
+            file.deviceExists = true;
+          }
+        });
+        lastFile = info.file.name;
+        setComparation([...comparation]);
+      }
+      if (info?.status === 'installed') {
+        loadComparation();
+      }
 
+    });
+  }, [game, verbose]);
+
+  let isDownloaded = downloadManager.isGameDownloaded(game.id);
+  let isInstalled = deviceManager.isGameInstalled(game.packageName);
   const status: React.ReactNode[] = [];
   if(gameStatus?.status === 'installing') {
     status.push(<div key={status.length} className="game-card-task">Installing</div>)
@@ -80,14 +111,18 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
   } else if (gameStatus?.status === 'cancelling') {
     status.push(<div key={status.length} className="game-card-task">Cancelling Download</div>)
   } else {
-    const isInstalled = gameStatus?.status === 'installed' || deviceManager.isGameInstalled(game.packageName);
+    isInstalled = isInstalled || gameStatus?.status === 'installed';
     if (isInstalled) {
       status.push(<Button key={status.length} wide onClick={uninstall} icon={Icons.solid.faMinusCircle}>Uninstall</Button>)
     }
-    const isDownloaded = downloaded || downloadManager.isGameDownloaded(game.id);
+    isDownloaded = isDownloaded || downloaded || false;
     if (isDownloaded) {
       if (isInstalled) {
-        status.push(<Button key={status.length} wide onClick={install} icon={Icons.solid.faBoxOpen}>Reinstall</Button>)    
+        if(comparation.length > 0 && comparation.some(file => !file.deviceExists)) {
+          status.push(<Button key={status.length} onClick={() => install(true)} icon={Icons.solid.faDownload}>Install Missing Files</Button>)
+        } else {
+          status.push(<Button key={status.length} wide onClick={install} icon={Icons.solid.faBoxOpen}>Reinstall</Button>)    
+        }
       } else {
         status.push(<Button key={status.length} wide onClick={install} icon={Icons.solid.faDownload}>Install</Button>)
       }
@@ -109,6 +144,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
           <div style={{ marginRight: 10 }}>
             <div><strong>ID:</strong></div>
             <div><strong>Version:</strong></div>
+            {deviceVersion && deviceVersion != game.version && <div><strong>Device Version:</strong></div>}
             <div><strong>Category:</strong></div>
             <div><strong>Package Name:</strong></div>
             <div><strong>Last Updated:</strong></div>
@@ -116,6 +152,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
           <div style={{ flex: 1 }}>
             <div>{game.id}</div>
             <div>{game.version}</div>
+            {deviceVersion && deviceVersion != game.version && <div>{deviceVersion}</div>}
             <div>{game.category}</div>
             <div>{game.packageName}</div>
             <div>{game.lastUpdated}</div>
@@ -128,7 +165,55 @@ const GameCard: React.FC<GameCardProps> = ({ game, onSelect, onDownload, verbose
       </div>
     </div>
     {verbose && gameStatus && <GameVerboseInfo gameStatus={gameStatus} />}
+    { isDownloaded && comparation.length > 0 && <div style={{flex: 1}}>
+      <table border={1} style={{width: '100%'}}>
+        <thead>
+          <tr>
+            <th>File Name</th>
+            <th>On Local</th>
+            <th>On Device</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>APK Version</b></td>
+            <td align="center">{game.version}</td>
+            <td align="center">{deviceVersion || "Not Found"}</td>
+          </tr>
+          {comparation
+            .sort((a, b) => a.deviceExists === b.deviceExists ? 0 : a.deviceExists ? 1 : -1)
+            .map((file, index) => <tr key={index}>
+              <td>{file.fileName}</td>
+              <td align="center"><BooleanView value={file.localExists} /></td>
+              <td align="center"><BooleanView value={file.deviceExists} /></td>
+            </tr>)}
+        </tbody>
+      </table></div>}
   </>;
 };
+
+const compareFiles = async (id: string): Promise<GameFileComparison[]> => {
+  const [localFiles, deviceFiles] = await Promise.all([
+    downloadManager.getLocalFiles(id),
+    gameManager.getObbFileList(id),
+  ]);
+  const allFiles = [
+    ...localFiles.filter(file => file.trim() !== ""),
+    ...deviceFiles.filter(file => file.trim() !== "")
+  ];
+  console.log(localFiles, deviceFiles);
+
+  return Array.from(allFiles).map(file => ({
+    fileName: file,
+    localExists: localFiles.includes(file),
+    deviceExists: deviceFiles.includes(file),
+  }));
+};
+
+interface GameFileComparison {
+  fileName: string;
+  localExists: boolean;
+  deviceExists: boolean;
+}
 
 export default GameCard;

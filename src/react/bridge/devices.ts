@@ -18,6 +18,11 @@ class DeviceManager {
     return this.cache;
   }
 
+  public getPackageVersion(packageName: string): number | null {
+    const app = this.cache.apps.find(app => app.packageName === packageName);
+    return app ? app.versionCode : null;
+  }
+
   public isGameInstalled(packageName?: string): boolean {
     return this.cache.apps.some(app => app.packageName === packageName);
   }

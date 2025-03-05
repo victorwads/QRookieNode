@@ -47,6 +47,11 @@
 
 - Games
     - Fix Listing Bug
+- Game Files Inspect/Compare (New)
+    - Show Download Obb Files
+    - Show Device Obb Files
+    - Compare Versions
+    - Push Just Missing Obb Files
 - Devices Manager
     - optimize device listing with caches,
       Reducing 60% of adb calls

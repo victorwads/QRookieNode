@@ -13,13 +13,19 @@ export interface GameInfo {
   name: string;
   releaseName: string;
   packageName: string;
-  version: string;
+  version: number;
   lastUpdated: string;
   size: string;
 }
 
+type CachedGameInfo  = {
+  lastDownloaded: string;
+  games: GameInfo[];
+} | GameInfo[];
+
 const metaFileName = "meta.7z";
 const metaFilePath = join(downloadDir, metaFileName);
+const gamesInfoFileName = "games_info.json";
 
 export class VprManager extends RunSystemCommand {
   private games: Map<string, GameInfo> = new Map();
@@ -30,7 +36,7 @@ export class VprManager extends RunSystemCommand {
   }
 
   private get gamesFilePath(): string {
-    return join(downloadDir, "games_info.json");
+    return join(downloadDir, gamesInfoFileName);
   }
 
   public async loadGamesInfo(): Promise<boolean> {
@@ -41,10 +47,23 @@ export class VprManager extends RunSystemCommand {
 
     try {
       const data = fs.readFileSync(this.gamesFilePath, "utf-8");
-      const json = JSON.parse(data) as GameInfo[];
+      const json = JSON.parse(data) as CachedGameInfo;
+      if (Array.isArray(json)) {
+        log.error("Invalid games_info.json");
+        await this.updateMetadata();
+        return true;
+      }
+      const lastDownloaded = new Date(json.lastDownloaded);
+      if (new Date().getTime() - lastDownloaded.getTime() > 1000 * 60 * 60 * 24) {
+        log.warn("Games info is outdated");
+        await this.updateMetadata();
+        return true;
+      } else {
+        log.info("Games info is up to date");
+      }
 
       this.games.clear();
-      json.forEach((game) => {
+      json.games.forEach((game) => {
         this.games.set(game.releaseName, game);
       });
 
@@ -58,7 +77,11 @@ export class VprManager extends RunSystemCommand {
 
   public saveGamesInfo(): boolean {
     try {
-      const json = Array.from(this.games.values());
+      const games = Array.from(this.games.values());
+      const json: CachedGameInfo = {
+        lastDownloaded: new Date().toISOString(),
+        games,
+      };
       fs.writeFileSync(this.gamesFilePath, JSON.stringify(json, null, 2), "utf-8");
       return true;
     } catch (error) {
@@ -146,7 +169,7 @@ export class VprManager extends RunSystemCommand {
         name: parts[0],
         releaseName: parts[1],
         packageName: parts[2],
-        version: parts[3],
+        version: Number.parseInt(parts[3]),
         lastUpdated: parts[4],
         size: parts[5],
       };

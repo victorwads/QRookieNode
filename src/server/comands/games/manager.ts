@@ -24,13 +24,27 @@ let loadedGames: boolean = false;
 class GameManager {
   private games: Game[] = [];
   private downloader = new HttpDownloader();
+  private lastPromise: Promise<boolean> | null = null;
 
   private static readonly GAMES_URL = "https://torrents.vrpirates.wiki/torrents.json";
 
+  constructor() {
+    this.update();
+  }
+
   public async update(): Promise<boolean> {
+    if (this.lastPromise) {
+      return this.lastPromise;
+    }
+    this.lastPromise = this.updateTask().finally(() => this.lastPromise = null);
+    return this.lastPromise;
+  }
+
+  public async updateTask(): Promise<boolean> {
     if (loadedGames) {
       return true;
     }
+    loadedGames = true;
     try {
       log.info("Downloading games data from...", GameManager.GAMES_URL);
       const data = await this.downloader.download(GameManager.GAMES_URL);
@@ -57,10 +71,10 @@ class GameManager {
         } as Game
       });
 
-      loadedGames = true;
       return true;
     } catch (err) {
       log.error("Error updating games:", err);
+      loadedGames = false;
       return false;
     }
   }

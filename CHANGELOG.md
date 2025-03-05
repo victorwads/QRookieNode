@@ -45,6 +45,8 @@
 
 ### Changes Release 0.2.0
 
+- Games
+    - Fix Listing Bug
 - Devices Manager
     - optimize device listing with caches,
       Reducing 60% of adb calls

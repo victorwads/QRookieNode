@@ -169,11 +169,9 @@ jobs:
       - name: Build Flatpak
         run: |
           # Set up Yarn offline mirror and install
-          mkdir -p yarn-offline-cache
-          rm -rf node_modules yarn.lock #yarn-offline-cache
-
-          npm install --package-lock-only
-          flatpak-node-generator npm package-lock.json
+          sudo apt install pipx
+          pipx install git+https://github.com/flatpak/flatpak-builder-tools.git#subdirectory=node
+          flatpak-node-generator yarn yarn.lock
 
           yarn config set yarn-offline-mirror ./yarn-offline-cache
           yarn config set yarn-offline-mirror-pruning false

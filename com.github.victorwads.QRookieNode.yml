@@ -22,6 +22,8 @@ finish-args:
 
 modules:
 
+  - generated-sources.json
+
   - name: qrookie-node
     buildsystem: simple
     build-options:
@@ -33,7 +35,7 @@ modules:
         npm_config_offline: 'true'
     build-commands:
       # Install npm dependencies
-      - npm install --offline
+      - yarn install --offline --frozen-lockfile
       # Build the app; in this example the `dist` script
       # in package.json runs electron-builder
       - |

@@ -166,11 +166,35 @@ jobs:
           CERTIFICATE_PASSWORD: ${{ secrets.DECP }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: yarn bundle --linux
+      - name: Build Flatpak
+        run: |
+          # Set up Yarn offline mirror and install
+          mkdir -p yarn-offline-cache
+          rm -rf node_modules yarn.lock #yarn-offline-cache
+
+          npm install --package-lock-only
+          flatpak-node-generator npm package-lock.json
+
+          yarn config set yarn-offline-mirror ./yarn-offline-cache
+          yarn config set yarn-offline-mirror-pruning false
+          yarn install --frozen-lockfile
+
+          # Run Flatpak build
+          mkdir -p flatpak-build-dir
+          flatpak-builder --user --force-clean \
+            --install-deps-from=flathub \
+            --install-deps-from=flathub-beta \
+            --repo=repo \
+            flatpak-build-dir \
+            com.github.victorwads.QRookieNode.yml
+      
+          # Bundle the final Flatpak
+          flatpak build-bundle repo com.github.victorwads.QRookieNode.flatpak com.github.victorwads.QRookieNode      
 
       - name: Upload Linux Artifacts to Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "dist/*.AppImage,dist/*.deb,dist/*.rpm,dist/*.zip"
+          artifacts: "dist/*.AppImage,dist/*.deb,dist/*.rpm,dist/*.zip,*.flatpak"
           allowUpdates: true
           tag: ${{ steps.yarn-cache-dir-path.outputs.version }}
           name: Release ${{ steps.yarn-cache-dir-path.outputs.version }}

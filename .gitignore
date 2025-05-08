@@ -30,3 +30,12 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .vscode
+
+# flatpak
+repo
+*.flatpak
+flatpak-build-dir
+yarn-offline-cache
+qrookie-node-yarn-pack.tgz
+.flatpak-builder
+cache

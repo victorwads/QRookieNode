@@ -161,11 +161,11 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile --non-interactive
 
-      - name: Build Linux App
-        env:
-          CERTIFICATE_PASSWORD: ${{ secrets.DECP }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: yarn bundle --linux
+      # - name: Build Linux App
+      #   env:
+      #     CERTIFICATE_PASSWORD: ${{ secrets.DECP }}
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: yarn bundle --linux
         
       - name: Build Flatpak
         run: |

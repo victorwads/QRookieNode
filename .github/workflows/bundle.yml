@@ -166,16 +166,13 @@ jobs:
           CERTIFICATE_PASSWORD: ${{ secrets.DECP }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: yarn bundle --linux
+        
       - name: Build Flatpak
         run: |
           # Set up Yarn offline mirror and install
           sudo apt install pipx
           pipx install git+https://github.com/flatpak/flatpak-builder-tools.git#subdirectory=node
           flatpak-node-generator yarn yarn.lock
-
-          yarn config set yarn-offline-mirror ./yarn-offline-cache
-          yarn config set yarn-offline-mirror-pruning false
-          yarn install --frozen-lockfile
 
           # Run Flatpak build
           mkdir -p flatpak-build-dir

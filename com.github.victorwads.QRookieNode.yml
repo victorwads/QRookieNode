@@ -9,7 +9,9 @@ sdk-extensions:
 separate-locales: false
 command: qrookie-wrapper.sh
 finish-args:
-  - --socket=x11
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --enable-features=WaylandWindowDecorations
   - --device=dri
   - --share=ipc
   - --share=network

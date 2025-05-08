@@ -170,8 +170,7 @@ jobs:
       - name: Build Flatpak
         run: |
           # Set up Yarn offline mirror and install
-          apt install -y flatpak-builder
-          sudo apt install pipx
+          sudo apt install -y pipx flatpak-builder
           pipx install git+https://github.com/flatpak/flatpak-builder-tools.git#subdirectory=node
           flatpak-node-generator yarn yarn.lock
 

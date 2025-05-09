@@ -173,6 +173,7 @@ jobs:
           sudo apt install -y pipx flatpak-builder
           pipx install git+https://github.com/flatpak/flatpak-builder-tools.git#subdirectory=node
           flatpak-node-generator yarn yarn.lock
+          echo "[DEBUG] flatpak node generator completed"
 
           # Run Flatpak build
           mkdir -p flatpak-build-dir

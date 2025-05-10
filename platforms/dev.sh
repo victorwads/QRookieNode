@@ -3,9 +3,9 @@
 # Use Repo directory
 cd "$(dirname "$0")/.."
 
-# Função para matar os processos filhos quando o script principal terminar
+# Function to kill child processes when the main script ends
 cleanup() {
-    echo "Encerrando todos os processos..."
+    echo "Terminating all processes..."
     kill 0
     exit
 }
@@ -14,33 +14,33 @@ wait_for_port() {
     local PORT=$1
     local RETRIES=30
 
-    echo "Aguardando o servidor React na porta $PORT..."
+    echo "Waiting for the React server on port $PORT..."
 
     for ((i=1; i<=RETRIES; i++)); do
         if nc -z localhost $PORT; then
-            echo "Servidor React disponível na porta $PORT."
+            echo "React server is available on port $PORT."
             return 0
         fi
-        echo "Tentativa $i/$RETRIES: Servidor ainda não está pronto. Aguardando..."
+        echo "Attempt $i/$RETRIES: Server is not ready yet. Waiting..."
         sleep 0.5
     done
 
-    echo "Erro: Servidor React não ficou pronto na porta $PORT."
+    echo "Error: React server did not become ready on port $PORT."
     exit 1
 }
 
-# Iniciar o servidor React (yarn start) em segundo plano
-echo "Iniciando React..."
+# Start the React server (yarn start) in the background
+echo "Starting React..."
 PORT=3000 yarn react:dev &
 REACT_PID=$!
 
-# Verificar se o servidor React está pronto
+# Check if the React server is ready
 wait_for_port 3000
 
-# Iniciar o Electron no modo de desenvolvimento
-echo "Iniciando Electron..."
+# Start Electron in development mode
+echo "Starting Electron..."
 yarn electron:dev &
 ELECTRON_PID=$!
 
-# Aguardar os processos (impede que o script termine imediatamente)
+# Wait for the processes (prevents the script from ending immediately)
 wait $REACT_PID $ELECTRON_PID $TSC_PID

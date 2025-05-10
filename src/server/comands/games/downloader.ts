@@ -104,15 +104,15 @@ export default class Downloader extends RunSystemCommand {
           fs.renameSync(tempPath, finalPath);
           log.info(`Download completed: ${finalPath}`);
           resolve(true);
-          client.close(); // Fecha a conexão HTTP/2
+          client.close(); // Close the HTTP/2 connection
         });
       });
 
       req.on("error", (err) => {
         fileStream.close();
-        fs.unlinkSync(finalPath); // Remove o arquivo corrompido
+        fs.unlinkSync(finalPath); // Remove the corrupted file
         reject(err);
-        client.close(); // Fecha a conexão em caso de erro
+        client.close(); // Close the connection in case of an error
       });
 
       req.end();

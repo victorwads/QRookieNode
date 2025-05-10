@@ -9,6 +9,7 @@ import settingsManager from "@comands/settings/manager";
 import { DownloadProgress, GameStatusInfo } from "@comands/types";
 import log from "@server/log";
 import RunSystemCommand from "@server/systemProcess";
+import { statusCodeToReasonPhrase } from "@server/utils";
 
 import type { VprPublicData } from "./vrpPublic";
 
@@ -90,7 +91,15 @@ export default class Downloader extends RunSystemCommand {
 
       req.on("response", (headers) => {
         if (headers[":status"] !== 200) {
-          reject(new Error(`HTTP/2 Error: ${headers[":status"]}`));
+          fileStream.close();
+          fs.unlinkSync(finalPath); // Remove the corrupted file
+          reject(
+            new Error(
+              `HTTP/2 Error: ${headers[":status"]} - ${
+                statusCodeToReasonPhrase[headers[":status"] || ""]
+              }`
+            )
+          );
           req.close();
           return;
         }

@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as path from "path";
 
 import log from "@server/log";
 import SystemProcess from "@server/systemProcess";
@@ -220,10 +221,11 @@ class AdbManager extends SystemProcess {
       throw new Error("No device selected");
     if (!fs.existsSync(filePath))
       throw new Error("File not found " + filePath);
-    
+
+    const fileName = path.basename(filePath);
     await this.runAdbCommand([
       "-s", serial,
-      "push", "-p", filePath, `/sdcard/Android/obb/${packageName}/`
+      "push", "-p", filePath, `/sdcard/Android/obb/${packageName}/${fileName}`
     ]);
   }
 

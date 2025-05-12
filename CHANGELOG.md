@@ -43,6 +43,11 @@
 
 ## Changes Log
 
+### Changes Release 0.2.2
+
+- Games
+    - Fix Install Game Obb Data
+
 ### Changes Release 0.2.1
 
 - Games

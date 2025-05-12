@@ -8,6 +8,7 @@
     "email": "victor.laureano+qrookienode@gmail.com"
   },
   "homepage": "./",
+  "main": "dist/server/index.js",
   "scripts": {
     "headless": "yarn react:build && yarn server:build && yarn headless:no-build",
     "headless:no-build": "node dist/server/index.js",
@@ -21,8 +22,8 @@
     "install:mac": "yarn bundle:mac-dev && cp -R dist/mac-arm64/QRookie.app /Applications",
     "react:dev": "cross-env BROWSER=none craco start",
     "react:build": "cross-env BUILD_PATH=dist/react craco build",
-    "server:build": "tsc --project tsconfig.server.json && tsc-alias -p tsconfig.server.json && cp package.json dist/server/",
-    "electron:dev": "nodemon --watch src/server --ext ts --exec \"yarn server:build && cross-env NODE_ENV=development electron ./dist/server/index.js --verbose\"",
+    "server:build": "tsc --project tsconfig.server.json && tsc-alias -p tsconfig.server.json && cpy package.json dist/server --rename=package.json && json -I -f dist/server/package.json -e \"this.main='index.js'\"",
+    "electron:dev": "nodemon --watch src/server --ext ts --exec \"yarn server:build && cross-env NODE_ENV=development electron --inspect=9222 ./dist/server/index.js --remote-debugging-port=9223 --verbose\"",
     "lint": "clear && eslint --config ./eslint.config.mjs src",
     "test": "craco test"
   },
@@ -52,12 +53,14 @@
     "@types/node-7z": "^2.1.10",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "cpy-cli": "^5.0.0",
     "cross-env": "^7.0.3",
     "electron": "^34.0.2",
     "electron-builder": "^25.1.8",
     "eslint": "^9.17.0",
     "eslint-config-react-app": "^7.0.1",
     "globals": "^15.14.0",
+    "json": "^11.0.0",
     "nodemon": "^3.1.9",
     "tsc-alias": "^1.8.10",
     "typescript-eslint": "^8.19.0"

@@ -1,0 +1,37 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Main Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+      },
+      "args": [".", "--remote-debugging-port=9223", "--verbose"],
+      "runtimeArgs": ["--inspect-brk=9222"],
+      "outputCapture": "std",
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/dist/server/**/*.js"],
+      "preLaunchTask": "prelaunch:main:debug",
+      "postDebugTask": "Terminate All Tasks"
+    },
+    {
+      "name": "Debug Renderer Process",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9223,
+      "webRoot": "${workspaceFolder}/src/react",
+      "sourceMaps": true,
+      "urlFilter": "http://localhost:3000/*",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
+      ],
+      "preLaunchTask": "prelaunch:main:debug",
+      "postDebugTask": "Terminate All Tasks"
+    }
+  ]
+}

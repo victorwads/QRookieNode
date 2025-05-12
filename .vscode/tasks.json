@@ -1,0 +1,77 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "electron:dev",
+      "type": "npm",
+      "script": "electron:dev",
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "base": "$tsc-watch",
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "Debugger listening",
+            "endsPattern": "Bridge is ready"
+          }
+        }
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "silent",
+        "clear": true
+      }
+    },
+    {
+      "label": "react:dev",
+      "type": "shell",
+      "command": "PORT=3000 yarn react:dev",
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "pattern": [
+            { "regexp": ".", "file": 1, "location": 1, "message": 1 }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "^Starting the development server...",
+            "endsPattern": "Local:.*http://localhost:3000"
+          }
+        }
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "devServersGroup",
+        "clear": false
+      }
+    },
+    {
+      "label": "prelaunch:main:debug",
+      "dependsOn": ["react:dev", "electron:dev"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "Terminate All Tasks",
+      "command": "echo '${input:terminate}'",
+      "type": "shell",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never",
+        "close": true
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "terminate",
+      "type": "command",
+      "command": "workbench.action.tasks.terminate",
+      "args": "terminateAll"
+    }
+  ]
+}

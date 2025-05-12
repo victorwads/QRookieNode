@@ -6,7 +6,10 @@
     "module": "NodeNext",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "inlineSources": true,
+    "sourceMap": true,
+    "inlineSourceMap": false
   },
   "include": ["src/server"]
 }

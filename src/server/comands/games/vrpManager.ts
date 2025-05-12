@@ -42,7 +42,13 @@ export class VprManager extends RunSystemCommand {
   public async loadGamesInfo(): Promise<boolean> {
     if (!fs.existsSync(this.gamesFilePath)) {
       log.warn("games_info.json not found");
-      await this.updateMetadata();
+      const result = await this.updateMetadata();
+      if (!result) {
+        log.error(
+          "Failed to update metadata. There is an issue with either your connection, or the server."
+        );
+        return false;
+      }
     }
 
     try {

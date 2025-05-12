@@ -141,13 +141,13 @@ export class VprManager extends RunSystemCommand {
   public parseMetadata(): boolean {
     const filePath = join(downloadDir, "VRP-GameList.txt");
 
-    // Verifica se o arquivo existe
+    // Check if the file exists
     if (!fs.existsSync(filePath)) {
       log.error("VRP-GameList.txt not found");
       return false;
     }
 
-    // Tenta abrir o arquivo
+    // Attempt to open the file
     const fileContent = fs.readFileSync(filePath, "utf-8");
     const lines = fileContent.split("\n");
 

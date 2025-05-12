@@ -4,7 +4,7 @@ import type { Device } from "@bridge/devices";
 import { formatSize } from "./GameCard";
 
 function calculateColor(value: number, max: number, isReversed: boolean = false): string {
-  const percentage = Math.max(0, Math.min(value / max, 1)); // Limita entre 0 e 1
+  const percentage = Math.max(0, Math.min(value / max, 1)); // Limits between 0 and 1
   const red = isReversed ? percentage * 255 : (1 - percentage) * 255;
   const green = isReversed ? (1 - percentage) * 255 : percentage * 255;
 

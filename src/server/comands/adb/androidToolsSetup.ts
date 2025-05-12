@@ -66,7 +66,7 @@ function downloadFile(url: string, dest: string): Promise<void> {
       response.pipe(file);
       file.on("finish", () => file.close(resolve as any));
     }).on("error", (err) => {
-      fs.unlinkSync(dest); // Remove arquivo corrompido
+      fs.unlinkSync(dest); // Remove the corrupted file
       reject(err);
     });
   });

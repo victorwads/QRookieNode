@@ -55,6 +55,7 @@
     "cross-env": "^7.0.3",
     "electron": "^34.0.2",
     "electron-builder": "^25.1.8",
+    "electron-devtools-installer": "^4.0.0",
     "eslint": "^9.17.0",
     "eslint-config-react-app": "^7.0.1",
     "globals": "^15.14.0",

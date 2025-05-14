@@ -3,7 +3,7 @@
 ## 📚 Dependencies
 
 You need to install the following dependencies:
-- nvm (Node Version Manager) or Node.js Lts
+- [nvm](https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script) (Node Version Manager) or Node.js Lts
 - yarn (package manager) - Do not use npm
 - Inkscape (for icons generation)
 

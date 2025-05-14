@@ -45,6 +45,7 @@ See more details on how to run it on [Running](docs/InstallationAndRunning.md)
 - dist/: Contains the built code (.gitignored).
     - react/: Contains the built React code.
     - electron/: Contains the built Electron code.
+- docs: Contains the developer documentation on how to buld the project
 
 
 ## 🎨 User Interface
@@ -55,4 +56,4 @@ Using react also allows for easy customization and extension of the interface, m
 
 ## 🔗 References
 
-This project was heavily inspired and based on the work of @glaumar in [QRookie](https://github.com/glaumar/QRookie). The structure, ideas, and features were adapted to better suit the requirements of JavaScript-based platforms. 
+This project was heavily inspired and based on the work of @glaumar in [QRookie](https://github.com/glaumar/QRookie). The structure, ideas, and features were adapted to better suit the requirements of JavaScript-based platforms.

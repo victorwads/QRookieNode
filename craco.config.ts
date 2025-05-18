@@ -1,6 +1,9 @@
 import { resolve } from 'path';
 
 export default {
+  eslint: {
+    enable: false,
+  },
   webpack: {
     alias: {
       '@react': resolve(__dirname, 'src/react'),

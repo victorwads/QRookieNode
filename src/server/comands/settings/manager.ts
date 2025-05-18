@@ -6,15 +6,17 @@ import log from "@server/log";
 import SystemProcess from "@server/systemProcess";
 import type { Settings, SystemHelth } from ".";
 
-export const appVersion = JSON.parse(fs.readFileSync(path.join(buildRoot, "package.json"), "utf-8")).version;
+export const appVersion = JSON.parse(
+  fs.readFileSync(path.join(buildRoot, "package.json"), "utf-8")
+).version;
 
 const settingsPath = path.join(appDataDir, "settings.json");
-const { showOpenDialog } = (function() {
+const { showOpenDialog } = (function () {
   if (process.versions.electron) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    return { showOpenDialog: require("electron").dialog.showOpenDialog};
+    return { showOpenDialog: require("electron").dialog.showOpenDialog };
   }
-  return { showOpenDialog: async () => ({canceled: true, filePaths: []})};
+  return { showOpenDialog: async () => ({ canceled: true, filePaths: [] }) };
 })();
 
 class SettingsManager extends SystemProcess {
@@ -22,7 +24,9 @@ class SettingsManager extends SystemProcess {
 
   constructor() {
     super();
-    this.settings = fs.existsSync(settingsPath) ? JSON.parse(fs.readFileSync(settingsPath, "utf-8")) : {};
+    this.settings = fs.existsSync(settingsPath)
+      ? JSON.parse(fs.readFileSync(settingsPath, "utf-8"))
+      : {};
     this.createDownloadsDir();
   }
   private async createDownloadsDir() {
@@ -36,7 +40,7 @@ class SettingsManager extends SystemProcess {
       title: "Select downloads dir",
       properties: ["openDirectory"],
     });
-    
+
     if (!result.canceled && result.filePaths.length > 0) {
       const selectedPath = result.filePaths[0];
       this.settings.downloadsDir = selectedPath;
@@ -49,15 +53,12 @@ class SettingsManager extends SystemProcess {
   public get(): Settings {
     return {
       ...this.settings,
-      ...(process.env.ROOKIE_DOWNLOADS_DIR
-        ? {downloadsDir: this.getDownloadsDir()}
-        : {}
-      ),
+      ...(process.env.ROOKIE_DOWNLOADS_DIR ? { downloadsDir: this.getDownloadsDir() } : {}),
     };
   }
 
   public getDownloadsDir(): string {
-    if(process.env.ROOKIE_DOWNLOADS_DIR && fs.existsSync(process.env.ROOKIE_DOWNLOADS_DIR)) {
+    if (process.env.ROOKIE_DOWNLOADS_DIR && fs.existsSync(process.env.ROOKIE_DOWNLOADS_DIR)) {
       return process.env.ROOKIE_DOWNLOADS_DIR;
     }
     if (this.settings.downloadsDir && fs.existsSync(this.settings.downloadsDir)) {
@@ -66,16 +67,20 @@ class SettingsManager extends SystemProcess {
     return gamesDir;
   }
 
-  private async getCommandInfo(path: string|null, name: string, lines: number, arg: string = "-h"): Promise<string> {
+  private async getCommandInfo(
+    path: string | null,
+    name: string,
+    lines: number,
+    arg: string = "-h"
+  ): Promise<string> {
     if (!path) {
       return "Not found, Please install " + name;
     }
     const { stdout } = await this.runCommand(path, [arg]);
-    return path + "\n" +
-      stdout.split("\n").slice(0, lines).join("\n");
+    return path + "\n" + stdout.split("\n").slice(0, lines).join("\n");
   }
 
-  private static systemHelthCache: Promise<SystemHelth>|null = null;
+  private static systemHelthCache: Promise<SystemHelth> | null = null;
 
   public async getSystemHelth(): Promise<SystemHelth> {
     if (!SettingsManager.systemHelthCache) {
@@ -87,10 +92,12 @@ class SettingsManager extends SystemProcess {
   private async getSystemHelthInternal(): Promise<SystemHelth> {
     const asyncResults = {
       adb: this.getCommandInfo(this.getAdbPath(), "adb", 2, "version"),
-      unzip: this.getCommanPath('unzip').then(path => this.getCommandInfo(path, "unzip", 1)),
+      unzip: this.getCommanPath("unzip").then(path => this.getCommandInfo(path, "unzip", 1)),
       sevenZip: this.getSevenZipPath().then(path => this.getCommandInfo(path, "7zip", 2)),
-      java: this.getCommanPath('java').then(path => this.getCommandInfo(path, "java", 3, "--version")),
-    }
+      java: this.getCommanPath("java").then(path =>
+        this.getCommandInfo(path, "java", 3, "--version")
+      ),
+    };
 
     return {
       appVersion,

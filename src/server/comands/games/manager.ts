@@ -1,14 +1,14 @@
-import * as crypto from 'crypto';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as crypto from "crypto";
+import * as fs from "fs";
+import * as path from "path";
 import type { Game } from ".";
 
-import adbManager from '@comands/adb/manager';
-import settingsManager from '@comands/settings/manager';
-import log from '@server/log';
+import adbManager from "@comands/adb/manager";
+import settingsManager from "@comands/settings/manager";
+import log from "@server/log";
 import HttpDownloader, { extractDirName, progress } from "./downloader";
-import vrpManager from './vrpManager';
-import vrpPublic from './vrpPublic';
+import vrpManager from "./vrpManager";
+import vrpPublic from "./vrpPublic";
 
 interface WebGame {
   name?: string;
@@ -45,7 +45,7 @@ class GameManager {
     if (this.lastPromise) {
       return this.lastPromise;
     }
-    this.lastPromise = this.updateTask().finally(() => this.lastPromise = null);
+    this.lastPromise = this.updateTask().finally(() => (this.lastPromise = null));
     return this.lastPromise;
   }
 
@@ -77,7 +77,7 @@ class GameManager {
           normalName: existingGame?.name,
           lastUpdated: existingGame?.lastUpdated,
           version: existingGame?.version,
-        } as Game
+        } as Game;
       });
 
       return true;
@@ -97,9 +97,9 @@ class GameManager {
   }
 
   private getGameId(releaseName: string): string {
-    const hash = crypto.createHash('md5');
+    const hash = crypto.createHash("md5");
     hash.update(releaseName + "\n");
-    return hash.digest('hex');
+    return hash.digest("hex");
   }
 
   public async download(id: string) {
@@ -109,7 +109,7 @@ class GameManager {
       return;
     }
 
-    this.downloader.downloadDir(vrpInfo.baseUri, id, await vrpPublic)
+    this.downloader.downloadDir(vrpInfo.baseUri, id, await vrpPublic);
   }
 
   public async removeDownload(id: string) {
@@ -117,8 +117,8 @@ class GameManager {
     this.getDownloadedGames();
   }
 
-  public async uninstall(id: string): Promise<string|null> {
-    const game = this.games.find((g) => g.id === id);
+  public async uninstall(id: string): Promise<string | null> {
+    const game = this.games.find(g => g.id === id);
     if (!game || !game.packageName) {
       return "Game not found:" + id;
     }
@@ -127,8 +127,8 @@ class GameManager {
     return null;
   }
 
-  private async getDownloadedGameInfo(id: string): Promise<DownloadedGameFilesInfo|null> {
-    const game = this.games.find((g) => g.id === id);
+  private async getDownloadedGameInfo(id: string): Promise<DownloadedGameFilesInfo | null> {
+    const game = this.games.find(g => g.id === id);
     if (!game || !game.packageName) {
       return null;
     }
@@ -142,11 +142,13 @@ class GameManager {
       dataDir: fs.existsSync(dataDir) ? dataDir : undefined,
       packageName: game.packageName,
       obbFiles: fs.existsSync(dataDir) ? fs.readdirSync(dataDir) : undefined,
-      apkFile: fs.existsSync(gameDir) ? fs.readdirSync(gameDir).find((file) => file.endsWith(".apk")) || undefined : undefined
-    }
+      apkFile: fs.existsSync(gameDir)
+        ? fs.readdirSync(gameDir).find(file => file.endsWith(".apk")) || undefined
+        : undefined,
+    };
   }
 
-  public async install(id: string, justMissing: boolean = false): Promise<string|null> {
+  public async install(id: string, justMissing: boolean = false): Promise<string | null> {
     const gameInfo = await this.getDownloadedGameInfo(id);
     if (!gameInfo) {
       return "Game or package name not found:" + id;
@@ -159,34 +161,39 @@ class GameManager {
     }
 
     let installedObbFiles: string[] = [];
-    if(justMissing) {
+    if (justMissing) {
       installedObbFiles = await adbManager.listObbFiles(packageName);
     }
 
     try {
-      progress({ id , status: 'installing', installingFile: apkFile });
-      if(!justMissing) {
+      progress({ id, status: "installing", installingFile: apkFile });
+      if (!justMissing) {
         await adbManager.install(path.join(gameDir, apkFile));
       }
 
       if (obbFiles && dataDir) {
         await adbManager.createObbDir(packageName || "");
 
-        for(let index = 0; index < obbFiles.length; index++) {
+        for (let index = 0; index < obbFiles.length; index++) {
           const name = obbFiles[index];
-          progress({ id , status: 'pushing app data', file: { index, name }, totalFiles: obbFiles.length });
+          progress({
+            id,
+            status: "pushing app data",
+            file: { index, name },
+            totalFiles: obbFiles.length,
+          });
 
-          if(justMissing && installedObbFiles.includes(name)) {
+          if (justMissing && installedObbFiles.includes(name)) {
             continue;
           }
           await adbManager.pushObbFile(path.join(dataDir, name), packageName || "");
         }
       }
     } catch (err: any) {
-      progress({ id , status: 'error', message: err });
+      progress({ id, status: "error", message: err });
       return "Failed to install game: " + err;
     }
-    progress({ id , status: 'installed'});
+    progress({ id, status: "installed" });
     return null;
   }
 
@@ -195,7 +202,7 @@ class GameManager {
   }
 
   public async listObbFiles(id: string): Promise<string[]> {
-    const game = this.games.find((g) => g.id === id);
+    const game = this.games.find(g => g.id === id);
     if (!game || !game.packageName) {
       return [];
     }

@@ -6,9 +6,9 @@ interface BooleanViewProps {
 
 const BooleanView: React.FC<BooleanViewProps> = ({ value }: BooleanViewProps) => {
   return (
-    <Icon 
-      icon={value ? Icons.solid.faCheckCircle : Icons.solid.faTimesCircle} 
-      style={{ color: value ? "green" : "red" }} 
+    <Icon
+      icon={value ? Icons.solid.faCheckCircle : Icons.solid.faTimesCircle}
+      style={{ color: value ? "green" : "red" }}
     />
   );
 };

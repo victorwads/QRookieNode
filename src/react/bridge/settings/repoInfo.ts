@@ -81,6 +81,6 @@ export const promisse = Promise.all(
   })
 );
 
-promisse.then(() => {
+void promisse.then(() => {
   localStorage.setItem(storageKey, JSON.stringify(repoDownloadsInfo));
 });

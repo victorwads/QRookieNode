@@ -30,7 +30,7 @@ const Games: React.FC = () => {
   };
 
   useEffect(() => {
-    getAdbDevices();
+    void getAdbDevices();
   }, []);
 
   if (result.length > 0 && id) {
@@ -72,7 +72,7 @@ const Games: React.FC = () => {
             <GameCard
               key={game.id}
               game={game}
-              onSelect={game => navigate(game.id ?? "")}
+              onSelect={game => void navigate(game.id ?? "")}
               onDownload={() => downloadManager.downloadGame(game.id)}
             />
           ))}

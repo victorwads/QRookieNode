@@ -15,7 +15,7 @@ const loadSystemHelth = async () =>
     sysTemHelthCache = info;
     return info;
   });
-loadSystemHelth();
+void loadSystemHelth();
 
 export const changeDownloadsDir = async (): Promise<SettingsModel> => {
   if (isWebsoket) {
@@ -37,14 +37,14 @@ const Settings: React.FC = () => {
   };
 
   useEffect(() => {
-    settingsManager.fetchReposInfo().then(info => {
+    void settingsManager.fetchReposInfo().then(info => {
       set({ ...info });
     });
     if (!systemHelth) {
-      loadSystemHelth().then(setSystemHelth);
+      void loadSystemHelth().then(setSystemHelth);
     }
-    settingsManager.getSettings().then(setSettings);
-    settingsManager.hasUpdate().then(setUpdate);
+    void settingsManager.getSettings().then(setSettings);
+    void settingsManager.hasUpdate().then(setUpdate);
   }, [systemHelth]);
 
   const reposInfos = Object.values(infos);
@@ -66,7 +66,7 @@ const Settings: React.FC = () => {
           </Button>
         )}
         <Button
-          onClick={() => changeDownloadsDir().then(setSettings)}
+          onClick={() => void changeDownloadsDir().then(setSettings)}
           icon={Icons.solid.faFolderOpen}
         >
           Change Downloads Dir

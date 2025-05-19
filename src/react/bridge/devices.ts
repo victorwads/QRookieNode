@@ -11,7 +11,7 @@ class DeviceManager {
   };
 
   constructor() {
-    this.getDevices();
+    void this.getDevices();
   }
 
   public getDevicesCache(): AdbCommandOutput["list"] {

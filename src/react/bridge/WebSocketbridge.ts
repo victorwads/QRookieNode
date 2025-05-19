@@ -120,7 +120,7 @@ class WebSocketBridge implements BridgeInterface {
           })
         );
       } catch (err) {
-        reject(err);
+        reject(err as Error);
       }
     });
   }

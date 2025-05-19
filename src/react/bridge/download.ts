@@ -14,9 +14,9 @@ class GameDownloadManager {
 
   constructor() {
     bridge.registerGameStatusReceiver((info: GameStatusInfo) => {
-      this.emit(info.id, info);
+      void this.emit(info.id, info);
     });
-    this.getDownloadedGames();
+    void this.getDownloadedGames();
   }
 
   public addListener(id: string, callback: ListenerCallback) {
@@ -66,7 +66,7 @@ class GameDownloadManager {
     return this.downloadingGames[id] || null;
   }
 
-  private async emit(id: string, info: GameStatusInfo) {
+  private emit(id: string, info: GameStatusInfo) {
     this.downloadingGames[id] = info;
     if (!this.getGameStatusInfo(id)) {
       this.emitDownloading();
@@ -95,7 +95,7 @@ class GameDownloadManager {
   }
 
   public downloadGame(id: string) {
-    bridge.sendCommand<GamesCommandName, GamesCommandPayload>({
+    void bridge.sendCommand<GamesCommandName, GamesCommandPayload>({
       type: "games",
       payload: { action: "download", id },
     });
@@ -112,7 +112,7 @@ class GameDownloadManager {
   }
 
   public cancel(id: string) {
-    bridge.sendCommand<GamesCommandName, GamesCommandPayload>({
+    void bridge.sendCommand<GamesCommandName, GamesCommandPayload>({
       type: "games",
       payload: { action: "cancel", id },
     });

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { GameStatusInfo } from "@bridge/download";
 import type { Game } from "@bridge/games";
@@ -54,7 +54,7 @@ const GameCard: React.FC<GameCardProps> = ({
     } else {
       alert("Game installed successfully");
     }
-    loadComparation();
+    void loadComparation();
   };
 
   const remove = async () => {
@@ -63,7 +63,7 @@ const GameCard: React.FC<GameCardProps> = ({
     setGameStatus(null);
   };
 
-  const cancel = async () => {
+  const cancel = () => {
     if (!window.confirm("Are you sure you want to cancel this download?")) return;
     downloadManager.cancel(game.id);
   };
@@ -76,20 +76,20 @@ const GameCard: React.FC<GameCardProps> = ({
     )
       return;
     await gameManager.uninstall(game.id);
-    loadComparation();
+    await loadComparation();
     setDeviceVersion(null);
     setGameStatus(null);
   };
 
-  const loadComparation = async () => {
+  const loadComparation = useCallback(async () => {
     if (verbose && game.packageName) {
-      compareFiles(game.id).then(setComparation);
+      await compareFiles(game.id).then(setComparation);
       setDeviceVersion(deviceManager.getPackageVersion(game.packageName));
     }
-  };
+  }, [game, verbose]);
 
   useEffect(() => {
-    loadComparation();
+    void loadComparation();
 
     let lastFile = "";
     return downloadManager.addListener(game.id, info => {
@@ -104,10 +104,10 @@ const GameCard: React.FC<GameCardProps> = ({
         setComparation([...comparation]);
       }
       if (info?.status === "installed") {
-        loadComparation();
+        void loadComparation();
       }
     });
-  }, [game, verbose]);
+  }, [comparation, game, loadComparation, verbose]);
 
   let isDownloaded = downloadManager.isGameDownloaded(game.id);
   let isInstalled = deviceManager.isGameInstalled(game.packageName);
@@ -154,7 +154,12 @@ const GameCard: React.FC<GameCardProps> = ({
     isInstalled = isInstalled || gameStatus?.status === "installed";
     if (isInstalled) {
       status.push(
-        <Button key={status.length} wide onClick={uninstall} icon={Icons.solid.faMinusCircle}>
+        <Button
+          key={status.length}
+          wide
+          onClick={() => void uninstall()}
+          icon={Icons.solid.faMinusCircle}
+        >
           Uninstall
         </Button>
       );
@@ -164,26 +169,40 @@ const GameCard: React.FC<GameCardProps> = ({
       if (isInstalled) {
         if (comparation.length > 0 && comparation.some(file => !file.deviceExists)) {
           status.push(
-            <Button key={status.length} onClick={() => install(true)} icon={Icons.solid.faDownload}>
+            <Button
+              key={status.length}
+              onClick={() => void install(true)}
+              icon={Icons.solid.faDownload}
+            >
               Install Missing Files
             </Button>
           );
         } else {
           status.push(
-            <Button key={status.length} wide onClick={install} icon={Icons.solid.faBoxOpen}>
+            <Button
+              key={status.length}
+              wide
+              onClick={() => void install()}
+              icon={Icons.solid.faBoxOpen}
+            >
               Reinstall
             </Button>
           );
         }
       } else {
         status.push(
-          <Button key={status.length} wide onClick={install} icon={Icons.solid.faDownload}>
+          <Button
+            key={status.length}
+            wide
+            onClick={() => void install()}
+            icon={Icons.solid.faDownload}
+          >
             Install
           </Button>
         );
       }
       status.push(
-        <Button key={status.length} onClick={remove} icon={Icons.solid.faTrash}>
+        <Button key={status.length} onClick={() => void remove()} icon={Icons.solid.faTrash}>
           Remove
         </Button>
       );
@@ -192,7 +211,7 @@ const GameCard: React.FC<GameCardProps> = ({
         <Button
           key={status.length}
           wide
-          onClick={() => onDownload(game)}
+          onClick={() => void onDownload(game)}
           icon={Icons.solid.faDownload}
         >
           Download

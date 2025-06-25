@@ -2,7 +2,6 @@ import { GameStatusInfo } from "@comands/games";
 import log from "./log";
 import { sendInfo as sendInfoNode } from "./main/node";
 
-
 let sendInfoElectron: ((info: GameStatusInfo) => void) | null = null;
 if (process.versions.electron) {
   try {

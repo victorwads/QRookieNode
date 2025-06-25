@@ -1,9 +1,9 @@
-import log from '@server/log';
+import log from "@server/log";
 import HttpDownloader from "./downloader";
 
 export interface VprPublicData {
-    baseUri: string;
-    password: string;
+  baseUri: string;
+  password: string;
 }
 
 export class VprPublic {
@@ -35,4 +35,4 @@ export class VprPublic {
   }
 }
 
-export default (new VprPublic()).fetchData();
+export default new VprPublic().fetchData();

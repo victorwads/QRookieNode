@@ -1,7 +1,7 @@
-import type { CommandSender, GameStatusInfo } from '@server/comands/types';
+import type { CommandSender, GameStatusInfo } from "@server/comands/types";
 
-import ElectronBridge from './ElectronBridge';
-import WebSocketBridge from './WebSocketbridge';
+import ElectronBridge from "./ElectronBridge";
+import WebSocketBridge from "./WebSocketbridge";
 
 export interface BridgeInterface {
   sendCommand: CommandSender;

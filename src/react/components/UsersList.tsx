@@ -11,9 +11,10 @@ const UsersList: React.FC<{ users: User[] }> = ({ users }) => {
     <div className="users-list">
       <h2>Users</h2>
       <ul>
-        {users.map((user) => (
+        {users.map(user => (
           <li key={user.id}>
-            <strong>{user.name}</strong> (ID: {user.id}) - {user.running ? "Running" : "Not Running"}
+            <strong>{user.name}</strong> (ID: {user.id}) -{" "}
+            {user.running ? "Running" : "Not Running"}
           </li>
         ))}
       </ul>

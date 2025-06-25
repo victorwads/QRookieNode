@@ -24,14 +24,14 @@ setInterval(() => {
   shouldSend = true;
 }, 30);
 
-export const progress = async (info: GameStatusInfo) => {
+export const progress = (info: GameStatusInfo) => {
   if (info.status !== "cancelling" && cancelRequests[info.id]) {
     info = { id: info.id, status: "cancelling" };
   }
   downloadingInfo[info.id] = info;
   if (shouldSend || info.status !== "downloading") {
     shouldSend = false;
-    downloadProgress(info);
+    void downloadProgress(info);
   }
 };
 
@@ -52,7 +52,7 @@ export default class Downloader extends RunSystemCommand {
           if (response.statusCode === 200) {
             resolve(data);
           } else {
-            reject(`HTTP Error: ${response.statusCode}`);
+            reject(new Error(`HTTP Error: ${response.statusCode}`));
           }
         });
 
@@ -125,7 +125,7 @@ export default class Downloader extends RunSystemCommand {
       req.on("error", err => {
         fileStream.close();
         fs.unlinkSync(finalPath); // Remove the corrupted file
-        reject(err);
+        reject(err as Error);
         client.close(); // Close the connection in case of an error
       });
 
@@ -153,7 +153,7 @@ export default class Downloader extends RunSystemCommand {
     await new Promise((resolve, reject) => {
       req.on("response", headers => {
         if (headers[":status"] !== 200) {
-          reject(`HTTP/2 Error: ${headers[":status"]} ${url}`);
+          reject(new Error(`HTTP/2 Error: ${headers[":status"]} ${url}`));
           req.close();
           return;
         }
@@ -178,7 +178,7 @@ export default class Downloader extends RunSystemCommand {
           client.close();
           if (canceled) {
             log.debug(`Download on end, canceled: ${url}`);
-            reject("Download canceled " + url);
+            reject(new Error(`Download canceled ${url}`));
           } else {
             resolve(true);
           }
@@ -188,7 +188,7 @@ export default class Downloader extends RunSystemCommand {
         if (canceled) {
           log.debug(`Download on error, canceled: ${url}`);
         }
-        reject("Download error " + url + " " + err);
+        reject(new Error(`Download error ${url} - ${err}`));
         client.close();
         if (stream) {
           stream.close();
@@ -375,7 +375,7 @@ export default class Downloader extends RunSystemCommand {
       downloadSpeed = 0;
     }, 1000);
 
-    const downloadNext = async () => {
+    const downloadNext = () => {
       if (currentIndex >= files.length) {
         const isFinished = files.reduce(
           (acc, file) => acc && (file?.percent === 100 || file?.percent === CANCELLED),
@@ -388,7 +388,7 @@ export default class Downloader extends RunSystemCommand {
       }
       while (downloadingNow < queeeMaxSimultaneous && currentIndex < files.length) {
         downloadingNow++;
-        downloadOne(files[currentIndex])
+        void downloadOne(files[currentIndex])
           .then(result => {
             success = success && result;
           })

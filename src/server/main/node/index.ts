@@ -19,8 +19,9 @@ if (server.listening) {
 
     ws.on("message", message => {
       try {
-        const parsedMessage = JSON.parse(message.toString()) as BridgeMessage;
-        log.debug(`Received message: ${message.toString()}`);
+        const messageJSON = JSON.stringify(message);
+        const parsedMessage = JSON.parse(messageJSON) as BridgeMessage;
+        log.debug(`Received message: ${messageJSON}`);
 
         if (parsedMessage.event === "command") {
           executeCommand(parsedMessage.data)
@@ -59,7 +60,7 @@ if (server.listening) {
   log.error("WebSocket server is not listening");
 }
 
-export const sendInfo = async (info: GameStatusInfo) => {
+export const sendInfo = (info: GameStatusInfo) => {
   connections.forEach(ws => {
     ws.send(JSON.stringify({ event: "download-progress", data: info } as BridgeMessage));
   });

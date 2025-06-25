@@ -14,7 +14,7 @@ class AdbManager extends SystemProcess {
 
   constructor() {
     super();
-    this.listDevices();
+    void this.listDevices();
   }
 
   private async runAdbCommand(args: string[]): Promise<string> {
@@ -212,7 +212,7 @@ class AdbManager extends SystemProcess {
     const serial = this.getDeviceSerial();
     if (!serial) throw new Error("No device selected");
 
-    this.runAdbCommand([
+    void this.runAdbCommand([
       "-s",
       serial,
       "shell",

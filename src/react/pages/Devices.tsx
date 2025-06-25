@@ -45,23 +45,23 @@ const Devices: React.FC = () => {
     setLoading(false);
   };
 
-  const connectWifi = async (serial: string) => {
-    connectionFeedback(
+  const connectWifi = (serial: string) => {
+    void connectionFeedback(
       deviceManager.connectWifi(serial),
       "Failed to connect with tcp to device " + serial
     );
   };
 
-  const connectTcp = async (connectIp: string) => {
+  const connectTcp = (connectIp: string) => {
     localStorage.setItem(LAST_IP_KEY, connectIp);
-    connectionFeedback(
+    void connectionFeedback(
       deviceManager.connectTcp(connectIp),
       "Failed to connect to address" + connectIp
     );
   };
 
-  const pair = async (pairIp: string, pairCode: string) => {
-    connectionFeedback(
+  const pair = (pairIp: string, pairCode: string) => {
+    void connectionFeedback(
       deviceManager.pair(pairIp, pairCode),
       "Failed to pair with device " +
         pairIp +
@@ -72,9 +72,9 @@ const Devices: React.FC = () => {
   };
 
   useEffect(() => {
-    getDevices();
+    void getDevices();
     const interval = setInterval(() => {
-      getDevices();
+      void getDevices();
     }, 30000);
     return () => {
       clearInterval(interval);
@@ -89,7 +89,7 @@ const Devices: React.FC = () => {
           Devices Page
         </h1>
         <CenteredLoading visible={loading} />
-        <Button onClick={() => getDevices()} icon={Icons.solid.faRefresh}>
+        <Button onClick={() => void getDevices()} icon={Icons.solid.faRefresh}>
           Reload Devices
         </Button>
       </div>
@@ -103,7 +103,7 @@ const Devices: React.FC = () => {
           onChange={e => setConnectIp(e.target.value)}
           style={{ width: "11em" }}
         />
-        <Button onClick={() => connectTcp(connectIp)} icon={Icons.solid.faWifi}>
+        <Button onClick={() => void connectTcp(connectIp)} icon={Icons.solid.faWifi}>
           Try Connect TCP
         </Button>
       </div>
@@ -149,7 +149,7 @@ const Devices: React.FC = () => {
         <div style={{ padding: "0 20px" }}>
           <DevicesList
             devices={result.devices}
-            onConnect={getDevices}
+            onConnect={() => void getDevices()}
             onConnectWifi={connectWifi}
           />
           {result.deviceInfo && <DeviceInfoCard deviceInfo={result.deviceInfo} />}

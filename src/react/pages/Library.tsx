@@ -36,12 +36,12 @@ const Library: React.FC = () => {
 
   const changeDownloadsDir = async () => {
     await settingsManager.setDownloadPath();
-    updateDownloadedGames();
+    void updateDownloadedGames();
   };
 
   useEffect(() => {
     return downloadManager.addDownloadingListener(infos => {
-      updateDownloadedGames();
+      void updateDownloadedGames();
       setDownloading(
         infos
           .filter(info => installingStates.includes(info.status))
@@ -58,7 +58,7 @@ const Library: React.FC = () => {
           <Icon icon={Icons.solid.faLayerGroup} size="lg" />
           Library Page
         </h1>
-        <Button onClick={changeDownloadsDir} icon={Icons.solid.faFolderOpen}>
+        <Button onClick={() => void changeDownloadsDir()} icon={Icons.solid.faFolderOpen}>
           Change Downloads Dir
         </Button>
       </div>
@@ -83,7 +83,7 @@ const Library: React.FC = () => {
                 <GameCard
                   game={game}
                   key={game.id}
-                  onSelect={() => navigate("/games/" + game.id)}
+                  onSelect={() => void navigate(`/games/${game.id}`)}
                 />
               ))}
             </div>
@@ -98,7 +98,7 @@ const Library: React.FC = () => {
                   downloaded
                   game={game}
                   key={game.id}
-                  onSelect={() => navigate("/games/" + game.id)}
+                  onSelect={() => void navigate(`/games/${game.id}`)}
                 />
               ))}
             </div>

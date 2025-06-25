@@ -12,7 +12,7 @@ if (process.versions.electron) {
   }
 }
 
-export async function sendInfo(info: GameStatusInfo) {
+export function sendInfo(info: GameStatusInfo) {
   sendInfoElectron?.(info);
-  sendInfoNode(info);
+  void sendInfoNode(info);
 }

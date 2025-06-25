@@ -24,13 +24,13 @@ export default abstract class SystemProcess {
           return;
         }
         log.warn(`ADB not found, downloading platform-tools. getCommanPath returned: '${path}'`);
-        setupTools();
+        void setupTools();
       })
       .catch(err => {
         log.error(
           `ADB not found, downloading platform-tools. getCommanPath returned error: '${err.message}'`
         );
-        setupTools();
+        void setupTools();
       });
   }
 

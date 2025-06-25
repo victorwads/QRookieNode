@@ -38,7 +38,7 @@ class GameManager {
   private static readonly GAMES_URL = "https://torrents.vrpirates.wiki/torrents.json";
 
   constructor() {
-    this.update();
+    void this.update();
   }
 
   public async update(): Promise<boolean> {
@@ -109,11 +109,11 @@ class GameManager {
       return;
     }
 
-    this.downloader.downloadDir(vrpInfo.baseUri, id, await vrpPublic);
+    void this.downloader.downloadDir(vrpInfo.baseUri, id, await vrpPublic);
   }
 
-  public async removeDownload(id: string) {
-    await this.downloader.remove(id);
+  public removeDownload(id: string) {
+    this.downloader.remove(id);
     this.getDownloadedGames();
   }
 
@@ -127,7 +127,7 @@ class GameManager {
     return null;
   }
 
-  private async getDownloadedGameInfo(id: string): Promise<DownloadedGameFilesInfo | null> {
+  private getDownloadedGameInfo(id: string): DownloadedGameFilesInfo | null {
     const game = this.games.find(g => g.id === id);
     if (!game || !game.packageName) {
       return null;
@@ -149,7 +149,7 @@ class GameManager {
   }
 
   public async install(id: string, justMissing: boolean = false): Promise<string | null> {
-    const gameInfo = await this.getDownloadedGameInfo(id);
+    const gameInfo = this.getDownloadedGameInfo(id);
     if (!gameInfo) {
       return "Game or package name not found:" + id;
     }
@@ -172,7 +172,7 @@ class GameManager {
       }
 
       if (obbFiles && dataDir) {
-        await adbManager.createObbDir(packageName || "");
+        adbManager.createObbDir(packageName || "");
 
         for (let index = 0; index < obbFiles.length; index++) {
           const name = obbFiles[index];
@@ -198,7 +198,7 @@ class GameManager {
   }
 
   public cancel(id: string): void {
-    this.downloader.cancel(id);
+    void this.downloader.cancel(id);
   }
 
   public async listObbFiles(id: string): Promise<string[]> {
@@ -210,8 +210,8 @@ class GameManager {
     return adbManager.listObbFiles(game.packageName);
   }
 
-  public async getLocalFiles(id: string): Promise<string[]> {
-    const gameInfo = await this.getDownloadedGameInfo(id);
+  public getLocalFiles(id: string): string[] {
+    const gameInfo = this.getDownloadedGameInfo(id);
 
     if (!gameInfo) {
       return [];

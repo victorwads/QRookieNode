@@ -6,7 +6,7 @@ import { getImagePath } from "@server/comands/games/images";
 import { BridgeSendCommandEvent, CommandEvent, GameStatusInfo } from "@server/comands/types";
 import { getMainWindow } from ".";
 
-app.whenReady().then(() => {
+void app.whenReady().then(() => {
   protocol.handle("game-image", request => {
     const packageName = decodeURIComponent(request.url.replace("game-image://", ""));
     return net.fetch("file://" + path.normalize(getImagePath(packageName)));
@@ -21,6 +21,6 @@ ipcMain.handle(
   }
 );
 
-export const sendInfo = async (info: GameStatusInfo) => {
+export const sendInfo = (info: GameStatusInfo) => {
   getMainWindow()?.webContents.send("downloadProgress", info);
 };

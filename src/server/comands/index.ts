@@ -27,6 +27,6 @@ export const executeCommand = async (comandEvent: CommandEvent<any, any>) => {
   return null;
 };
 
-export const downloadProgress = async (info: GameStatusInfo) => {
+export const downloadProgress = (info: GameStatusInfo) => {
   sendInfo(info);
 };

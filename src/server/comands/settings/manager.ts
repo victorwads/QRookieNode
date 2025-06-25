@@ -16,7 +16,7 @@ const { showOpenDialog } = (function () {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     return { showOpenDialog: require("electron").dialog.showOpenDialog };
   }
-  return { showOpenDialog: async () => ({ canceled: true, filePaths: [] }) };
+  return { showOpenDialog: () => ({ canceled: true, filePaths: [] }) };
 })();
 
 class SettingsManager extends SystemProcess {
@@ -27,9 +27,9 @@ class SettingsManager extends SystemProcess {
     this.settings = fs.existsSync(settingsPath)
       ? JSON.parse(fs.readFileSync(settingsPath, "utf-8"))
       : {};
-    this.createDownloadsDir();
+    void this.createDownloadsDir();
   }
-  private async createDownloadsDir() {
+  private createDownloadsDir() {
     if (!fs.existsSync(this.getDownloadsDir())) {
       fs.mkdirSync(this.getDownloadsDir(), { recursive: true });
     }

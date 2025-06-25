@@ -27,9 +27,9 @@ const createMainWindow = () => {
   });
 
   if (process.env.NODE_ENV === "development") {
-    mainWindow.loadURL("http://localhost:3000");
+    void mainWindow.loadURL("http://localhost:3000");
   } else {
-    mainWindow.loadFile(path.join(resourcesDir, "dist/react/index.html"));
+    void mainWindow.loadFile(path.join(resourcesDir, "dist/react/index.html"));
     setupMenu();
   }
 

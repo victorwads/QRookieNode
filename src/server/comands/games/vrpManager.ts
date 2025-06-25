@@ -34,7 +34,7 @@ export class VprManager extends RunSystemCommand {
 
   constructor() {
     super();
-    this.loadGamesInfo();
+    void this.loadGamesInfo();
   }
 
   private get gamesFilePath(): string {
@@ -142,7 +142,7 @@ export class VprManager extends RunSystemCommand {
       });
 
       this.parseMetadata();
-      this.loadGamesInfo();
+      void this.loadGamesInfo();
       return true;
     } catch (error) {
       log.error("Metadata update failed:", error);

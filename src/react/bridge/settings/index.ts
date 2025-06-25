@@ -29,7 +29,7 @@ class SettingsManager {
   }
 
   public openDevTools() {
-    bridge.sendCommand<DevToolsCommandName>({
+    void bridge.sendCommand<DevToolsCommandName>({
       type: "devTools",
     });
   }
@@ -48,12 +48,12 @@ class SettingsManager {
   }
 
   public async setDownloadPath(): Promise<Settings> {
-    return await bridge.sendCommand<SettingsCommandName, SettingsCommandPayload>({
+    return (await bridge.sendCommand<SettingsCommandName, SettingsCommandPayload>({
       type: "settings",
       payload: {
         action: "setDownloadsDir",
       },
-    });
+    })) as Settings;
   }
 
   public getReposInfo(): RepoDownloadsInfo {

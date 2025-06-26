@@ -1,6 +1,5 @@
-
-import './Button.css';
-import Icon, { IconDefinition } from './Icons';
+import "./Button.css";
+import Icon, { IconDefinition } from "./Icons";
 
 export interface ButtonProps {
   icon: IconDefinition;
@@ -10,10 +9,12 @@ export interface ButtonProps {
 }
 
 const Button: React.FC<ButtonProps> = ({ icon, onClick, children, wide }: ButtonProps) => {
-  return <button className={`simple-buttom${wide? ' wide': ''}`} onClick={onClick}>
-    <Icon icon={icon} />
-    {children}
-  </button>;
+  return (
+    <button className={`simple-button${wide ? " wide" : ""}`} onClick={onClick}>
+      <Icon icon={icon} />
+      {children}
+    </button>
+  );
 };
 
 export default Button;

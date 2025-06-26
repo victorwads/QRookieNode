@@ -18,7 +18,7 @@ winget install -e --id Inkscape.Inkscape
 
 ## Git Bash
 
-After thaat you will need to use Git Bash to run yarn and our bash scripts.
+After that, you will need to use Git Bash to run yarn and our bash scripts.
 
 Open git bash on the project folder use for running dev mode:
 

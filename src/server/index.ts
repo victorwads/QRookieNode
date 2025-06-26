@@ -1,7 +1,6 @@
-import { GameStatusInfo } from "@comands/games";
+import { GameStatusInfo } from "@commands/games";
 import log from "./log";
 import { sendInfo as sendInfoNode } from "./main/node";
-
 
 let sendInfoElectron: ((info: GameStatusInfo) => void) | null = null;
 if (process.versions.electron) {
@@ -13,7 +12,7 @@ if (process.versions.electron) {
   }
 }
 
-export async function sendInfo(info: GameStatusInfo) {
+export function sendInfo(info: GameStatusInfo) {
   sendInfoElectron?.(info);
-  sendInfoNode(info);
+  void sendInfoNode(info);
 }

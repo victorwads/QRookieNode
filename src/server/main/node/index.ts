@@ -1,39 +1,56 @@
 import { WebSocket, WebSocketServer } from "ws";
 
-import { executeCommand } from "@server/comands";
-import { appVersion } from "@server/comands/settings/manager";
-import { CommandEvent, GameStatusInfo } from "@server/comands/types";
+import { executeCommand } from "@server/commands";
+import { appVersion } from "@server/commands/settings/manager";
+import { CommandEvent, GameStatusInfo } from "@server/commands/types";
 import log from "@server/log";
-import server from './reactServer';
+import server from "./reactServer";
 
-type BridgeMessage = 
-    { id: string; event: 'command'; data: CommandEvent<any, any>;} |
-    { id: string; event: 'command-response'; error: boolean; data: unknown;} |
-    { event: 'download-progress'; data: GameStatusInfo; }
+type BridgeMessage =
+  | { id: string; event: "command"; data: CommandEvent<any, any> }
+  | { id: string; event: "command-response"; error: boolean; data: unknown }
+  | { event: "download-progress"; data: GameStatusInfo };
 
-if(server.listening) {
+if (server.listening) {
   log.info("WebSocket server is listening");
-  new WebSocketServer({ server }).on("connection", (ws) => {
+  new WebSocketServer({ server }).on("connection", ws => {
     connections.push(ws);
     log.debug("Client connected via WebSocket");
-  
-    ws.on("message", (message) => {
+
+    ws.on("message", message => {
       try {
-        const parsedMessage = JSON.parse(message.toString()) as BridgeMessage;
-        log.debug(`Received message: ${message.toString()}`);
-  
-        if (parsedMessage.event === 'command') {
-          executeCommand(parsedMessage.data).then((data) => {
-            ws.send(JSON.stringify({ event: "command-response", id: parsedMessage.id, error: false, data }));
-          }).catch((error) => {
-            ws.send(JSON.stringify({ event: "command-response", id: parsedMessage.id, error: true, data: error }));
-          });
+        const messageJSON = JSON.stringify(message);
+        const parsedMessage = JSON.parse(messageJSON) as BridgeMessage;
+        log.debug(`Received message: ${messageJSON}`);
+
+        if (parsedMessage.event === "command") {
+          executeCommand(parsedMessage.data)
+            .then(data => {
+              ws.send(
+                JSON.stringify({
+                  event: "command-response",
+                  id: parsedMessage.id,
+                  error: false,
+                  data,
+                })
+              );
+            })
+            .catch(error => {
+              ws.send(
+                JSON.stringify({
+                  event: "command-response",
+                  id: parsedMessage.id,
+                  error: true,
+                  data: error,
+                })
+              );
+            });
         }
       } catch (err) {
         log.error("Error parsing message", err);
       }
     });
-  
+
     ws.on("close", () => {
       log.debug("Client disconnected");
       connections.splice(connections.indexOf(ws), 1);
@@ -43,15 +60,15 @@ if(server.listening) {
   log.error("WebSocket server is not listening");
 }
 
-export const sendInfo = async (info: GameStatusInfo) => {
-  connections.forEach((ws) => {
+export const sendInfo = (info: GameStatusInfo) => {
+  connections.forEach(ws => {
     ws.send(JSON.stringify({ event: "download-progress", data: info } as BridgeMessage));
   });
-}
+};
 
 const connections: WebSocket[] = [];
 
-if(process.argv.includes("--help") || process.argv.includes("-h")) {
+if (process.argv.includes("--help") || process.argv.includes("-h")) {
   log.userInfo("Version:", appVersion);
   log.userInfo("Usage: ./start [options]");
   log.userInfo();

@@ -62,6 +62,8 @@ type AdbCommandOutputs = AdbCommandOutput["list"] | void | string | null | boole
 export default {
   type: "adb",
   receiver: async function (payload: AdbCommandInput): Promise<AdbCommandOutputs> {
+    await AdbManager.initialize();
+
     if (payload?.command === "selectDevice") {
       AdbManager.selectDevice(payload.serial);
       return;

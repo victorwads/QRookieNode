@@ -10,28 +10,32 @@ const execFileAsync = promisify(execFile);
 
 export default abstract class SystemProcess {
   private static adbPath?: string;
+  private static isInitialized = false;
 
-  constructor() {
-    if (SystemProcess.adbPath) {
-      return;
-    }
-    SystemProcess.adbPath = path.join(platformToolsDir, "adb" + binExt);
-    this.getCommanPath("adb")
-      .then(path => {
-        if (path) {
-          SystemProcess.adbPath = path;
-          log.info("ADB found at:", path);
-          return;
-        }
-        log.warn(`ADB not found, downloading platform-tools. getCommanPath returned: '${path}'`);
-        void setupTools();
-      })
-      .catch(err => {
-        log.error(
-          `ADB not found, downloading platform-tools. getCommanPath returned error: '${err.message}'`
+  public constructor() {}
+
+  public async initialize(): Promise<void> {
+    if (SystemProcess.isInitialized) return;
+
+    try {
+      const adbPath = await this.getCommanPath("adb");
+
+      if (adbPath) {
+        SystemProcess.adbPath = adbPath;
+        log.info("ADB found at:", adbPath);
+      } else {
+        SystemProcess.adbPath = path.join(platformToolsDir, "adb" + binExt);
+        log.warn(
+          `ADB not found, downloading platform-tools. getCommandPath returned: '${adbPath}'`
         );
-        void setupTools();
-      });
+        await setupTools();
+      }
+
+      SystemProcess.isInitialized = true;
+    } catch (error) {
+      log.error("Failed to initialize SystemProcess:", error);
+      throw error;
+    }
   }
 
   public async getCommanPath(comandName: string): Promise<string | null> {
@@ -70,7 +74,10 @@ export default abstract class SystemProcess {
     );
   }
 
-  public getAdbPath(): string {
+  public async getAdbPath(): Promise<string> {
+    if (!SystemProcess.adbPath) {
+      await this.initialize();
+    }
     return SystemProcess.adbPath || "error";
   }
 }

@@ -14,11 +14,15 @@ class AdbManager extends SystemProcess {
 
   constructor() {
     super();
-    void this.listDevices();
+  }
+
+  public async initialize(): Promise<void> {
+    await super.initialize();
+    await this.listDevices();
   }
 
   private async runAdbCommand(args: string[]): Promise<string> {
-    const { stdout } = await this.runCommand(this.getAdbPath(), args);
+    const { stdout } = await this.runCommand(await this.getAdbPath(), args);
     return stdout;
   }
 

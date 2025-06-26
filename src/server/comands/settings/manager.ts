@@ -27,7 +27,7 @@ class SettingsManager extends SystemProcess {
     this.settings = fs.existsSync(settingsPath)
       ? JSON.parse(fs.readFileSync(settingsPath, "utf-8"))
       : {};
-    void this.createDownloadsDir();
+    this.createDownloadsDir();
   }
   private createDownloadsDir() {
     if (!fs.existsSync(this.getDownloadsDir())) {
@@ -91,7 +91,7 @@ class SettingsManager extends SystemProcess {
 
   private async getSystemHelthInternal(): Promise<SystemHelth> {
     const asyncResults = {
-      adb: this.getCommandInfo(this.getAdbPath(), "adb", 2, "version"),
+      adb: this.getCommandInfo(await this.getAdbPath(), "adb", 2, "version"),
       unzip: this.getCommanPath("unzip").then(path => this.getCommandInfo(path, "unzip", 1)),
       sevenZip: this.getSevenZipPath().then(path => this.getCommandInfo(path, "7zip", 2)),
       java: this.getCommanPath("java").then(path =>

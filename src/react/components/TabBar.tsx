@@ -1,21 +1,21 @@
-import { CSSProperties } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { CSSProperties } from "react";
+import { Link, useLocation } from "react-router-dom";
 
-import Icon, { IconDefinition, Icons } from './Icons';
+import Icon, { IconDefinition, Icons } from "./Icons";
 
 interface Tab {
-    name: string;
-    path: string;
-    icon: IconDefinition;
-    isFlexible?: boolean;
+  name: string;
+  path: string;
+  icon: IconDefinition;
+  isFlexible?: boolean;
 }
 
 const tabs: Tab[] = [
-  { name: 'Games', path: '/games', icon: Icons.solid.faGamepad, isFlexible: true },
-  { name: 'Library', path: '/downloads', icon: Icons.solid.faLayerGroup, isFlexible: true },
-  { name: 'Devices', path: '/devices', icon: Icons.solid.faTabletAlt, isFlexible: true },
+  { name: "Games", path: "/games", icon: Icons.solid.faGamepad, isFlexible: true },
+  { name: "Library", path: "/downloads", icon: Icons.solid.faLayerGroup, isFlexible: true },
+  { name: "Devices", path: "/devices", icon: Icons.solid.faTabletAlt, isFlexible: true },
   // { name: 'Users', path: '/users', icon: Icons.solid.faUsers, isFlexible: true },
-  { name: 'Settings', path: '/settings', icon: Icons.solid.faCog, isFlexible: false },
+  { name: "Settings", path: "/settings", icon: Icons.solid.faCog, isFlexible: false },
 ];
 
 const TabBar: React.FC = () => {
@@ -23,7 +23,7 @@ const TabBar: React.FC = () => {
 
   return (
     <div style={styles.container}>
-      {tabs.map((tab) => (
+      {tabs.map(tab => (
         <Link
           key={tab.path}
           to={tab.path}
@@ -43,35 +43,35 @@ const TabBar: React.FC = () => {
 
 const styles: { [key: string]: CSSProperties } = {
   container: {
-    display: 'flex',
-    flexDirection: 'row',
-    height: '70px',
-    minHeight: '70px',
-    backgroundColor: '#2c3e50',
-    borderTop: '1px solid #34495e',
+    display: "flex",
+    flexDirection: "row",
+    height: "70px",
+    minHeight: "70px",
+    backgroundColor: "#2c3e50",
+    borderTop: "1px solid #34495e",
   },
   tab: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    textDecoration: 'none',
-    color: '#ecf0f1',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textDecoration: "none",
+    color: "#ecf0f1",
   },
   flexibleTab: {
     flex: 1,
   },
   nonFlexibleTab: {
-    flex: 'none',
-    width: '90px',
-    backgroundColor: '#777', 
+    flex: "none",
+    width: "90px",
+    backgroundColor: "#777",
   },
   activeTab: {
-    backgroundColor: '#34495e',
+    backgroundColor: "#34495e",
   },
   tabText: {
-    fontSize: '12px',
-    marginTop: '4px',
+    fontSize: "12px",
+    marginTop: "4px",
   },
 };
 

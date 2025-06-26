@@ -1,14 +1,14 @@
-import { Command, CommandEvent } from "@comands/types";
+import { Command, CommandEvent } from "@commands/types";
 
-export type DevToolsCommandName = 'devTools'
-export type DevToolsCommand = Command<void, void, DevToolsCommandName>
-export type DevToolsCommandEvent = CommandEvent<void, DevToolsCommandName>
+export type DevToolsCommandName = "devTools";
+export type DevToolsCommand = Command<void, void, DevToolsCommandName>;
+export type DevToolsCommandEvent = CommandEvent<void, DevToolsCommandName>;
 
 export default {
-  type: 'devTools',
+  type: "devTools",
   receiver: function () {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { BrowserWindow } = require('electron');
+    const { BrowserWindow } = require("electron");
 
     const focusedWindow = BrowserWindow.getFocusedWindow();
     if (focusedWindow) {
@@ -18,5 +18,5 @@ export default {
         focusedWindow.webContents.openDevTools();
       }
     }
-  }
+  },
 } as DevToolsCommand;

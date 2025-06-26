@@ -1,20 +1,20 @@
-import log from '@server/log';
+import log from "@server/log";
 import HttpDownloader from "./downloader";
 
-export interface VprPublicData {
-    baseUri: string;
-    password: string;
+export interface VrpPublicData {
+  baseUri: string;
+  password: string;
 }
 
-export class VprPublic {
+export class VrpPublic {
   private static readonly PUBLIC_URL = "https://vrpirates.wiki/downloads/vrp-public.json";
 
-  public async fetchData(): Promise<VprPublicData | null> {
+  public async fetchData(): Promise<VrpPublicData | null> {
     const downloader = new HttpDownloader();
 
     try {
-      log.info(`Fetching VPR public data from: ${VprPublic.PUBLIC_URL}`);
-      const data = await downloader.download(VprPublic.PUBLIC_URL);
+      log.info(`Fetching VPR public data from: ${VrpPublic.PUBLIC_URL}`);
+      const data = await downloader.download(VrpPublic.PUBLIC_URL);
 
       const json = JSON.parse(data);
 
@@ -35,4 +35,4 @@ export class VprPublic {
   }
 }
 
-export default (new VprPublic()).fetchData();
+export default new VrpPublic().fetchData();

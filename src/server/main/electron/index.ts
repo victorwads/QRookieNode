@@ -33,8 +33,9 @@ const createMainWindow = () => {
     void mainWindow.loadURL("http://localhost:3000");
   } else {
     void mainWindow.loadFile(path.join(resourcesDir, "dist/react/index.html"));
-    setupMenu();
   }
+
+  setupMenu();
 
   mainWindow.on("closed", () => {
     mainWindow = null;

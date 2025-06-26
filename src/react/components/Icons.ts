@@ -15,7 +15,7 @@ interface IconSearchName {
 }
 
 export function getIconByCaseInsensitiveName(name: string): IconDefinition {
-  const normalizedName = ICON_NAME_PREFIX + name.toLowerCase().replace("-", "");
+  const normalizedName = ICON_NAME_PREFIX + name.toLowerCase().replaceAll("-", "");
   const foundIcon = iconNames.find(iconName => iconName.lowerCaseName === normalizedName)?.icon;
 
   return foundIcon ? foundIcon : Icons.solid.faQuestion;

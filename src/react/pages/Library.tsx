@@ -12,6 +12,9 @@ import type { Game } from "@bridge/games";
 
 let hasPendingDownloadFolderSearch = false;
 
+const navbarHeight = 70;
+const headerHeight = 100;
+
 const installingStates: GameStatusType[] = [
   "installing",
   "unzipping",
@@ -52,7 +55,7 @@ const Library: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <>
       <div className="horizontal-display">
         <h1>
           <Icon icon={Icons.solid.faLayerGroup} size="lg" />
@@ -68,7 +71,7 @@ const Library: React.FC = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            height: "100%",
+            height: `calc(100vh - ${navbarHeight}px - ${headerHeight}px)`,
           }}
         >
           <h2>No Games Found</h2>
@@ -105,7 +108,7 @@ const Library: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 };
 

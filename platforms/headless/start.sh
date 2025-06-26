@@ -8,7 +8,7 @@ check_command() {
 if ! check_command node || ! check_command yarn || ! check_command which || ! check_command 7za; then
   if [ ! -d "/data/data/com.termux" ]; then
     echo "This script is only fully auto resolvable in Termux."
-    echo "Please asure that the following binaries are avaliable: node, yarn, which, 7za"
+    echo "Please ensure that the following binaries are available: node, yarn, which, 7za"
     exit 1
   fi
 

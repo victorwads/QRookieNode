@@ -1,7 +1,7 @@
-import bridge from '.';
+import bridge from ".";
 
-import type { GamesCommandName, GamesCommandPayload, GameStatusInfo } from '@server/comands/types';
-export type { GameStatusInfo, GameStatusType } from '@server/comands/types';
+import type { GamesCommandName, GamesCommandPayload, GameStatusInfo } from "@server/commands/types";
+export type { GameStatusInfo, GameStatusType } from "@server/commands/types";
 
 type ListenerCallback = (info: GameStatusInfo) => void;
 type DownloadingListener = (info: GameStatusInfo[]) => void;
@@ -14,9 +14,9 @@ class GameDownloadManager {
 
   constructor() {
     bridge.registerGameStatusReceiver((info: GameStatusInfo) => {
-      this.emit(info.id, info);
+      void this.emit(info.id, info);
     });
-    this.getDownloadedGames();
+    void this.getDownloadedGames();
   }
 
   public addListener(id: string, callback: ListenerCallback) {
@@ -24,7 +24,7 @@ class GameDownloadManager {
       this.listeners[id] = [];
     }
     this.listeners[id].push(callback);
-    callback(this.getGameStatusInfo(id) || { id, status: 'none' });
+    callback(this.getGameStatusInfo(id) || { id, status: "none" });
 
     return () => {
       this.removeListener(id, callback);
@@ -51,11 +51,13 @@ class GameDownloadManager {
   }
 
   public removeDownloadingListener(callback: DownloadingListener) {
-    this.downloadingGamesChangeListeners = this.downloadingGamesChangeListeners.filter(listener => listener !== callback);
+    this.downloadingGamesChangeListeners = this.downloadingGamesChangeListeners.filter(
+      listener => listener !== callback
+    );
   }
 
   public emitDownloading() {
-    this.downloadingGamesChangeListeners.forEach(callback => 
+    this.downloadingGamesChangeListeners.forEach(callback =>
       callback(Object.values(this.downloadingGames))
     );
   }
@@ -64,12 +66,12 @@ class GameDownloadManager {
     return this.downloadingGames[id] || null;
   }
 
-  private async emit(id: string, info: GameStatusInfo) {
+  private emit(id: string, info: GameStatusInfo) {
     this.downloadingGames[id] = info;
-    if(!this.getGameStatusInfo(id)) {
+    if (!this.getGameStatusInfo(id)) {
       this.emitDownloading();
     }
-    if(!this.getGameStatusInfo(id) || info.status !== 'downloading') {
+    if (!this.getGameStatusInfo(id) || info.status !== "downloading") {
       this.emitDownloading();
     }
 
@@ -78,29 +80,31 @@ class GameDownloadManager {
   }
 
   public async getDownloadedGames(): Promise<string[]> {
-    const downloadedIds = await bridge.sendCommand<GamesCommandName, GamesCommandPayload, string[]>({
-      type: 'games',
-      payload: { action: 'listDownloaded' },
-    })
+    const downloadedIds = await bridge.sendCommand<GamesCommandName, GamesCommandPayload, string[]>(
+      {
+        type: "games",
+        payload: { action: "listDownloaded" },
+      }
+    );
     this.downloadedCache = downloadedIds;
     return downloadedIds;
   }
 
   public isGameDownloaded(id: string): boolean {
-    return this.downloadedCache.includes(id) || this.downloadingGames[id]?.status === 'downloaded';
+    return this.downloadedCache.includes(id) || this.downloadingGames[id]?.status === "downloaded";
   }
 
   public downloadGame(id: string) {
-    bridge.sendCommand<GamesCommandName, GamesCommandPayload>({
-      type: 'games',
-      payload: { action: 'download', id},
+    void bridge.sendCommand<GamesCommandName, GamesCommandPayload>({
+      type: "games",
+      payload: { action: "download", id },
     });
   }
 
   public async remove(id: string): Promise<void> {
     await bridge.sendCommand<GamesCommandName, GamesCommandPayload>({
-      type: 'games',
-      payload: { action: 'removeDownload', id},
+      type: "games",
+      payload: { action: "removeDownload", id },
     });
     this.downloadedCache = this.downloadedCache.filter(gameId => gameId !== id);
     delete this.downloadingGames[id];
@@ -108,19 +112,18 @@ class GameDownloadManager {
   }
 
   public cancel(id: string) {
-    bridge.sendCommand<GamesCommandName, GamesCommandPayload>({
-      type: 'games',
-      payload: { action: 'cancel', id },
+    void bridge.sendCommand<GamesCommandName, GamesCommandPayload>({
+      type: "games",
+      payload: { action: "cancel", id },
     });
   }
 
   public async getLocalFiles(id: string) {
     return await bridge.sendCommand<GamesCommandName, GamesCommandPayload, string[]>({
-      type: 'games',
-      payload: { action: 'getLocalFiles', id },
+      type: "games",
+      payload: { action: "getLocalFiles", id },
     });
   }
-
 }
 
 const gameDownloadManager = new GameDownloadManager();

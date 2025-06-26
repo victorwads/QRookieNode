@@ -3,38 +3,45 @@ import { execFile } from "child_process";
 import * as path from "path";
 import { promisify } from "util";
 
-import { binExt, platformToolsDir, setupTools } from "@comands/adb/androidToolsSetup";
+import { binExt, platformToolsDir, setupTools } from "@commands/adb/androidToolsSetup";
 import log from "./log";
 
 const execFileAsync = promisify(execFile);
 
 export default abstract class SystemProcess {
-
   private static adbPath?: string;
+  private static isInitialized = false;
 
-  constructor() {
-    if (SystemProcess.adbPath) {
-      return;
-    }
-    SystemProcess.adbPath = path.join(platformToolsDir, "adb" + binExt);
-    this.getCommanPath('adb').then((path) => {
-      if (path) {
-        SystemProcess.adbPath = path;
-        log.info("ADB found at:", path);
-        return;
+  public constructor() {}
+
+  public async initialize(): Promise<void> {
+    if (SystemProcess.isInitialized) return;
+
+    try {
+      const adbPath = await this.getCommandPath("adb");
+
+      if (adbPath) {
+        SystemProcess.adbPath = adbPath;
+        log.info("ADB found at:", adbPath);
+      } else {
+        SystemProcess.adbPath = path.join(platformToolsDir, "adb" + binExt);
+        log.warn(
+          `ADB not found, downloading platform-tools. getCommandPath returned: '${adbPath}'`
+        );
+        await setupTools();
       }
-      log.warn(`ADB not found, downloading platform-tools. getCommanPath returned: '${path}'`);
-      setupTools();
-    }).catch((err) => {
-      log.error(`ADB not found, downloading platform-tools. getCommanPath returned error: '${err.message}'`);
-      setupTools();
-    });
+
+      SystemProcess.isInitialized = true;
+    } catch (error) {
+      log.error("Failed to initialize SystemProcess:", error);
+      throw error;
+    }
   }
 
-  public async getCommanPath(comandName: string): Promise<string|null> {
+  public async getCommandPath(comandName: string): Promise<string | null> {
     try {
       const { stdout } = await execFileAsync("which", [comandName]);
-      const path = (stdout||'').trim();
+      const path = (stdout || "").trim();
       return path !== "" ? path : null;
     } catch (error: any) {
       log.warn("Command error: ", error.message);
@@ -42,7 +49,10 @@ export default abstract class SystemProcess {
     }
   }
 
-  public async runCommand(comandWithPath: string, args: string[]): Promise<{
+  public async runCommand(
+    comandWithPath: string,
+    args: string[]
+  ): Promise<{
     stdout: string;
     stderr: string;
   }> {
@@ -54,16 +64,21 @@ export default abstract class SystemProcess {
       return { stdout, stderr };
     } catch (error: any) {
       log.commandError(comandWithPath, args, error.message);
-      return { stdout: "", stderr: error.message }
+      return { stdout: "", stderr: error.message };
     }
   }
 
   public async getSevenZipPath(): Promise<string> {
-    return await this.getCommanPath('7za') ?? sevenBin.path7za.replace("app.asar", "app.asar.unpacked");
+    return (
+      (await this.getCommandPath("7za")) ??
+      sevenBin.path7za.replace("app.asar", "app.asar.unpacked")
+    );
   }
 
-  public getAdbPath(): string {
+  public async getAdbPath(): Promise<string> {
+    if (!SystemProcess.adbPath) {
+      await this.initialize();
+    }
     return SystemProcess.adbPath || "error";
   }
-
 }

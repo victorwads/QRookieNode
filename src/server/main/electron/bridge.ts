@@ -1,23 +1,26 @@
 import { app, ipcMain, IpcMainInvokeEvent, net, protocol } from "electron";
 import path from "path";
 
-import { executeCommand } from "@server/comands";
-import { getImagePath } from "@server/comands/games/images";
-import { BridgeSendCommandEvent, CommandEvent, GameStatusInfo } from "@server/comands/types";
+import { executeCommand } from "@server/commands";
+import { getImagePath } from "@server/commands/games/images";
+import { BridgeSendCommandEvent, CommandEvent, GameStatusInfo } from "@server/commands/types";
 import { getMainWindow } from ".";
 
-app.whenReady().then(() => {
-  protocol.handle('game-image', (request) => {
+void app.whenReady().then(() => {
+  protocol.handle("game-image", request => {
     const packageName = decodeURIComponent(request.url.replace("game-image://", ""));
-    return net.fetch('file://' + path.normalize(getImagePath(packageName)));
-  })
+    return net.fetch("file://" + path.normalize(getImagePath(packageName)));
+  });
 });
 
 console.log("Bridge is ready");
-ipcMain.handle(BridgeSendCommandEvent, async (event: IpcMainInvokeEvent, comandEvent: CommandEvent<any, any>) => {
-  return executeCommand(comandEvent);
-});
+ipcMain.handle(
+  BridgeSendCommandEvent,
+  async (event: IpcMainInvokeEvent, commandEvent: CommandEvent<any, any>) => {
+    return executeCommand(commandEvent);
+  }
+);
 
-export const sendInfo = async (info: GameStatusInfo) => {
+export const sendInfo = (info: GameStatusInfo) => {
   getMainWindow()?.webContents.send("downloadProgress", info);
-}
+};

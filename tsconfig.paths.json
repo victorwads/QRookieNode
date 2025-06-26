@@ -9,9 +9,9 @@
       "@components/*": ["./react/components/*"],
       "@server": ["./server"],
       "@server/*": ["./server/*"],
-      "@comands": ["./server/comands"],
-      "@comands/*": ["./server/comands/*"],
-      "@main/*": ["./server/main/*"],
+      "@commands": ["./server/commands"],
+      "@commands/*": ["./server/commands/*"],
+      "@main/*": ["./server/main/*"]
     }
   }
 }

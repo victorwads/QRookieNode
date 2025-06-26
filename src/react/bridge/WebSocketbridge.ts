@@ -1,21 +1,24 @@
 import { BridgeInterface } from ".";
 import { GameStatusInfo } from "./download";
 
-import { CommandEvent } from "@server/comands/types";
+import { CommandEvent } from "@server/commands/types";
 
-type BridgeMessage = {
-  id: string;
-  event: 'command';
-  data: CommandEvent<any, any>;
-} | {
-  id: string;
-  event: 'command-response';
-  error: boolean;
-  data: unknown;
-} | {
-  event: 'download-progress';
-  data: GameStatusInfo;
-}
+type BridgeMessage =
+  | {
+      id: string;
+      event: "command";
+      data: CommandEvent<any, any>;
+    }
+  | {
+      id: string;
+      event: "command-response";
+      error: boolean;
+      data: unknown;
+    }
+  | {
+      event: "download-progress";
+      data: GameStatusInfo;
+    };
 
 class WebSocketBridge implements BridgeInterface {
   private socket: WebSocket;
@@ -23,8 +26,10 @@ class WebSocketBridge implements BridgeInterface {
   private reconnectDelay = 2000;
   private isReconnecting = false;
 
-  private eventHandlers: { [event: string]: {resolve: (data: any) => void, reject: (err: any) => void} } = {};
-  private gameStatusReceiver: ((info: GameStatusInfo) => void) |  null = null;
+  private eventHandlers: {
+    [event: string]: { resolve: (data: any) => void; reject: (err: any) => void };
+  } = {};
+  private gameStatusReceiver: ((info: GameStatusInfo) => void) | null = null;
 
   constructor() {
     this.connectionPromise = Promise.resolve();
@@ -43,14 +48,18 @@ class WebSocketBridge implements BridgeInterface {
   }
 
   private connect(): WebSocket {
-    const port = process.env.NODE_ENV === "development" ? ":3001"
-      : (window.location.port ? ":" + window.location.port : "");
+    const port =
+      process.env.NODE_ENV === "development"
+        ? ":3001"
+        : window.location.port
+          ? ":" + window.location.port
+          : "";
     const socketUrl = "ws://" + window.location.hostname + port;
 
     console.log("Connecting to WebSocket", socketUrl);
     const socket = new WebSocket(socketUrl);
 
-    this.connectionPromise = new Promise((resolve) => {
+    this.connectionPromise = new Promise(resolve => {
       socket.onopen = () => {
         console.log("WebSocket connected");
         this.isReconnecting = false;
@@ -60,20 +69,20 @@ class WebSocketBridge implements BridgeInterface {
 
     socket.onerror = () => {
       this.isReconnecting = false;
-    }
+    };
 
     socket.onclose = () => {
       console.log("WebSocket disconnected");
       this.reconnect();
     };
 
-    socket.onmessage = (message) => {
+    socket.onmessage = message => {
       try {
         const parsedMessage = JSON.parse(message.data) as BridgeMessage;
-        
-        if (parsedMessage.event === 'download-progress' && this.gameStatusReceiver) {
+
+        if (parsedMessage.event === "download-progress" && this.gameStatusReceiver) {
           this.gameStatusReceiver(parsedMessage.data);
-        } else if (parsedMessage.event === 'command-response') {
+        } else if (parsedMessage.event === "command-response") {
           if (this.eventHandlers[parsedMessage.id]) {
             if (parsedMessage.error) {
               this.eventHandlers[parsedMessage.id].reject(parsedMessage.data);
@@ -95,19 +104,23 @@ class WebSocketBridge implements BridgeInterface {
     return socket;
   }
 
-  public async sendCommand<Name extends string, Input, Output>(command: CommandEvent<Input, Name>): Promise<Output> {
+  public async sendCommand<Name extends string, Input, Output>(
+    command: CommandEvent<Input, Name>
+  ): Promise<Output> {
     await this.connectionPromise;
     const uniqueId = Math.random().toString(36);
     return new Promise((resolve, reject) => {
       try {
         this.eventHandlers[uniqueId] = { resolve, reject };
-        this.socket.send(JSON.stringify({ 
-          id: uniqueId,
-          event: 'command',
-          data: command
-        }));
+        this.socket.send(
+          JSON.stringify({
+            id: uniqueId,
+            event: "command",
+            data: command,
+          })
+        );
       } catch (err) {
-        reject(err);
+        reject(err as Error);
       }
     });
   }

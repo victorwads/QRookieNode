@@ -18,13 +18,50 @@
     gap: 0.6em;
 }
 
-input, select {
-    box-sizing: border-box;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    padding: 4px 8px;
-    height: 40px;
+input,
+select,
+.dropdown-toggle,
+.dropdown-menu {
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 4px 8px;
+  height: 40px;
 }
+
+.dropdown-menu {
+  right: 0;
+  left: auto;
+  top: auto;
+  position: absolute;
+  width: 250px;
+  height: auto;
+  background-color: #2c3e50;
+  border: 1px solid #000;
+  text-align: left;
+  padding: 8px;
+}
+
+.dropdown-menu .dropdown-item {
+  display: block;
+  color: white;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: #007aff;
+}
+
+.dropdown-toggle {
+  position: relative;
+  background-color: field;
+}
+
+.dropdown-icon {
+  margin-right: 4px;
+}
+
 .game-list-header > select {
     text-align: center;
     max-width: 70px;

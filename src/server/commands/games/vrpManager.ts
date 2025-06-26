@@ -1,8 +1,8 @@
 import * as fs from "fs";
-import { extractFull } from 'node-7z';
+import { extractFull } from "node-7z";
 import { join } from "path";
 
-import settingsManager from "@comands/settings/manager";
+import settingsManager from "@commands/settings/manager";
 import { downloadDir } from "@server/dirs";
 import log from "@server/log";
 import RunSystemCommand from "@server/systemProcess";
@@ -18,10 +18,12 @@ export interface GameInfo {
   size: string;
 }
 
-type CachedGameInfo  = {
-  lastDownloaded: string;
-  games: GameInfo[];
-} | GameInfo[];
+type CachedGameInfo =
+  | {
+      lastDownloaded: string;
+      games: GameInfo[];
+    }
+  | GameInfo[];
 
 const metaFileName = "meta.7z";
 const metaFilePath = join(downloadDir, metaFileName);
@@ -32,7 +34,7 @@ export class VprManager extends RunSystemCommand {
 
   constructor() {
     super();
-    this.loadGamesInfo();
+    void this.loadGamesInfo();
   }
 
   private get gamesFilePath(): string {
@@ -69,7 +71,7 @@ export class VprManager extends RunSystemCommand {
       }
 
       this.games.clear();
-      json.games.forEach((game) => {
+      json.games.forEach(game => {
         this.games.set(game.releaseName, game);
       });
 
@@ -110,11 +112,15 @@ export class VprManager extends RunSystemCommand {
     const vrpInfo = await vrpPublic;
     if (!vrpInfo) {
       log.error("Failed to get VRP info");
-      return false
+      return false;
     }
 
     try {
-      const downloaded = await downloader.downloadFile(metaFileName, vrpInfo?.baseUri, metaFilePath);
+      const downloaded = await downloader.downloadFile(
+        metaFileName,
+        vrpInfo?.baseUri,
+        metaFilePath
+      );
 
       if (!downloaded) {
         log.error("Failed to download metadata");
@@ -122,21 +128,21 @@ export class VprManager extends RunSystemCommand {
       }
 
       const SevenZipPath = await this.getSevenZipPath();
-      await (new Promise((resolve, reject) => {
+      await new Promise((resolve, reject) => {
         log.info("Extracting metadata...", SevenZipPath);
         const seven = extractFull(metaFilePath, downloadDir, {
           $bin: SevenZipPath,
-          password: vrpInfo.password
-        })
-        seven.on('end', function () {
+          password: vrpInfo.password,
+        });
+        seven.on("end", function () {
           resolve(null);
-        })
+        });
 
-        seven.on('error', reject)
-      }));
+        seven.on("error", reject);
+      });
 
       this.parseMetadata();
-      this.loadGamesInfo();
+      void this.loadGamesInfo();
       return true;
     } catch (error) {
       log.error("Metadata update failed:", error);
@@ -195,10 +201,10 @@ export class VprManager extends RunSystemCommand {
   }
 
   public getDownloadedGames(): string[] {
-    return fs.readdirSync(settingsManager.getDownloadsDir()).filter((file) => 
-      fs.existsSync(join(settingsManager.getDownloadsDir(), file, "finished"))
-    );
+    return fs
+      .readdirSync(settingsManager.getDownloadsDir())
+      .filter(file => fs.existsSync(join(settingsManager.getDownloadsDir(), file, "finished")));
   }
 }
 
-export default (new VprManager());
+export default new VprManager();

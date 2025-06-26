@@ -3,7 +3,7 @@ import { createServer } from "http";
 import { networkInterfaces } from "os";
 import { join } from "path";
 
-import { getImagePath } from "@comands/games/images";
+import { getImagePath } from "@commands/games/images";
 import { buildRoot } from "@server/dirs";
 import log from "@server/log";
 
@@ -23,8 +23,9 @@ const server = createServer((req, res) => {
     });
     return;
   }
-        
-  const filePath = req.url === "/" ? join(reactBuildPath, "index.html") : join(reactBuildPath, req.url!);
+
+  const filePath =
+    req.url === "/" ? join(reactBuildPath, "index.html") : join(reactBuildPath, req.url!);
   readFile(filePath, (err, data) => {
     if (err) {
       res.writeHead(404);

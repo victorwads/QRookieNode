@@ -11,7 +11,7 @@ import log from "@server/log";
 import RunSystemCommand from "@server/systemProcess";
 import { statusCodeToReasonPhrase } from "@server/utils";
 
-import type { VprPublicData } from "./vrpPublic";
+import type { VrpPublicData } from "./vrpPublic";
 
 export const extractDirName = "extracted";
 
@@ -257,7 +257,7 @@ export default class Downloader extends RunSystemCommand {
   public async downloadDir(
     baseUrl: string,
     id: string,
-    vrpPublicData: VprPublicData | null
+    vrpPublicData: VrpPublicData | null
   ): Promise<GameStatusInfo | null> {
     const prepareResult = this.prepareDownloadIfNeeded(id);
     const url = new URL(id + "/", baseUrl);
@@ -282,7 +282,7 @@ export default class Downloader extends RunSystemCommand {
     progress(progressInfo);
     const { files, totalSize } = await this.getGameDownloadFiles(url);
     if (files.length === 0) {
-      log.error(`Downloading Error: No files found: ${url}`);
+      log.error(`Download Error: No files found: ${url}`);
       return null;
     }
 
@@ -364,7 +364,7 @@ export default class Downloader extends RunSystemCommand {
       resolvePromise = resolve;
     });
 
-    const queeeMaxSimultaneous = 5;
+    const queueMaxSimultaneous = 5;
     let downloadSpeed = 0;
     let downloadingNow = 0;
     let currentIndex = 0;
@@ -386,7 +386,7 @@ export default class Downloader extends RunSystemCommand {
         }
         return;
       }
-      while (downloadingNow < queeeMaxSimultaneous && currentIndex < files.length) {
+      while (downloadingNow < queueMaxSimultaneous && currentIndex < files.length) {
         downloadingNow++;
         void downloadOne(files[currentIndex])
           .then(result => {

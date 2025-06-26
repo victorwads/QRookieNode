@@ -10,7 +10,7 @@ import Icon, { Icons } from "@components/Icons";
 
 import type { Game } from "@bridge/games";
 
-let hasPedingDownloadFolderSearch = false;
+let hasPendingDownloadFolderSearch = false;
 
 const installingStates: GameStatusType[] = [
   "installing",
@@ -25,9 +25,9 @@ const Library: React.FC = () => {
   const navigate = useNavigate();
 
   const updateDownloadedGames = async () => {
-    if (hasPedingDownloadFolderSearch) return;
+    if (hasPendingDownloadFolderSearch) return;
     const result = await downloadManager.getDownloadedGames().finally(() => {
-      hasPedingDownloadFolderSearch = false;
+      hasPendingDownloadFolderSearch = false;
     });
     setDownloads(
       result.map(id => gamesManager.getGameFromCacheById(id)).filter(game => game) as Game[]

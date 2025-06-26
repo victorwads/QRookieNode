@@ -2,23 +2,23 @@ import React, { useEffect, useState } from "react";
 import { BasicLoading } from "./Loading";
 import "./Settings.css";
 
-import { isElectron, isWebsoket } from "@bridge";
-import settingsManager, { SystemHelth } from "@bridge/settings";
+import { isElectron, isWebsocket } from "@bridge";
+import settingsManager, { SystemHealth } from "@bridge/settings";
 import Button from "@components/Button";
 import Icon, { Icons } from "@components/Icons";
 
 import type { RepoDownloadsInfo, Settings as SettingsModel } from "@bridge/settings";
 
-let sysTemHelthCache: SystemHelth | null = null;
-const loadSystemHelth = async () =>
-  settingsManager.getHelthInfo().then(info => {
-    sysTemHelthCache = info;
+let systemHealthCache: SystemHealth | null = null;
+const loadSystemHealth = async () =>
+  settingsManager.getHealthInfo().then(info => {
+    systemHealthCache = info;
     return info;
   });
-void loadSystemHelth();
+void loadSystemHealth();
 
 export const changeDownloadsDir = async (): Promise<SettingsModel> => {
-  if (isWebsoket) {
+  if (isWebsocket) {
     alert(
       "Use ROOKIE_DOWNLOADS_DIR environment variable with a valid full path to set the download dir on web server"
     );
@@ -29,7 +29,7 @@ export const changeDownloadsDir = async (): Promise<SettingsModel> => {
 const Settings: React.FC = () => {
   const [infos, set] = useState<RepoDownloadsInfo>(settingsManager.getReposInfo());
   const [update, setUpdate] = useState<string | null>(null);
-  const [systemHelth, setSystemHelth] = useState<SystemHelth | null>(sysTemHelthCache);
+  const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(systemHealthCache);
   const [settings, setSettings] = useState<SettingsModel>({});
 
   const openDevTools = () => {
@@ -40,12 +40,12 @@ const Settings: React.FC = () => {
     void settingsManager.fetchReposInfo().then(info => {
       set({ ...info });
     });
-    if (!systemHelth) {
-      void loadSystemHelth().then(setSystemHelth);
+    if (!systemHealth) {
+      void loadSystemHealth().then(setSystemHealth);
     }
     void settingsManager.getSettings().then(setSettings);
     void settingsManager.hasUpdate().then(setUpdate);
-  }, [systemHelth]);
+  }, [systemHealth]);
 
   const reposInfos = Object.values(infos);
 
@@ -85,51 +85,51 @@ const Settings: React.FC = () => {
           })}
         </section>
         <section>
-          <h2>System Helth Check</h2>
-          {systemHelth ? (
+          <h2>System Health Check</h2>
+          {systemHealth ? (
             <ul>
               <li>
                 <pre>
-                  <strong>App Version:</strong> {systemHelth.appVersion}
-                  {isWebsoket ? " (Web Version)" : ""}
+                  <strong>App Version:</strong> {systemHealth.appVersion}
+                  {isWebsocket ? " (Web Version)" : ""}
                 </pre>
               </li>
               {isElectron && (
                 <li>
                   <pre>
-                    <strong>Electron Version:</strong> {systemHelth.electronVersion}
+                    <strong>Electron Version:</strong> {systemHealth.electronVersion}
                   </pre>
                 </li>
               )}
               <li>
                 <pre>
                   <strong>{isElectron && "Bundled "}Node Version:</strong>{" "}
-                  {systemHelth.bundledNodeVersion}
+                  {systemHealth.bundledNodeVersion}
                 </pre>
               </li>
               <li>
                 <pre>
-                  <strong>ADB:</strong> {systemHelth.adb}
+                  <strong>ADB:</strong> {systemHealth.adb}
                 </pre>
               </li>
               <li>
                 <pre>
-                  <strong>7Zip:</strong> {systemHelth.sevenZip}
+                  <strong>7Zip:</strong> {systemHealth.sevenZip}
                 </pre>
               </li>
               <li>
                 <pre>
-                  <strong>Unzip:</strong> {systemHelth.unzip}
+                  <strong>Unzip:</strong> {systemHealth.unzip}
                 </pre>
               </li>
               <li>
                 <pre>
-                  <strong>Java:</strong> {systemHelth.java}
+                  <strong>Java:</strong> {systemHealth.java}
                 </pre>
               </li>
             </ul>
           ) : (
-            <BasicLoading visible={!systemHelth} />
+            <BasicLoading visible={!systemHealth} />
           )}
         </section>
         {update && (

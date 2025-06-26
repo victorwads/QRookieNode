@@ -76,7 +76,7 @@ const GameVerboseInfo: React.FC<GameVerboseInfoProps> = ({ gameStatus }: GameVer
       )}
       {gameStatus.status === "pushing app data" && (
         <div className="game-card-download-info">
-          <strong>Pusing App Data</strong>
+          <strong>Pushing App Data</strong>
           <div>
             <strong>Files:</strong>
             {gameStatus.file.index + 1}/{gameStatus.totalFiles}

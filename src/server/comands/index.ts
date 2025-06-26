@@ -14,15 +14,15 @@ const commands: Command<any, any, any>[] = [
   SettingsCommand,
 ];
 
-export const executeCommand = async (comandEvent: CommandEvent<any, any>) => {
-  const command = commands.filter(command => command.type === comandEvent.type);
+export const executeCommand = async (commandEvent: CommandEvent<any, any>) => {
+  const command = commands.filter(command => command.type === commandEvent.type);
   if (command.length === 1) {
-    return await command[0].receiver(comandEvent.payload);
+    return await command[0].receiver(commandEvent.payload);
   }
   if (command.length > 1) {
-    log.error(`Multiple commands with the same type: ${comandEvent.type}`, commands);
+    log.error(`Multiple commands with the same type: ${commandEvent.type}`, commands);
   } else {
-    log.error(`Unknown command type: ${comandEvent.type}`);
+    log.error(`Unknown command type: ${commandEvent.type}`);
   }
   return null;
 };

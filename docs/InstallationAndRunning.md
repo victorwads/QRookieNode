@@ -42,4 +42,4 @@ Dependencies:
 
 ### Help
 
-If you have any problem, please open an issue on the issues page.
+If you have any problems, please open an issue on the issues page.

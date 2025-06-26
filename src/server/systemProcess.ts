@@ -18,7 +18,7 @@ export default abstract class SystemProcess {
     if (SystemProcess.isInitialized) return;
 
     try {
-      const adbPath = await this.getCommanPath("adb");
+      const adbPath = await this.getCommandPath("adb");
 
       if (adbPath) {
         SystemProcess.adbPath = adbPath;
@@ -38,7 +38,7 @@ export default abstract class SystemProcess {
     }
   }
 
-  public async getCommanPath(comandName: string): Promise<string | null> {
+  public async getCommandPath(comandName: string): Promise<string | null> {
     try {
       const { stdout } = await execFileAsync("which", [comandName]);
       const path = (stdout || "").trim();
@@ -70,7 +70,8 @@ export default abstract class SystemProcess {
 
   public async getSevenZipPath(): Promise<string> {
     return (
-      (await this.getCommanPath("7za")) ?? sevenBin.path7za.replace("app.asar", "app.asar.unpacked")
+      (await this.getCommandPath("7za")) ??
+      sevenBin.path7za.replace("app.asar", "app.asar.unpacked")
     );
   }
 

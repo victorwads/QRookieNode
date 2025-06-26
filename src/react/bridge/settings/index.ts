@@ -1,6 +1,6 @@
 import semver from "semver";
 
-import { promisse, RepoDownloadsInfo, repoDownloadsInfo } from "./repoInfo";
+import { repoInfo, RepoDownloadsInfo, repoDownloadsInfo } from "./repoInfo";
 
 import bridge from "@bridge";
 import {
@@ -9,21 +9,21 @@ import {
   SettingsCommandName,
   SettingsCommandOutputs,
   SettingsCommandPayload,
-  SystemHelth,
+  SystemHealth,
 } from "@server/comands/types";
-export type { GitHubRelease, Settings, SystemHelth } from "@server/comands/types";
+export type { GitHubRelease, Settings, SystemHealth } from "@server/comands/types";
 export type { RepoDownloadsInfo };
 
 class SettingsManager {
-  public async getHelthInfo(): Promise<SystemHelth> {
+  public async getHealthInfo(): Promise<SystemHealth> {
     return bridge.sendCommand<
       SettingsCommandName,
       SettingsCommandPayload,
-      SettingsCommandOutputs["systemHelth"]
+      SettingsCommandOutputs["systemHealth"]
     >({
       type: "settings",
       payload: {
-        action: "getSystemHelth",
+        action: "getSystemHealth",
       },
     });
   }
@@ -61,13 +61,13 @@ class SettingsManager {
   }
 
   public async fetchReposInfo(): Promise<RepoDownloadsInfo> {
-    await promisse;
+    await repoInfo;
     return repoDownloadsInfo;
   }
 
   public async hasUpdate(): Promise<string | null> {
     const info = (await this.fetchReposInfo())["victorwads/QRookieNode"];
-    const appVersion = (await this.getHelthInfo()).appVersion;
+    const appVersion = (await this.getHealthInfo()).appVersion;
 
     if (semver.gt(info.lastAppVersion, appVersion)) {
       return `https://github.com/victorwads/QRookieNode/releases/tag/${info.lastAppVersion}`;

@@ -25,7 +25,7 @@ export type RepoDownloadsInfo = {
 export const repoDownloadsInfo: RepoDownloadsInfo = JSON.parse(
   localStorage.getItem(storageKey) || "{}"
 );
-export const promisse = Promise.all(
+export const repoInfo = Promise.all(
   Object.entries(repos).map(([name, alias]) => {
     const repoName = name as keyof typeof repos;
     const cache = repoDownloadsInfo[repoName];
@@ -81,6 +81,6 @@ export const promisse = Promise.all(
   })
 );
 
-void promisse.then(() => {
+void repoInfo.then(() => {
   localStorage.setItem(storageKey, JSON.stringify(repoDownloadsInfo));
 });

@@ -125,7 +125,7 @@ const Devices: React.FC = () => {
         />
         <Button onClick={() => pair(pairIp, pairCode)} icon={Icons.solid.faWifi}>
           Try Pair
-        </Button>
+        </Button>{" "}
         <a
           href="https://developer.android.com/tools/adb?hl=pt-br#connect-to-a-device-over-wi-fi"
           target="_blank"

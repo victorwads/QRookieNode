@@ -21,7 +21,7 @@ while (!existsSync(join(foundResourcesDir, "dist"))) {
 export const resourcesDir = foundResourcesDir;
 export const buildRoot = __dirname;
 export const appDataDir = join(userDataDir, "data");
-export const extractedDir = join(appDataDir, "uncrompressed");
+export const extractedDir = join(appDataDir, "uncompressed");
 export const downloadDir = join(appDataDir, "downloads");
 export const gamesDirName = "VrGames";
 export const gamesDir = join(downloadDir, gamesDirName);

@@ -16,8 +16,8 @@ void app.whenReady().then(() => {
 console.log("Bridge is ready");
 ipcMain.handle(
   BridgeSendCommandEvent,
-  async (event: IpcMainInvokeEvent, comandEvent: CommandEvent<any, any>) => {
-    return executeCommand(comandEvent);
+  async (event: IpcMainInvokeEvent, commandEvent: CommandEvent<any, any>) => {
+    return executeCommand(commandEvent);
   }
 );
 

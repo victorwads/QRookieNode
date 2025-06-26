@@ -4,7 +4,7 @@ import * as path from "path";
 import { appDataDir, buildRoot, gamesDir, gamesDirName } from "@server/dirs";
 import log from "@server/log";
 import SystemProcess from "@server/systemProcess";
-import type { Settings, SystemHelth } from ".";
+import type { Settings, SystemHealth } from ".";
 
 export const appVersion = JSON.parse(
   fs.readFileSync(path.join(buildRoot, "package.json"), "utf-8")
@@ -80,21 +80,21 @@ class SettingsManager extends SystemProcess {
     return path + "\n" + stdout.split("\n").slice(0, lines).join("\n");
   }
 
-  private static systemHelthCache: Promise<SystemHelth> | null = null;
+  private static systemHealthCache: Promise<SystemHealth> | null = null;
 
-  public async getSystemHelth(): Promise<SystemHelth> {
-    if (!SettingsManager.systemHelthCache) {
-      SettingsManager.systemHelthCache = this.getSystemHelthInternal();
+  public async getSystemHealth(): Promise<SystemHealth> {
+    if (!SettingsManager.systemHealthCache) {
+      SettingsManager.systemHealthCache = this.getSystemHealthInternal();
     }
-    return SettingsManager.systemHelthCache;
+    return SettingsManager.systemHealthCache;
   }
 
-  private async getSystemHelthInternal(): Promise<SystemHelth> {
+  private async getSystemHealthInternal(): Promise<SystemHealth> {
     const asyncResults = {
       adb: this.getCommandInfo(await this.getAdbPath(), "adb", 2, "version"),
-      unzip: this.getCommanPath("unzip").then(path => this.getCommandInfo(path, "unzip", 1)),
+      unzip: this.getCommandPath("unzip").then(path => this.getCommandInfo(path, "unzip", 1)),
       sevenZip: this.getSevenZipPath().then(path => this.getCommandInfo(path, "7zip", 2)),
-      java: this.getCommanPath("java").then(path =>
+      java: this.getCommandPath("java").then(path =>
         this.getCommandInfo(path, "java", 3, "--version")
       ),
     };

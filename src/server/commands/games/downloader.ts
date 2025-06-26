@@ -4,9 +4,9 @@ import * as http2 from "http2";
 import * as https from "https";
 import * as path from "path";
 
-import { downloadProgress } from "@comands";
-import settingsManager from "@comands/settings/manager";
-import { DownloadProgress, GameStatusInfo } from "@comands/types";
+import { downloadProgress } from "@commands";
+import settingsManager from "@commands/settings/manager";
+import { DownloadProgress, GameStatusInfo } from "@commands/types";
 import log from "@server/log";
 import RunSystemCommand from "@server/systemProcess";
 import { statusCodeToReasonPhrase } from "@server/utils";

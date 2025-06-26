@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { extractFull } from "node-7z";
 import { join } from "path";
 
-import settingsManager from "@comands/settings/manager";
+import settingsManager from "@commands/settings/manager";
 import { downloadDir } from "@server/dirs";
 import log from "@server/log";
 import RunSystemCommand from "@server/systemProcess";

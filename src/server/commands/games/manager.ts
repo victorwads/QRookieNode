@@ -3,8 +3,8 @@ import * as fs from "fs";
 import * as path from "path";
 import type { Game } from ".";
 
-import adbManager from "@comands/adb/manager";
-import settingsManager from "@comands/settings/manager";
+import adbManager from "@commands/adb/manager";
+import settingsManager from "@commands/settings/manager";
 import log from "@server/log";
 import HttpDownloader, { extractDirName, progress } from "./downloader";
 import vrpManager from "./vrpManager";

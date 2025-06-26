@@ -3,7 +3,7 @@ import { createServer } from "http";
 import { networkInterfaces } from "os";
 import { join } from "path";
 
-import { getImagePath } from "@comands/games/images";
+import { getImagePath } from "@commands/games/images";
 import { buildRoot } from "@server/dirs";
 import log from "@server/log";
 

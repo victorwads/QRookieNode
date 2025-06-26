@@ -1,4 +1,4 @@
-import type { GitHubRelease } from "@server/comands/types";
+import type { GitHubRelease } from "@server/commands/types";
 
 // https://api.github.com/rate_limit
 const storageKey = "repoDownloadsInfoV2";

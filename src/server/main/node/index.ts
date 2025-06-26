@@ -1,8 +1,8 @@
 import { WebSocket, WebSocketServer } from "ws";
 
-import { executeCommand } from "@server/comands";
-import { appVersion } from "@server/comands/settings/manager";
-import { CommandEvent, GameStatusInfo } from "@server/comands/types";
+import { executeCommand } from "@server/commands";
+import { appVersion } from "@server/commands/settings/manager";
+import { CommandEvent, GameStatusInfo } from "@server/commands/types";
 import log from "@server/log";
 import server from "./reactServer";
 

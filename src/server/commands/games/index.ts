@@ -1,4 +1,4 @@
-import { Command, CommandEvent } from "@comands/types";
+import { Command, CommandEvent } from "@commands/types";
 import GamesManager from "./manager";
 
 export type GamesCommandPayload = GamesActionList | GamesActionWithId | GameActionInstall;

@@ -1,7 +1,7 @@
 import bridge from ".";
 
-import type { GamesCommandName, GamesCommandPayload, GameStatusInfo } from "@server/comands/types";
-export type { GameStatusInfo, GameStatusType } from "@server/comands/types";
+import type { GamesCommandName, GamesCommandPayload, GameStatusInfo } from "@server/commands/types";
+export type { GameStatusInfo, GameStatusType } from "@server/commands/types";
 
 type ListenerCallback = (info: GameStatusInfo) => void;
 type DownloadingListener = (info: GameStatusInfo[]) => void;

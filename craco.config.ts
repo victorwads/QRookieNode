@@ -16,7 +16,7 @@ export default {
       "@bridge": resolve(__dirname, "src/react/bridge"),
       "@components": resolve(__dirname, "src/react/components"),
       "@server": resolve(__dirname, "src/server"),
-      "@comands": resolve(__dirname, "src/server/comands"),
+      "@commands": resolve(__dirname, "src/server/commands"),
       "@main": resolve(__dirname, "src/server/main"),
     },
   },

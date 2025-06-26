@@ -1,7 +1,7 @@
 import { BridgeInterface } from ".";
 import { GameStatusInfo } from "./download";
 
-import { CommandEvent } from "@server/comands/types";
+import { CommandEvent } from "@server/commands/types";
 
 type BridgeMessage =
   | {

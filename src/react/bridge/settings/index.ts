@@ -10,8 +10,8 @@ import {
   SettingsCommandOutputs,
   SettingsCommandPayload,
   SystemHealth,
-} from "@server/comands/types";
-export type { GitHubRelease, Settings, SystemHealth } from "@server/comands/types";
+} from "@server/commands/types";
+export type { GitHubRelease, Settings, SystemHealth } from "@server/commands/types";
 export type { RepoDownloadsInfo };
 
 class SettingsManager {

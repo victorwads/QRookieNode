@@ -1,7 +1,7 @@
 import bridge from ".";
 
-import type { Game, GamesCommandName, GamesCommandPayload } from "@server/comands/types";
-export type { Game } from "@server/comands/types";
+import type { Game, GamesCommandName, GamesCommandPayload } from "@server/commands/types";
+export type { Game } from "@server/commands/types";
 
 const cacheKey = "games";
 

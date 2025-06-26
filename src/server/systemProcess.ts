@@ -3,7 +3,7 @@ import { execFile } from "child_process";
 import * as path from "path";
 import { promisify } from "util";
 
-import { binExt, platformToolsDir, setupTools } from "@comands/adb/androidToolsSetup";
+import { binExt, platformToolsDir, setupTools } from "@commands/adb/androidToolsSetup";
 import log from "./log";
 
 const execFileAsync = promisify(execFile);

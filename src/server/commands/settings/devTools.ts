@@ -1,4 +1,4 @@
-import { Command, CommandEvent } from "@comands/types";
+import { Command, CommandEvent } from "@commands/types";
 
 export type DevToolsCommandName = "devTools";
 export type DevToolsCommand = Command<void, void, DevToolsCommandName>;

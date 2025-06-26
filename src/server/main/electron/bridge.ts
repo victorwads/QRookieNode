@@ -1,9 +1,9 @@
 import { app, ipcMain, IpcMainInvokeEvent, net, protocol } from "electron";
 import path from "path";
 
-import { executeCommand } from "@server/comands";
-import { getImagePath } from "@server/comands/games/images";
-import { BridgeSendCommandEvent, CommandEvent, GameStatusInfo } from "@server/comands/types";
+import { executeCommand } from "@server/commands";
+import { getImagePath } from "@server/commands/games/images";
+import { BridgeSendCommandEvent, CommandEvent, GameStatusInfo } from "@server/commands/types";
 import { getMainWindow } from ".";
 
 void app.whenReady().then(() => {
